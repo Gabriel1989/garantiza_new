@@ -1,0 +1,12 @@
+[
+    {"Codigo":"1","Nombre":"Creación de Solicitud"},
+    {"Codigo":"2","Nombre":"Grabación de adquirientes"},
+    {"Codigo":"3","Nombre":"Grabación de Compra/Para"},
+    {"Codigo":"4","Nombre":"Grabación de Impuesto Verde"},
+    {"Codigo":"5","Nombre":"Grabación datos del Vehículo"},
+    {"Codigo":"6","Nombre":"Sube Documentos"},
+    {"Codigo":"7","Nombre":"Envía Solicitud"},
+    {"Codigo":"8","Nombre":"Aprobación de Solicitud"},
+    {"Codigo":"9","Nombre":"Rechazado por Rut de Adquiriente"},
+    {"Codigo":"10","Nombre":"Rechazado por Nombre de Adquiriente"}
+]

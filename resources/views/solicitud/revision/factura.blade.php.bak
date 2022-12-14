@@ -1,0 +1,199 @@
+@extends("themes.$themes.layout")
+
+
+
+@section('styles')
+<!-- FlowChart CSS -->
+<link rel="stylesheet" type="text/css" href="{{asset("assets/$themes/vendor/plugins/flowchart/jquery.flowchart.min.css")}}">
+<style>
+    .flowchart-example-container {
+        width: 800px;
+        height: 500px;
+        background: white;
+        border: 1px solid #BBB;
+        margin-bottom: 10px;
+    }
+</style>
+@endsection
+
+@section('contenido')
+
+@include('includes.form-error-message')
+<form method="post" action="{{route('solicitud.updateRevisionCedula', ['id' => $id])}}" role="form" class="form-horizontal form-revision">
+    @csrf
+    @method('PUT')
+    <div class="panel panel-info panel-border top">
+        <div class="panel-heading">
+            <span class="panel-title">Revisión de Solicitud N° {{$id}} - Datos de Factura</span>
+        </div>
+        <div class="panel-body">
+            
+            <div class="form-group">
+                
+                <div class="col-lg-4">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <span class="panel-title">
+                                <span class="glyphicon glyphicon-cog hidden"></span>Información del adquiriente
+                            </span>
+                        </div>
+                        <div class="panel-body" >
+                            <div class="form-group">
+                                <div class="row">
+                                    <label for="name" class="col-lg-2 control-label ">Nombre:</label>
+                                    <label class="col-lg-10">
+                                        <p class="form-control-static text-muted">{{$header->RznSocRecep}}</p>
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <label for="name" class="col-lg-2 control-label ">Rut:</label>
+                                    <label class="col-lg-10">
+                                        <p class="form-control-static text-muted">{{$header->RUTRecep}}</p>
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <label for="name" class="col-lg-2 control-label ">Calle:</label>
+                                    <label class="col-lg-10">
+                                        <p class="form-control-static text-muted">{{$header->DirRecep}}</p>
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <label for="name" class="col-lg-2 control-label ">N° Domicilio:</label>
+                                    <label class="col-lg-10">
+                                        <p class="form-control-static text-muted"></p>
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <label for="name" class="col-lg-2 control-label ">Comuna:</label>
+                                    <label class="col-lg-10">
+                                        <p class="form-control-static text-muted">{{$header->CmnaRecep}}</p>
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <label for="name" class="col-lg-2 control-label ">Email:</label>
+                                    <label class="col-lg-10">
+                                        <p class="form-control-static text-muted"></p>
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <label for="name" class="col-lg-2 control-label ">Teléfono:</label>
+                                    <label class="col-lg-10">
+                                        <p class="form-control-static text-muted"></p>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4">
+                    <div id="chart_container">
+                        <div class="flowchart-example-container" id="flowchartworkspace"></div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+        <div class="panel-footer">
+            <button type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Grabar y Continuar Revisión </button>
+        </div>
+    </div>
+</form>
+    
+
+@endsection
+
+@section('scripts')
+
+<script type="text/javascript" src="{{asset("assets/$themes/vendor/plugins/flowchart/jquery.flowchart.js")}}"></script>
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        
+        var defaultFlowchartData = {
+			operators: {
+				operator1: {
+					top: 20,
+					left: 20,
+					properties: {
+						title: 'Detalle de Factura',
+						inputs: {},
+						outputs: {
+                            @for ($i = 0; $i < count($detalle) -1; $i++)
+                                {{'linea_' . $i}}: {
+                                    label: '{{$detalle[$i]}}',
+                                },
+                            @endfor
+						}
+					}
+				},
+				operator2: {
+					top: 20,
+					left: 470,
+					properties: {
+						title: 'Vehículo',
+						inputs: {
+							agno: {
+								label: 'Año Fabricación',
+							},
+							asientos: {
+								label: 'Cantidad de Asientos',
+							},
+                            carga: {
+								label: 'Carga',
+							},
+                            color: {
+								label: 'Color',
+							},
+                            combustible: {
+								label: 'Combustible',
+							},
+                            marca: {
+								label: 'Marca',
+							},
+                            chasis: {
+								label: 'Chasis',
+							},
+                            motor: {
+								label: 'Motor',
+							},
+                            serie: {
+								label: 'Serie',
+							},
+                            vin: {
+								label: 'VIN',
+							},
+                            pbv: {
+								label: 'PBV',
+							},
+                            terminacion: {
+								label: 'Terminación PPU',
+							}
+						},
+						outputs: {}
+					}
+				},
+			},
+		};
+
+        var $flowchart = $('#flowchartworkspace');
+        var $container = $flowchart.parent();
+
+        $flowchart.flowchart({
+            data: defaultFlowchartData,
+            defaultSelectedLinkColor: '#000055',
+            grid: 10,
+            linkWidth: 3,
+            onLinkCreate:function (linkId, linkData) {
+                alert(linkId);
+                alert(linkData);
+            },
+
+        });
+
+        $('.flowchart-operator-title').each(function(index) {
+            $(this).parent().width(300); 
+        });
+    });   
+</script>
+@endsection

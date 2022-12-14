@@ -1,0 +1,19 @@
+[
+    {"name":"AUTOMOVIL","tipo":"1"},
+    {"name":"STATION WAGON","tipo":"1"},
+    {"name":"FURGON","tipo":"1"},
+    {"name":"CAMIONETA","tipo":"1"},
+    {"name":"MINIBUS","tipo":"1"},
+    {"name":"JEEP","tipo":"1"},
+    {"name":"MINIBUS","tipo":"1"},
+    {"name":"MOTO","tipo":"2"},
+    {"name":"BICIMOTO","tipo":"2"},
+    {"name":"TRIMOTO","tipo":"2"},
+    {"name":"CUADRIMOTO","tipo":"2"},
+    {"name":"BICICLETA MOTOR","tipo":"2"},
+    {"name":"TRICICLO MOTOR","tipo":"2"},
+    {"name":"CAMION","tipo":"3"},
+    {"name":"TRACTOCAMION","tipo":"3"},
+    {"name":"REMOLQUE","tipo":"3"},
+    {"name":"SEMIREMOLQUE","tipo":"3"}
+]
