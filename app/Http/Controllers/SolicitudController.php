@@ -362,8 +362,60 @@ class SolicitudController extends Controller
     }
 
     public function datosAuto($id){
-        return 'datos Auto';
-        return view('solicitud.compraPara', compact('id', 'comunas'));
+        $header = new stdClass;
+        $detail = new stdClass;
+
+        $documentos = Solicitud::DocumentosSolicitud($id);
+        $file = $documentos->where('tipo_documento_id', '1')->first()->name;
+
+        $header = new stdClass;
+        $detail = new stdClass;
+
+        $documentos = Solicitud::DocumentosSolicitud($id);
+        $file = $documentos->where('tipo_documento_id', '1')->first()->name;
+
+        if (Storage::exists($file)) {
+            $contents = Storage::get($file);
+            $xmlResponse = simplexml_load_string($contents);
+
+            $encabezado = $this->getNode($xmlResponse, 'Encabezado');
+            if($encabezado){
+                $header->Folio = (string)$encabezado->IdDoc->Folio;
+                $header->FchEmis = (string)$encabezado->IdDoc->FchEmis;
+                $header->RUTEmisor = (string)$encabezado->Emisor->RUTEmisor;
+                $header->RznSoc = (string)$encabezado->Emisor->RznSoc;
+                $header->GiroEmis = (string)$encabezado->Emisor->GiroEmis;
+                $header->Sucursal = (string)$encabezado->Emisor->Sucursal;
+                $header->DirOrigen = (string)$encabezado->Emisor->DirOrigen;
+                $header->CmnaOrigen = (string)$encabezado->Emisor->CmnaOrigen;
+                $header->CiudadOrigen = (string)$encabezado->Emisor->CiudadOrigen;
+                $header->RUTRecep = (string)$encabezado->Receptor->RUTRecep;
+                $header->RznSocRecep = (string)$encabezado->Receptor->RznSocRecep;
+                $header->GiroRecep = (string)$encabezado->Receptor->GiroRecep;
+                $header->Contacto = (string)$encabezado->Receptor->Contacto;
+                $header->DirRecep = (string)$encabezado->Receptor->DirRecep;
+                $header->CmnaRecep = (string)$encabezado->Receptor->CmnaRecep;
+                $header->CiudadRecep = (string)$encabezado->Receptor->CiudadRecep;
+                $header->DirPostal = (string)$encabezado->Receptor->DirPostal;
+                $header->MntNeto = (string)$encabezado->Totales->MntNeto;
+                $header->MntExe = (string)$encabezado->Totales->MntExe;
+                $header->TasaIVA = (string)$encabezado->Totales->TasaIVA;
+                $header->IVA = (string)$encabezado->Totales->IVA;
+                $header->MntTotal = (string)$encabezado->Totales->MntTotal;
+            }            
+            
+            $detail = $this->getNode($xmlResponse, 'Detalle');
+            $detalle = explode(chr(10), (string)$detail->DscItem);
+            $comunas = Comuna::allOrder();
+
+        }
+        
+        return view('solicitud.revision.facturaAuto', compact('id', 'comunas', 'header', 'detalle'));
+
+
+
+        //return 'datos Auto';
+        //return view('solicitud.compraPara', compact('id', 'comunas'));
     }
 
     public function datosCamion($id){
@@ -811,6 +863,167 @@ class SolicitudController extends Controller
 
         
         $data = RegistroCivil::creaMoto($parametro);
+        $salida = json_decode($data, true);
+
+        if(!$salida['codigoresp']=='OK'){
+            return view('general.errorRC', ['glosa' => $salida['glosa']]); 
+        }
+        return dd($salida);
+        
+        // OJO
+        //return redirect()->route('solicitud.revision.facturaMoto', ['id' => $id]);
+    }
+
+    public function updateRevisionFacturaAuto(Request $request, $id){
+        $header = new stdClass;
+        $detail = new stdClass;
+
+        $documentos = Solicitud::DocumentosSolicitud($id);
+        $file = $documentos->where('tipo_documento_id', '1')->first()->name;
+
+        if (Storage::exists($file)) {
+            $contents = Storage::get($file);
+            $xmlResponse = simplexml_load_string($contents);
+            
+            if($xmlResponse->Documento->Encabezado){
+                $header->Folio = (string)$xmlResponse->Documento->Encabezado->IdDoc->Folio;
+                $header->FchEmis = (string)$xmlResponse->Documento->Encabezado->IdDoc->FchEmis;
+                $header->RUTEmisor = (string)$xmlResponse->Documento->Encabezado->Emisor->RUTEmisor;
+                $header->RznSoc = (string)$xmlResponse->Documento->Encabezado->Emisor->RznSoc;
+                $header->GiroEmis = (string)$xmlResponse->Documento->Encabezado->Emisor->GiroEmis;
+                $header->Sucursal = (string)$xmlResponse->Documento->Encabezado->Emisor->Sucursal;
+                $header->DirOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->DirOrigen;
+                $header->CmnaOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CmnaOrigen;
+                $header->CiudadOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CiudadOrigen;
+                $header->RUTRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->RUTRecep;
+                $header->RznSocRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->RznSocRecep;
+                $header->GiroRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->GiroRecep;
+                $header->Contacto = (string)$xmlResponse->Documento->Encabezado->Receptor->Contacto;
+                $header->DirRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->DirRecep;
+                $header->CmnaRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->CmnaRecep;
+                $header->CiudadRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->CiudadRecep;
+                $header->DirPostal = (string)$xmlResponse->Documento->Encabezado->Receptor->DirPostal;
+                $header->MntNeto = (string)$xmlResponse->Documento->Encabezado->Totales->MntNeto;
+                $header->MntExe = (string)$xmlResponse->Documento->Encabezado->Totales->MntExe;
+                $header->TasaIVA = (string)$xmlResponse->Documento->Encabezado->Totales->TasaIVA;
+                $header->IVA = (string)$xmlResponse->Documento->Encabezado->Totales->IVA;
+                $header->MntTotal = (string)$xmlResponse->Documento->Encabezado->Totales->MntTotal;
+            }
+
+            if($xmlResponse->Documento->Detalle){
+                $detail->DscItem = (string)$xmlResponse->Documento->Detalle->DscItem;
+                $detail->DscItem = str_replace("\n", "", $detail->DscItem);
+                $detalle = explode('^^', $detail->DscItem);
+            }
+        }
+
+        // Generar Json
+        $parametro = [
+            'compraParaDTO' => [
+                'calidad' => 'N',
+                'calle' => $request->get('DirRecep'),
+                'comuna' => $request->get('comuna'),
+                'email' => is_null($request->get('email')) ? 'info@acobro.cl' : $request->get('email'),
+                'ltrDomicilio' => '',
+                'nombresRazon' => $request->get('RznSocRecep'),
+                'nroDomicilio' => $request->get('nroDomicilio'),
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($request->get('RUTRecep'), 0, -1))),
+                'telefono' => is_null($request->get('telefono')) ? '123456789' : $request->get('telefono'),
+                'aMaterno' => $request->get('aMaterno'),
+                'aPaterno' => $request->get('aPaterno'),
+                'cPostal' => '',
+                'rDomicilio' => ''
+            ],
+            'comunidadDTO' => [
+                'cantidad' => '0',
+                'esComunidad' => 'NO'
+            ],
+            'documentoDTO' => [
+                'emisor' => $header->RznSoc,
+                'fecha' => str_replace('-', '', $header->FchEmis),
+                'lugar' => '94', //Nro Comuna Sucursal -> Maipu
+                'mbTotal' => $header->MntTotal,
+                'numero' => $header->Folio,
+                'tipo' => 'FACTURA ELECTRONICA',
+                'rEmisor' => str_replace('.', '', str_replace('-', '', substr($header->RUTEmisor, 0, -1))),
+                'tMoneda' => '$'
+            ],
+            'impuestoVerdeDTO' => [
+                'cid' => '',
+                'cit' => '',
+                'mImpuesto' => '',
+                'tFactura' => ''
+            ],
+            'adquierenteDTO' => [
+                'calidad' => 'N',
+                'calle' => $request->get('DirRecep'),
+                'comuna' => $request->get('comuna'),
+                'email' => is_null($request->get('email')) ? 'info@acobro.cl' : $request->get('email'),
+                'ltrDomicilio' => '',
+                'nombresRazon' => $request->get('RznSocRecep'),
+                'nroDomicilio' => $request->get('nroDomicilio'),
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($request->get('RUTRecep'), 0, -1))),
+                'telefono' => is_null($request->get('telefono')) ? '123456789' : $request->get('telefono'),
+                'aMaterno' => $request->get('aMaterno'),
+                'aPaterno' => $request->get('aPaterno'),
+                'cPostal' => '',
+                'rDomicilio' => ''
+            ],
+            'livMedWs' => [
+                'agnoFabricacion' => $request->get('agnoFabricacion'),
+                'asientos' => $request->get('asientos'),
+                'carga' => $request->get('carga'),
+                'citModelo' => '',
+                'color' => $request->get('color'),
+                'combustible' => $request->get('combustible'),
+                'marca' => $request->get('marca'),
+                'modelo' => $request->get('modelo'),
+                'nroChasis' => $request->get('nroChasis'),
+                'nroMotor' => $request->get('nroMotor'),
+                'nroSerie' => is_null($request->get('nroSerie')) ? '' : $request->get('nroSerie'),
+                'nroVin' => is_null($request->get('nroVin')) ? '' : $request->get('nroVin'),
+                'pbv' => is_null($request->get('pbv')) ? '0' : $request->get('pbv'),
+                'puertas' => is_null($request->get('puertas')) ? '0' : $request->get('puertas'),
+                'terminacionPPU' => $request->get('PPU'),
+                'tipoVehiculo' => is_null($request->get('tipoVehiculo')) ? 'MOTO' : $request->get('tipoVehiculo'),
+                'tCarga' => 'K',
+                'tPbv' => 'K'
+            ],
+            'observaciones' => '',
+            'operadorDTO' => [
+                'region' => '13',
+                'runUsuario' => str_replace('.', '', str_replace('-', '', substr($request->get('Sol_RUTRecep'), 0, -1))), // Rut Garantiza
+                'rEmpresa' => str_replace('.', '', str_replace('-', '', substr($request->get('Sol_RUTRecep'), 0, -1))), // Rut Garantiza
+            ],
+            'solicitanteDTO' => [
+                'calidad' => 'N',
+                'calle' => $request->get('Sol_DirRecep'),
+                'comuna' => $request->get('Sol_comuna'),
+                'email' => $request->get('Sol_email'),
+                'ltrDomicilio' => '',
+                'nombresRazon' => $request->get('Sol_RznSocRecep'),
+                'nroDomicilio' => $request->get('Sol_nroDomicilio'),
+                'runRut' => '13041719', //str_replace('.', '', str_replace('-', '', substr($request->get('Sol_RUTRecep'), 0, -1))),
+                'telefono' => $request->get('Sol_telefono'),
+                'aMaterno' => $request->get('Sol_aMaterno'),
+                'aPaterno' => $request->get('Sol_aPaterno'),
+                'cPostal' => '',
+                'rDomicilio' => ''
+            ],
+        ];
+        // Llamar RC
+        $parametros = array(
+            'llave' => array(
+                'consumidor' => 'ACOBRO',
+                'servicio' => 'PRIMERA INSCRIPCION AUTOS',
+                'tramite' => 'PRUEBA'
+            ),
+            'spieMoto' => $parametro
+        );
+        //return json_encode($parametros);
+
+        
+        $data = RegistroCivil::creaAuto($parametro);
         $salida = json_decode($data, true);
 
         if(!$salida['codigoresp']=='OK'){

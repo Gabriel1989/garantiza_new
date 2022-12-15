@@ -17,4 +17,16 @@ class RegistroCivil{
         $response = HTTP::post($url, $parametro);
         return $response;
     }
+
+    public static function creaAuto($parametro){
+        $url = 'http://localhost/RC_API/creaAuto.php';
+        $response = HTTP::post($url, $parametro);
+        return $response;
+    }
+
+    public static function consultaEstadoSolicitud($parametro){
+        $url = 'http://localhost/RC_API/consultaEstadoSolicitud.php';
+        $response = HTTP::post($url, $parametro);
+        return $response;
+    }
 }

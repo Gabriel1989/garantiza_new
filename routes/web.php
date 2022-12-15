@@ -100,6 +100,8 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
 
     Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
     Route::put('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
+    Route::put('solicitud/{id}/updateRevisionFacturaAuto', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
+    
 
     Route::get('solicitud/{id}/show', 'SolicitudController@show')->name('solicitud.show');
     Route::get('solicitud/verSolicitudes', 'SolicitudController@verSolicitudes')->name('solicitud.verSolicitudes');
