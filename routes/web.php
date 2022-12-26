@@ -87,6 +87,10 @@ Route::group(['prefix' => 'administrador', 'middleware' => ['auth', 'admin']], f
 Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
 
     // Crear Solicitud (Paso 1)
+
+    Route::get('solicitud/solicitarPPU', 'SolicitudController@solicitaPPU')->name('solicitud.solicitarPPU');
+    Route::post('solicitud/consultaPPU','SolicitudController@consultaPPU')->name('solicitud.consultaPPU');
+
     Route::get('solicitud/create', 'SolicitudController@create')->name('solicitud.create');
     Route::post('solicitud', 'SolicitudController@store')->name('solicitud.store');
     Route::get('solicitud/sinTerminar', 'SolicitudController@sinTerminar')->name('solicitud.sinTerminar');
@@ -96,6 +100,7 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::put('solicitud/{id}/saveCompraPara', 'SolicitudController@saveCompraPara')->name('solicitud.saveCompraPara');
     Route::get('solicitud/{id}/datosMoto', 'SolicitudController@datosMoto')->name('solicitud.datosMoto');
     Route::get('solicitud/{id}/datosAuto', 'SolicitudController@datosAuto')->name('solicitud.datosAuto');
+    Route::get('solicitud/{id}/datosCamion', 'SolicitudController@datosCamion')->name('solicitud.datosCamion');
     Route::put('solicitud/{id}/saveDatosMoto', 'SolicitudController@saveDatosMoto')->name('solicitud.saveDatosMoto');
 
     Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');

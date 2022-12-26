@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Helpers\RegistroCivil;
 use App\Helpers\Funciones;
+use App\Helpers\PdftoXML;
+use App\Http\Requests\PPURequest;
 use App\Http\Requests\SolicitudRequest;
 use App\Models\Adquiriente;
 use App\Models\CompraPara;
@@ -16,6 +18,7 @@ use App\Models\Sucursal;
 use App\Models\Tipo_Tramite;
 use App\Models\Tipo_Vehiculo;
 use App\Models\TipoTramite_Solicitud;
+use App\Models\Region;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -36,8 +39,38 @@ class SolicitudController extends Controller
         return view('solicitud.create', compact('sucursales', 'tipo_vehiculos'));
     }
 
+    public function solicitaPPU(){
+
+        $region = Region::all();
+        return view('solicitud.solicitarPPU', compact('region'));
+    }
+
+
+    public function consultaPPU(PPURequest $request){
+
+        $parametro = [
+            'Region' => $request->get('region'),
+            'TipoPlaca' => $request->get('placa_patente_id'),
+            'Servicio' => 'TERMINACION PATENTES DISPONIBLES',
+            'Institucion' => $request->get('nombre_institucion')
+        ];
+
+        $data = RegistroCivil::PPUDisponible($parametro);
+        $ppu = json_decode($data, true);
+
+        if($ppu['codigoresp']=='OK'){
+            $ppu = $ppu['PPU'];
+            return view('solicitud.revision.PPU', compact('solicitud_PPU', 'ppu', 'id'));
+        }else{
+            return view('general.errorRC', ['glosa' => $ppu['glosa']]); 
+        }
+
+        
+    }
+
     public function store(SolicitudRequest $request)
     {
+        
         $solicitud = new Solicitud();
         $solicitud->sucursal_id = $request->get('sucursal_id');
         $solicitud->user_id = Auth::user()->id;
@@ -54,10 +87,17 @@ class SolicitudController extends Controller
             $doc->tipo_documento_id = 1;
             $doc->added_at = Carbon::now()->toDateTimeString();
             $doc->save();
+
+            /*$pdftoxml = new PdftoXML();
+            $pdftoxml->init($request);
+            die;*/
         }else{
+            /*
             $errors = new MessageBag();
             $errors->add('Documentos', 'Debe adjuntar Factura XML.');
-            return redirect()->route('solicitud.create')->withErrors($errors);
+            return redirect()->route('solicitud.create')->withErrors($errors);*/
+            //Posible flujo para insertar datos manuales de la factura
+
         }
 
         return redirect()->route('solicitud.adquirientes', ['id' => $solicitud->id]);
@@ -83,6 +123,9 @@ class SolicitudController extends Controller
             $header->CmnaRecep = (string)strtoupper($receptor->CmnaRecep);
             $header->CiudadRecep = (string)$receptor->CiudadRecep;
             $header->DirPostal = (string)$receptor->DirPostal;
+        }
+        else{
+            
         }
         $comunas = Comuna::allOrder();
         return view('solicitud.adquirientes', compact('id', 'comunas', 'header'));

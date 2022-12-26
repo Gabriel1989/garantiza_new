@@ -50,12 +50,54 @@
                             Seleccionar Factura XML</span>
                     </div>
                     <div class="col-lg-5">
-                        <input id="Factura_XML" name="Factura_XML" type="file" style="display:none" accept="text/xml"/>
+                        <input id="Factura_XML" name="Factura_XML" type="file" style="display:none" accept="text/xml,application/pdf"/>
                         <label id="lbl_Factura_XML"></label>
                     </div>
                 </div>
             </div>
+            <div class="panel panel-info panel-border top">
+            <div class="panel-heading" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                <span class="panel-title" style="cursor:pointer;">Ingresar datos factura (en caso de no tener el XML de la factura)</span>
+            </div>
+            <div class="panel-body">
+                <div class="collapse" id="collapseExample">
+                    <br>
+                        <div class="row">
+                            <div class="col-lg-2">
+                                <label>Rut receptor</label>
+                                <input class="form-control">
+                            </div>
+                            <div class="col-lg-2">
+                                <label>Nombre o Razón Social</label>
+                                <input class="form-control">
+                            </div>
+                            <div class="col-lg-2">
+                                <label>Direccion Solicitante</label>
+                                <input class="form-control">
+                            </div>
+                            <div class="col-lg-2">
+                                <label>Folio Factura</label>
+                                <input class="form-control">
+                            </div>
+                            <div class="col-lg-2">
+                                <label>Rut emisor</label>
+                                <input class="form-control">
+                            </div>
+                            <div class="col-lg-2">
+                                <label>Fecha Emisión</label>
+                                <input class="form-control">
+                            </div>
+                            <div class="col-lg-2">
+                                <label>Monto Total Factura</label>
+                                <input class="form-control">
+                            </div>
+                        </div>
+                    
+                </div>
+            </div>
+            </div>
         </div>
+
     <div class="panel-footer">
         <button type="submit" class="btn btn-system"> <li class="fa fa-upload"></li> Crear Solicitud y Continuar</button>
     </div>

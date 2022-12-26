@@ -25,7 +25,7 @@
             </li>
             
             <li>
-                <a href="{{route('solicitud.create')}}">
+                <a href="{{route('solicitud.solicitarPPU')}}">
                     <span class="glyphicons glyphicons-inbox_plus"></span>
                     <span class="sidebar-title">Nueva Solicitud </span>
                 </a>
