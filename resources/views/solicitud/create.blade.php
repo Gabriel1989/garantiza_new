@@ -47,7 +47,7 @@
                 <div class="col-sm-6 col-lg-6 mb5">
                     <div class="col-lg-5">
                         <span class="btn btn-warning fileinput-button col-sm-12" name="pic" id="FacturaXML">
-                            Seleccionar Factura XML</span>
+                            Seleccionar Factura PDF</span>
                     </div>
                     <div class="col-lg-5">
                         <input id="Factura_XML" name="Factura_XML" type="file" style="display:none" accept="text/xml,application/pdf"/>
@@ -55,12 +55,26 @@
                     </div>
                 </div>
             </div>
+            <div class="form-group">
+            <label for="ppu_terminacion" class="col-lg-1 control-label">PPU Disponibles:</label>
+                <label class="col-lg-5">
+                    <select name="ppu_terminacion" id="ppu_terminacion">
+                        <option value="" selected>Seleccione PPU ...</option>
+                        @foreach ($ppu as $item)
+                            <option value="{{$item['Terminacion']}}">{{$item['Terminacion']}}</option>    
+                        @endforeach
+                    </select>
+                </label>
+
+
+            </div>
+            
             <div class="panel panel-info panel-border top">
-            <div class="panel-heading" role="button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                <span class="panel-title" style="cursor:pointer;">Ingresar datos factura (en caso de no tener el XML de la factura)</span>
+            <div class="panel-heading" role="button">
+                <span class="panel-title" style="cursor:pointer;">Ingresar datos factura</span>
             </div>
             <div class="panel-body">
-                <div class="collapse" id="collapseExample">
+                
                     <br>
                         <div class="row">
                             <div class="col-lg-2">
@@ -79,6 +93,8 @@
                                 <label>Folio Factura</label>
                                 <input class="form-control">
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col-lg-2">
                                 <label>Rut emisor</label>
                                 <input class="form-control">
@@ -93,7 +109,7 @@
                             </div>
                         </div>
                     
-                </div>
+                
             </div>
             </div>
         </div>

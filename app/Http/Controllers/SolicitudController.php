@@ -19,6 +19,7 @@ use App\Models\Tipo_Tramite;
 use App\Models\Tipo_Vehiculo;
 use App\Models\TipoTramite_Solicitud;
 use App\Models\Region;
+use App\Models\Factura;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -60,7 +61,9 @@ class SolicitudController extends Controller
 
         if($ppu['codigoresp']=='OK'){
             $ppu = $ppu['PPU'];
-            return view('solicitud.revision.PPU', compact('solicitud_PPU', 'ppu', 'id'));
+            $sucursales = Sucursal::all();
+            $tipo_vehiculos = Tipo_Vehiculo::all();
+            return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu'));
         }else{
             return view('general.errorRC', ['glosa' => $ppu['glosa']]); 
         }
@@ -81,21 +84,138 @@ class SolicitudController extends Controller
         if($request->hasFile('Factura_XML')){
             $doc = new Documento();
             $doc->name = $request->file('Factura_XML')->store('public');
-            $doc->type = 'xml';
-            $doc->description = 'Factura en XML';
+            $doc->type = 'pdf';
+            $doc->description = 'Factura en PDF';
             $doc->solicitud_id = $solicitud->id;
-            $doc->tipo_documento_id = 1;
+            $doc->tipo_documento_id = 2;
             $doc->added_at = Carbon::now()->toDateTimeString();
             $doc->save();
 
-            /*$pdftoxml = new PdftoXML();
+            ob_start();
+            $pdftoxml = new PdftoXML();
             $pdftoxml->init($request);
-            die;*/
-        }else{
+            $datos = ob_get_contents();
+            ob_clean();
+
+            $datos = str_replace("Ñ",'NN',$datos);
+
+
+            $chasis = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"chasis"),strlen($datos)))) ;
+            $chasis = str_ireplace("chasis:",'',PdftoXML::substring($chasis,0,strpos($chasis,'<br>')));
+
+            $nro_vin = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"vin"),strlen($datos)))) ;
+            $nro_vin = str_ireplace("vin:",'',PdftoXML::substring($nro_vin,0,strpos($nro_vin,'<br>')));
+
+            $motor = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"motor"),strlen($datos)))) ;
+            $motor = str_ireplace("motor:",'',PdftoXML::substring($motor,0,strpos($motor,'<br>')));
+
+            $marca = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"marca"),strlen($datos)))) ;
+            $marca = str_ireplace("marca:",'',PdftoXML::substring($marca,0,strpos($marca,'<br>')));
+
+            $modelo = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"modelo"),strlen($datos)))) ;
+            $modelo = str_ireplace("modelo:",'',PdftoXML::substring($modelo,0,strpos($modelo,'<br>')));
+
+        
+            $peso_bruto_vehicular = str_ireplace(["&#160;"],'',trim(substr($datos,stripos($datos,"peso bruto vehicular"),strlen($datos))));
+            $tipo_pbv = stripos($peso_bruto_vehicular,"kg") !== false ? "K": "T";
+            if($tipo_pbv == "K"){
+                $peso_bruto_vehicular = str_ireplace("kg",'',$peso_bruto_vehicular);
+            }
+            else{
+                $peso_bruto_vehicular = str_ireplace("ton",'',$peso_bruto_vehicular);
+            }
+            $peso_bruto_vehicular = str_ireplace("peso bruto vehicular:",'',PdftoXML::substring($peso_bruto_vehicular,0,strpos($peso_bruto_vehicular,'<br>')));
+
+            $tipo_vehiculo = str_ireplace(["&#160;"],'',trim(substr($datos,stripos($datos,"tipo"),strlen($datos)))) ;
+            $tipo_vehiculo = str_ireplace("tipo:",'',PdftoXML::substring($tipo_vehiculo,0,strpos($tipo_vehiculo,'<br>')));
+            $tipo_vehiculo2 = (trim($tipo_vehiculo) == "MOTOCICLETA")? "MOTO": $tipo_vehiculo;
+
+            $combustible = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"tipo combustible"),strlen($datos)))) ;
+            $combustible = str_ireplace("tipo combustible:",'',PdftoXML::substring($combustible,0,strpos($combustible,'<br>')));
+            switch(trim($combustible)){
+                case "BENCINA":
+                    $combustible = "GASOLINA";
+                break;
+
+                case "ELECTRICO" || "ELÉCTRICO":
+                    $combustible = "ELECTRICO";
+                    break;
+            }
+
+            $anno = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"anno comercial"),strlen($datos)))) ;
+            $anno = str_ireplace("anno comercial:",'',PdftoXML::substring($anno,0,strpos($anno,'<br>')));
+
+            $color = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"color"),strlen($datos))));
+            $color = str_ireplace("color:",'',PdftoXML::substring($color,0,strpos($color,'<br>')));
+
+            $tipo_carga = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"capacidad carga"),strlen($datos))));
+            $tipo_carga = str_ireplace("capacidad carga:",'',PdftoXML::substring($tipo_carga,0,strpos($tipo_carga,'<br>')));
+
+            $tipo_carga = stripos($tipo_carga,"KG") !== false? "K" : "T";
+
+            $color = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"color"),strlen($datos))));
+            $color = str_ireplace("color:",'',PdftoXML::substring($color,0,strpos($color,'<br>')));
+
+            $num_factura = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"n°"),strlen($datos))));
+            $num_factura = str_ireplace("n°",'',PdftoXML::substring($num_factura,0,strpos($num_factura,'<br>')));
+
+            //echo $anno;
+            
             /*
+            $fac = new Factura();
+            $fac->id_solicitud = $solicitud->id;
+            $fac->nro_chasis = trim($chasis);
+            $fac->nro_vin = trim($nro_vin);
+            $fac->motor = trim($motor);
+            $fac->marca = trim($marca);
+            $fac->modelo = trim($modelo);
+            $fac->peso_bruto_vehicular = trim($peso_bruto_vehicular);
+            $fac->tipo_vehiculo = trim($tipo_vehiculo2);
+            $fac->tipo_combustible = trim($combustible);
+            $fac->agno_fabricacion = trim($anno);
+            $fac->color = trim($color);
+            $fac->tipo_carga = trim($tipo_carga);
+            $fac->tipo_pbv = trim($tipo_pbv);
+
+
+            $fac->save();*/
+
+            //echo $datos;
+
+            /*
+            echo trim($chasis);
+            echo "<br>";
+            echo trim($nro_vin);
+            echo "<br>";
+            echo trim($motor);
+            echo "<br>";
+            echo trim($marca);
+            echo "<br>";
+            echo trim($modelo);
+            echo "<br>";
+            echo trim($peso_bruto_vehicular);
+            echo "<br>";
+            echo $tipo_vehiculo2;
+            echo "<br>";
+            echo $combustible;
+            echo "<br>";
+            echo $anno;
+            echo "<br>";
+            echo $color;
+            echo "<br>";
+            echo $tipo_carga;
+            echo "<br>";
+            echo $tipo_pbv;
+            echo "<br>";
+            echo $num_factura;*/
+
+            die;
+            
+        }else{
+            
             $errors = new MessageBag();
-            $errors->add('Documentos', 'Debe adjuntar Factura XML.');
-            return redirect()->route('solicitud.create')->withErrors($errors);*/
+            $errors->add('Documentos', 'Debe adjuntar Factura PDF.');
+            return redirect()->route('solicitud.create')->withErrors($errors);
             //Posible flujo para insertar datos manuales de la factura
 
         }
