@@ -69,12 +69,12 @@
                 <div class="form-group">
                     <label for="email" class="col-lg-2 control-label">Email :</label>
                     <label class="col-lg-4">
-                        <input type="email" name="email" id="email" class="form-control" placeholder="Email" value="{{$header->Contacto}}" required>
+                        <input type="email" name="email" id="email" class="form-control" placeholder="Email" value="" required>
                     </label>
                     
                     <label for="telefono" class="col-lg-2 control-label">Teléfono :</label>
                     <label class="col-lg-2">
-                        <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Ej. 978653214" value="{{$header->DirPostal}}" required>
+                        <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Ej. 978653214" value="{{$header->Contacto}}" required>
                     </label>
                     <label class="col-lg-2"></label>
                 </div>
@@ -240,7 +240,12 @@
 <script src="/js/jquery.rut.min.js"></script>
 <script>
     $(document).ready(function() {
-        $("#rut").val($.formatRut($("#rut").val())); 
+
+        var rut_format = $("#rut").val();
+        rut_format = rut_format + $.computeDv(rut_format);
+
+
+        $("#rut").val($.formatRut(rut_format)); 
 
         $('.comuna').multiselect({
             enableFiltering: true,

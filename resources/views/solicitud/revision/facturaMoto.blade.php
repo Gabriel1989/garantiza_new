@@ -41,55 +41,55 @@
                                 <div class="row">
                                     <label for="agnoFabricacion" class="col-lg-3 control-label ">Año Fabricación:</label>
                                     <label class="col-lg-2">
-                                        <input type="input" name="agnoFabricacion" id="agnoFabricacion" class="form-control" placeholder="{{ now()->year }}" required>
+                                        <input type="input" value="{{ $header->AnnioFabricacion}}" name="agnoFabricacion" id="agnoFabricacion" class="form-control" placeholder="{{ now()->year }}" required>
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="asientos" class="col-lg-3 control-label ">Asientos:</label>
                                     <label class="col-lg-2">
-                                        <input type="input" name="asientos" id="asientos" class="form-control" placeholder="0" required>
+                                        <input type="input" name="asientos" id="asientos" class="form-control" placeholder="0" >
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="carga" class="col-lg-3 control-label ">Carga:</label>
                                     <label class="col-lg-2">
-                                        <input type="input" name="carga" id="carga" class="form-control" placeholder="800" required>
+                                        <input type="input" name="carga" id="carga" class="form-control" placeholder="800" >
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="color" class="col-lg-3 control-label ">Color:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="color" id="color" class="form-control" placeholder="PLATEADO" required>
+                                        <input type="input" value="{{ $header->Color}}" name="color" id="color" class="form-control" placeholder="PLATEADO" required>
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="combustible" class="col-lg-3 control-label ">Combustible:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="combustible" id="combustible" class="form-control" placeholder="ELECTRICO" required>
+                                        <input type="input" value="{{ $header->TipoCombustible}}" name="combustible" id="combustible" class="form-control" placeholder="ELECTRICO" required>
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="marca" class="col-lg-3 control-label ">Marca:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="marca" id="marca" class="form-control" placeholder="JILI" required>
+                                        <input type="input" value="{{ $header->Marca}}" name="marca" id="marca" class="form-control" placeholder="JILI" required>
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="modelo" class="col-lg-3 control-label ">Modelo:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="modelo" id="modelo" class="form-control" placeholder="BOMBARDERO" required>
+                                        <input type="input" value="{{ $header->Modelo}}" name="modelo" id="modelo" class="form-control" placeholder="BOMBARDERO" required>
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="nroChasis" class="col-lg-3 control-label ">N° de Chasis:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="nroChasis" id="nroChasis" class="form-control" placeholder="LZSNJDZC2G8024057" required>
+                                        <input type="input" value="{{ $header->NroChasis}}" name="nroChasis" id="nroChasis" class="form-control" placeholder="LZSNJDZC2G8024057" required>
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="nroMotor" class="col-lg-3 control-label ">N° de Motor:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="nroMotor" id="nroMotor" class="form-control" placeholder="60V1200WL1612084866" required>
+                                        <input type="input" value="{{ $header->NroMotor}}" name="nroMotor" id="nroMotor" class="form-control" placeholder="60V1200WL1612084866" required>
                                     </label>
                                 </div>
                                 <div class="row">
@@ -101,25 +101,25 @@
                                 <div class="row">
                                     <label for="nroVin" class="col-lg-3 control-label ">N° de VIN:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="nroVin" id="nroVin" class="form-control" placeholder="">
+                                        <input type="input" value="{{ $header->NroVin}}" name="nroVin" id="nroVin" class="form-control" placeholder="">
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="pbv" class="col-lg-3 control-label ">Peso Bruto Vehicular:</label>
                                     <label class="col-lg-3">
-                                        <input type="input" name="pbv" id="pbv" class="form-control" placeholder="1290">
+                                        <input type="input"  value="{{ $header->PesoBrutoVehi}}"  name="pbv" id="pbv" class="form-control" placeholder="1290">
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="puertas" class="col-lg-3 control-label ">Puertas:</label>
                                     <label class="col-lg-3">
-                                        <input type="input" name="puertas" id="puertas" class="form-control" placeholder="0">
+                                        <input type="input" value="" name="puertas" id="puertas" class="form-control" placeholder="0" readonly>
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="tipoVehiculo" class="col-lg-3 control-label ">Tipo Vehículo:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="tipoVehiculo" id="tipoVehiculo" class="form-control" placeholder="TRICICLO MOTOR">
+                                        <input type="input" value="{{ $header->TipoVehiculo}}" name="tipoVehiculo" id="tipoVehiculo" class="form-control" placeholder="TRICICLO MOTOR">
                                     </label>
                                 </div>
                             </div>

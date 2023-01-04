@@ -29,9 +29,22 @@ class PdftoXML
         foreach ($paragraphs as $p) {
             $datestring = str_replace("&#160;",'',preg_replace('/\xc2\xa0/', ' ', trim($p->text(true))));
 
+            //SALTAR ESPACIOS EN BLANCO
+            if($datestring == ''){
+                continue;
+            }
+
             switch($text_anterior){
                 case "Señor(es)" : case "Sucursal": case "Giro": case "Vendedor": case  "Dirección": case "Comuna": case "Teléfono" : case "R.U.T.":
+                    if($text_anterior != "R.U.T."){
                     echo $text_anterior.$datestring;
+                    }else{
+                    echo "RUT Receptor ".$datestring;    
+                    }
+                break;
+
+                case "FACTURA ELECTRÓNICA":
+                    echo "FACTURA ".$datestring;
                 break;
 
                 default:
@@ -44,7 +57,7 @@ class PdftoXML
 
             echo "<br>";
         }
-        die;
+        //die;
     }
 
     private function notEcho($filter){

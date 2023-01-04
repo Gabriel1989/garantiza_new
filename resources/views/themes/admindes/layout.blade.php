@@ -18,6 +18,8 @@
         <!-- Theme CSS -->
         <link rel="stylesheet" type="text/css" href="{{asset("assets/$themes/skin/default_skin/css/theme.css")}}">
 
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+
 
         <!-- Favicon -->
         <link rel="shortcut icon" href="assets/img/favicon.ico">

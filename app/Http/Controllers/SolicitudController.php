@@ -59,15 +59,20 @@ class SolicitudController extends Controller
         $data = RegistroCivil::PPUDisponible($parametro);
         $ppu = json_decode($data, true);
 
-        if($ppu['codigoresp']=='OK'){
-            $ppu = $ppu['PPU'];
-            $sucursales = Sucursal::all();
-            $tipo_vehiculos = Tipo_Vehiculo::all();
-            return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu'));
-        }else{
-            return view('general.errorRC', ['glosa' => $ppu['glosa']]); 
-        }
+        if(isset($ppu['codigoresp'])){
 
+            if($ppu['codigoresp']=='OK'){
+                $ppu = $ppu['PPU'];
+                $sucursales = Sucursal::all();
+                $tipo_vehiculos = Tipo_Vehiculo::all();
+                return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu'));
+            }else{
+                return view('general.errorRC', ['glosa' => $ppu['glosa']]); 
+            }
+        }
+        else{
+            return view('general.errorRC', ['glosa' => 'No hay una respuesta válida desde RC']); 
+        }
         
     }
 
@@ -79,6 +84,7 @@ class SolicitudController extends Controller
         $solicitud->user_id = Auth::user()->id;
         $solicitud->estado_id = 1;
         $solicitud->tipoVehiculos_id = $request->get('tipoVehiculos_id');
+        $solicitud->termino_1 = $request->get('ppu_terminacion');
         $solicitud->save();
 
         if($request->hasFile('Factura_XML')){
@@ -98,25 +104,55 @@ class SolicitudController extends Controller
             ob_clean();
 
             $datos = str_replace("Ñ",'NN',$datos);
+            //echo $datos; 
+            //echo "<br>";
 
+            //EXTRAYENDO DATOS CHASIS
+            if(stripos($datos,"chasis") !== false){
+                $chasis = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"chasis"),strlen($datos))));
+                $chasis = str_ireplace("chasis:",'',PdftoXML::substring($chasis,0,strpos($chasis,'<br>')));
+            }
+            else if (stripos($datos,"chassis") !== false){
+                $chasis = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"chassis"),strlen($datos)))) ;
+                $chasis = str_ireplace("chassis: ",'',PdftoXML::substring($chasis,0,strpos($chasis,'<br>')));
+                if(stripos($datos," ") !== false){
+                    $chasis = explode(" ",$chasis)[0];
+                }
+            }
+            //$chasis = str_ireplace("chasis:",'',PdftoXML::substring($chasis,0,strpos($chasis,'<br>')));
 
-            $chasis = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"chasis"),strlen($datos)))) ;
-            $chasis = str_ireplace("chasis:",'',PdftoXML::substring($chasis,0,strpos($chasis,'<br>')));
-
-            $nro_vin = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"vin"),strlen($datos)))) ;
-            $nro_vin = str_ireplace("vin:",'',PdftoXML::substring($nro_vin,0,strpos($nro_vin,'<br>')));
-
+            //EXTRAYENDO DATOS N° VIN
+            if(stripos($datos,"vin:") !== false){
+                $nro_vin = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"vin:"),strlen($datos)))) ;
+                $nro_vin = str_ireplace("vin:",'',PdftoXML::substring($nro_vin,0,strpos($nro_vin,'<br>')));
+            }
+            else{
+                $nro_vin = '';
+            }
+            //MOTOR
             $motor = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"motor"),strlen($datos)))) ;
-            $motor = str_ireplace("motor:",'',PdftoXML::substring($motor,0,strpos($motor,'<br>')));
-
+            $motor = str_ireplace(["motor:","motor: ","motor:  "],'',PdftoXML::substring($motor,0,strpos($motor,'<br>')));
+            if(stripos($motor," ") !== false){
+                $motor = trim($motor);
+                $motor = explode(" ",$motor)[0];
+            }
+            //MARCA
             $marca = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"marca"),strlen($datos)))) ;
-            $marca = str_ireplace("marca:",'',PdftoXML::substring($marca,0,strpos($marca,'<br>')));
-
+            $marca = str_ireplace(["marca:","marca: ","marca:  "],'',PdftoXML::substring($marca,0,strpos($marca,'<br>')));
+            if(stripos($marca," ") !== false){
+                $marca = trim($marca);
+                $marca = explode(" ",$marca)[0];
+            }
+            //MODELO
             $modelo = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"modelo"),strlen($datos)))) ;
-            $modelo = str_ireplace("modelo:",'',PdftoXML::substring($modelo,0,strpos($modelo,'<br>')));
+            $modelo = str_ireplace(["modelo:","modelo: ","modelo:  "],'',PdftoXML::substring($modelo,0,strpos($modelo,'<br>')));
+            if(stripos($modelo," ") !== false){
+                $modelo = trim($modelo);
+                $modelo = explode("COLOR:",$modelo)[0];
+            }
 
-        
-            $peso_bruto_vehicular = str_ireplace(["&#160;"],'',trim(substr($datos,stripos($datos,"peso bruto vehicular"),strlen($datos))));
+            //PESO BRUTO VEHICULAR Y TIPO PESO BRUTO VEHICULAR
+            $peso_bruto_vehicular = str_ireplace(["&#160;","."],'',trim(substr($datos,stripos($datos,"peso bruto vehicular"),strlen($datos))));
             $tipo_pbv = stripos($peso_bruto_vehicular,"kg") !== false ? "K": "T";
             if($tipo_pbv == "K"){
                 $peso_bruto_vehicular = str_ireplace("kg",'',$peso_bruto_vehicular);
@@ -126,42 +162,150 @@ class SolicitudController extends Controller
             }
             $peso_bruto_vehicular = str_ireplace("peso bruto vehicular:",'',PdftoXML::substring($peso_bruto_vehicular,0,strpos($peso_bruto_vehicular,'<br>')));
 
+            if(stripos($peso_bruto_vehicular," ") !== false){
+                $peso_bruto_vehicular = trim($peso_bruto_vehicular);
+                $peso_bruto_vehicular = explode(" ",$peso_bruto_vehicular)[0];
+            }
+
+
+            //TIPO VEHICULO
             $tipo_vehiculo = str_ireplace(["&#160;"],'',trim(substr($datos,stripos($datos,"tipo"),strlen($datos)))) ;
-            $tipo_vehiculo = str_ireplace("tipo:",'',PdftoXML::substring($tipo_vehiculo,0,strpos($tipo_vehiculo,'<br>')));
+            $tipo_vehiculo = str_ireplace(["tipo:","tipo de vehiculo:","tipo: ","tipo de vehiculo: "],'',PdftoXML::substring($tipo_vehiculo,0,strpos($tipo_vehiculo,'<br>')));
+            if(stripos($tipo_vehiculo," ") !== false){
+                $tipo_vehiculo = trim($tipo_vehiculo);
+                $tipo_vehiculo = explode(" ",$tipo_vehiculo)[0];
+            }
             $tipo_vehiculo2 = (trim($tipo_vehiculo) == "MOTOCICLETA")? "MOTO": $tipo_vehiculo;
 
-            $combustible = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"tipo combustible"),strlen($datos)))) ;
-            $combustible = str_ireplace("tipo combustible:",'',PdftoXML::substring($combustible,0,strpos($combustible,'<br>')));
+            //COMBUSTIBLE
+            if(stripos($datos,"tipo combustible") !== false){
+                $combustible = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"tipo combustible"),strlen($datos)))) ;
+            }
+            else if(stripos($datos,"tipo de combustible") !== false){
+                $combustible = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"tipo de combustible"),strlen($datos)))) ;
+            }
+            $combustible = str_ireplace(["tipo combustible:","tipo de combustible: "],'',PdftoXML::substring($combustible,0,strpos($combustible,'<br>')));
+            if(stripos($combustible," ") !== false){
+                $combustible = trim($combustible);
+                $combustible = explode(" ",$combustible)[0];
+            }
             switch(trim($combustible)){
                 case "BENCINA":
                     $combustible = "GASOLINA";
                 break;
 
-                case "ELECTRICO" || "ELÉCTRICO":
+                case "ELECTRICO": case "ELÉCTRICO":
                     $combustible = "ELECTRICO";
                     break;
             }
 
+            //AÑO COMERCIAL
             $anno = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"anno comercial"),strlen($datos)))) ;
-            $anno = str_ireplace("anno comercial:",'',PdftoXML::substring($anno,0,strpos($anno,'<br>')));
+            $anno = str_ireplace(["anno comercial:","anno comercial: "],'',PdftoXML::substring($anno,0,strpos($anno,'<br>')));
+            if(stripos($anno," ") !== false){
+                $anno = trim($anno);
+                $anno = explode(" ",$anno)[0];
+            }
 
+            //COLOR
             $color = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"color"),strlen($datos))));
-            $color = str_ireplace("color:",'',PdftoXML::substring($color,0,strpos($color,'<br>')));
+            $color = str_ireplace(["color:","color: "],'',PdftoXML::substring($color,0,strpos($color,'<br>')));
+            if(stripos($color," ") !== false){
+                $color = trim($color);
+                $color = explode(" ",$color)[0];
+            }
 
-            $tipo_carga = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"capacidad carga"),strlen($datos))));
-            $tipo_carga = str_ireplace("capacidad carga:",'',PdftoXML::substring($tipo_carga,0,strpos($tipo_carga,'<br>')));
+            //TIPO CARGA
+            if(stripos($datos,"capacidad carga") !== false){
+                $tipo_carga = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"capacidad carga"),strlen($datos))));
+                $tipo_carga = str_ireplace("capacidad carga:",'',PdftoXML::substring($tipo_carga,0,strpos($tipo_carga,'<br>')));
+                $tipo_carga = stripos($tipo_carga,"KG") !== false? "K" : "T";
+            }
+            else{
+                $tipo_carga = "K";
+            }
 
-            $tipo_carga = stripos($tipo_carga,"KG") !== false? "K" : "T";
+            //$color = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"color"),strlen($datos))));
+            //$color = str_ireplace("color:",'',PdftoXML::substring($color,0,strpos($color,'<br>')));
 
-            $color = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"color"),strlen($datos))));
-            $color = str_ireplace("color:",'',PdftoXML::substring($color,0,strpos($color,'<br>')));
+            //N° FACTURA
+            $num_factura = substr($datos,mb_stripos($datos,"factura n",0,'UTF-8'),strlen($datos));
+            $num_factura = explode(" ",str_ireplace(">factura ",'',PdftoXML::substring($num_factura,0,strpos($num_factura,'<br>'))))[1];
 
-            $num_factura = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"n°"),strlen($datos))));
-            $num_factura = str_ireplace("n°",'',PdftoXML::substring($num_factura,0,strpos($num_factura,'<br>')));
+            //GIRO CLIENTE
+            if(stripos($datos,"personas naturales") == false){
+                $giro = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"giro"),strlen($datos))));
+                $giro = str_ireplace("giro:",'',PdftoXML::substring($giro,0,strpos($giro,'<br>')));
+            }
+            else{
+                $giro = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"personas naturales"),strlen($datos))));
+                $giro = str_ireplace("giro:",'',PdftoXML::substring($giro,0,strpos($giro,'<br>')));
+            }
 
-            //echo $anno;
+            //DIRECCION CLIENTE
+            if(mb_stripos($datos,"dirección:",0,'UTF-8') !== false){
+                $direccion = str_replace("&#160;",'',trim(substr($datos,mb_stripos($datos,"dirección:",0,'UTF-8'),strlen($datos))));
+                $direccion = str_ireplace(["dirección:","br>"],'',PdftoXML::substring($direccion,0,strpos($direccion,'<br>')));
+            }
+            else{
+                $direccion = explode("<br>",$datos)[5];
+            }
+
+            //COMUNA CLIENTE
+            if(stripos($datos,"comuna") !== false){
+                $comuna = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"comuna"),strlen($datos))));
+                $comuna =  explode(" ",str_ireplace(["comuna:","br>"],'',PdftoXML::substring($comuna,0,strpos($comuna,'<br>'))))[0];
+            }
+            else{
+                $comuna = explode(" ",explode("<br>",$datos)[6])[0];
+            }
+
+            //CIUDAD CLIENTE
+            if(stripos($datos,"provincia") !== false){
+                $ciudad = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"provincia"),strlen($datos))));
+                $ciudad = str_ireplace(["provincia :","br>"],'',PdftoXML::substring($ciudad,0,strpos($ciudad,'<br>')));
+            }
+            else{
+                $ciudad = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"ciudad"),strlen($datos))));
+                $ciudad = str_ireplace(["ciudad :","br>","ciudad","ciudad "],'',PdftoXML::substring($ciudad,0,strpos($ciudad,'<br>')));
+            }
+
+            //N° CONTACTO CLIENTE
+            if(stripos($datos,"teléfono")){
+                $contacto = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"teléfono"),strlen($datos))));
+                $contacto = explode(" ",str_ireplace(["teléfono:"],'',PdftoXML::substring($contacto,0,strpos($contacto,'<br>'))))[0];
+                $contacto = substr($contacto,3,strlen($contacto));
+            }
+            else{
+                $contacto = '';
+            }
+
+            //RUT CLIENTE
+            if(stripos($datos,"rut receptor")!== false){
+                $rut_recep = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"rut receptor"),strlen($datos))));
+                $rut_recep = str_ireplace(["rut receptor :",'.'],'',PdftoXML::substring($rut_recep,0,strpos($rut_recep,'<br>')));
+            }
+            else {
+                //dd(explode("<br>",$datos));
+                $rut_recep = explode(" ",explode("<br>",$datos)[14])[0];
+                $rut_recep = str_ireplace(".",'',$rut_recep);
+            }
             
-            /*
+
+            if(stripos($rut_recep,'-') !== false){
+                $rut_recep = substr($rut_recep,0,stripos($rut_recep,'-'));
+            }
+
+            //RAZON SOCIAL CLIENTE
+            if(stripos($datos,"Señor(es)") !== false){
+                $razon_social = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"Señor(es)"),strlen($datos))));
+                $razon_social = str_ireplace(["Señor(es):"],'',PdftoXML::substring($razon_social,0,strpos($razon_social,'<br>')));
+            }
+            else{
+                $razon_social = explode("<br>",$datos)[4];
+            }
+            
+            
             $fac = new Factura();
             $fac->id_solicitud = $solicitud->id;
             $fac->nro_chasis = trim($chasis);
@@ -176,12 +320,26 @@ class SolicitudController extends Controller
             $fac->color = trim($color);
             $fac->tipo_carga = trim($tipo_carga);
             $fac->tipo_pbv = trim($tipo_pbv);
+            $fac->num_factura = trim($num_factura);
+            $fac->giro = trim($giro);
+            $fac->direccion = trim($direccion);
+            $fac->comuna = trim($comuna);
+            $fac->ciudad = trim($ciudad);
+            $fac->contacto = trim($contacto);
+            $fac->rut_receptor = trim($rut_recep);
+            $fac->razon_social_recep = trim($razon_social);
+            $fac->razon_social_emisor = trim($request->get('razon_soc_emisor'));
+            $fac->rut_emisor = trim($request->get('rut_emisor'));
+            $fac->fecha_emision = trim($request->get('fecha_emision_fac'));
+            $fac->monto_total_factura = trim($request->get('monto_factura'));
+
+            //$fac->codigo_cit = $codigo_cit;
 
 
-            $fac->save();*/
+            $fac->save();
 
             //echo $datos;
-
+            
             /*
             echo trim($chasis);
             echo "<br>";
@@ -207,9 +365,24 @@ class SolicitudController extends Controller
             echo "<br>";
             echo $tipo_pbv;
             echo "<br>";
-            echo $num_factura;*/
+            echo $num_factura;
+            echo "<br>";
+            echo $giro;
+            echo "<br>";
+            echo $direccion;
+            echo "<br>";
+            echo $comuna;
+            echo "<br>";
+            echo $ciudad;
+            echo "<br>";
+            echo $contacto;
+            echo "<br>";
+            echo $rut_recep;
+            echo "<br>";
+            echo $razon_social;*/
 
-            die;
+            //die;
+
             
         }else{
             
@@ -226,6 +399,19 @@ class SolicitudController extends Controller
     public function adquirientes($id){
         $header = new stdClass;
 
+        $factura = Factura::where('id_solicitud',$id)->first();
+
+        if($factura != null){
+            $header->RUTRecep = (string)$factura->rut_receptor;
+            $header->RznSocRecep = (string)$factura->razon_social_recep;
+            $header->GiroRecep = (string)$factura->giro;
+            $header->Contacto = (string)$factura->contacto;
+            $header->DirRecep = (string)$factura->direccion;
+            $header->CmnaRecep = (string)strtoupper($factura->comuna);
+            $header->CiudadRecep = (string)$factura->ciudad;
+            $header->DirPostal = (string)$factura->direccion;
+        }
+        /*
         $documentos = Solicitud::DocumentosSolicitud($id);
         $file = $documentos->where('tipo_documento_id', '1')->first()->name;
         
@@ -246,7 +432,7 @@ class SolicitudController extends Controller
         }
         else{
             
-        }
+        }*/
         $comunas = Comuna::allOrder();
         return view('solicitud.adquirientes', compact('id', 'comunas', 'header'));
     }
@@ -296,7 +482,7 @@ class SolicitudController extends Controller
         $adquiriente->aMaterno = $request->get('aMaterno');
         $adquiriente->calle = $request->get('calle');
         $adquiriente->numero = $request->get('numero');
-        $adquiriente->rDomicilio = $request->get('rDomicilio');
+        $adquiriente->rDomicilio = $request->get('rDireccion');
         $adquiriente->comuna = $request->get('comuna');
         $adquiriente->telefono = $request->get('telefono');
         $adquiriente->email = $request->get('email');
@@ -396,7 +582,7 @@ class SolicitudController extends Controller
             $para->aMaterno = $request->get('aMaterno');
             $para->calle = $request->get('calle');
             $para->numero = $request->get('numero');
-            $para->rDomicilio = $request->get('rDomicilio');
+            $para->rDomicilio = $request->get('rDireccion');
             $para->comuna = $request->get('comuna');
             $para->telefono = $request->get('telefono');
             $para->email = $request->get('email');
@@ -482,6 +668,69 @@ class SolicitudController extends Controller
         $header = new stdClass;
         $detail = new stdClass;
 
+        $detalle = array();
+
+        $factura = Factura::where('id_solicitud',$id)->first();
+
+        if($factura != null){
+
+            $header->Folio = (string)$factura->num_factura;
+            //$header->FchEmis = (string)$encabezado->IdDoc->FchEmis;
+            //$header->RUTEmisor = (string)$encabezado->Emisor->RUTEmisor;
+            //$header->RznSoc = (string)$encabezado->Emisor->RznSoc;
+            //$header->GiroEmis = (string)$encabezado->Emisor->GiroEmis;
+            //$header->Sucursal = (string)$encabezado->Emisor->Sucursal;
+            //$header->DirOrigen = (string)$encabezado->Emisor->DirOrigen;
+            //$header->CmnaOrigen = (string)$encabezado->Emisor->CmnaOrigen;
+            //$header->CiudadOrigen = (string)$encabezado->Emisor->CiudadOrigen;
+
+
+            $header->FchEmis = '';
+            $header->RUTEmisor = '';
+            $header->RznSoc = '';
+            $header->GiroEmis = '';
+            $header->Sucursal = '';
+            $header->DirOrigen = '';
+            $header->CmnaOrigen = '';
+            $header->CiudadOrigen = '';
+
+
+
+            $header->RUTRecep = (string)$factura->rut_receptor;
+            $header->RznSocRecep = (string)$factura->razon_social_recep;
+            $header->GiroRecep = (string)$factura->giro;
+            $header->Contacto = (string)$factura->contacto;
+            $header->DirRecep = (string)$factura->direccion;
+            $header->CmnaRecep = (string)$factura->comuna;
+            $header->CiudadRecep = (string)$factura->ciudad;
+            $header->DirPostal = (string)$factura->direccion;
+
+            $header->AnnioFabricacion = (string)$factura->agno_fabricacion;
+            $header->Color = (string)$factura->color;
+            $header->TipoCombustible = (string)$factura->tipo_combustible;
+            $header->Marca = (string)$factura->marca;
+            $header->Modelo = (string)$factura->modelo;
+            $header->NroChasis = (string)$factura->nro_chasis;
+            $header->NroMotor = (string)$factura->motor;
+            $header->NroVin  = (string)$factura->nro_vin;
+            $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
+            $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
+            //$header->MntNeto = (string)$encabezado->Totales->MntNeto;
+            //$header->MntExe = (string)$encabezado->Totales->MntExe;
+            //$header->TasaIVA = (string)$encabezado->Totales->TasaIVA;
+            //$header->IVA = (string)$encabezado->Totales->IVA;
+            //$header->MntTotal = (string)$encabezado->Totales->MntTotal;
+
+            $header->MntNeto = '';
+            $header->MntExe = '';
+            $header->TasaIVA = '';
+            $header->IVA = '';
+            $header->MntTotal = '';
+
+
+        }
+        /*
+
         $documentos = Solicitud::DocumentosSolicitud($id);
         $file = $documentos->where('tipo_documento_id', '1')->first()->name;
 
@@ -517,9 +766,12 @@ class SolicitudController extends Controller
             
             $detail = $this->getNode($xmlResponse, 'Detalle');
             $detalle = explode(chr(10), (string)$detail->DscItem);
-            $comunas = Comuna::allOrder();
+            
 
-        }
+        }*/
+
+
+        $comunas = Comuna::allOrder();
         
         return view('solicitud.revision.facturaMoto', compact('id', 'comunas', 'header', 'detalle'));
     }
@@ -881,60 +1133,77 @@ class SolicitudController extends Controller
         $header = new stdClass;
         $detail = new stdClass;
 
-        $documentos = Solicitud::DocumentosSolicitud($id);
-        $file = $documentos->where('tipo_documento_id', '1')->first()->name;
-        
-        if (Storage::exists($file)) {
-            $contents = Storage::get($file);
-            $xmlResponse = simplexml_load_string($contents);
-            
-            if($xmlResponse->Documento->Encabezado){
-                $header->Folio = (string)$xmlResponse->Documento->Encabezado->IdDoc->Folio;
-                $header->FchEmis = (string)$xmlResponse->Documento->Encabezado->IdDoc->FchEmis;
-                $header->RUTEmisor = (string)$xmlResponse->Documento->Encabezado->Emisor->RUTEmisor;
-                $header->RznSoc = (string)$xmlResponse->Documento->Encabezado->Emisor->RznSoc;
-                $header->GiroEmis = (string)$xmlResponse->Documento->Encabezado->Emisor->GiroEmis;
-                $header->Sucursal = (string)$xmlResponse->Documento->Encabezado->Emisor->Sucursal;
-                $header->DirOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->DirOrigen;
-                $header->CmnaOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CmnaOrigen;
-                $header->CiudadOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CiudadOrigen;
-                $header->RUTRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->RUTRecep;
-                $header->RznSocRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->RznSocRecep;
-                $header->GiroRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->GiroRecep;
-                $header->Contacto = (string)$xmlResponse->Documento->Encabezado->Receptor->Contacto;
-                $header->DirRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->DirRecep;
-                $header->CmnaRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->CmnaRecep;
-                $header->CiudadRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->CiudadRecep;
-                $header->DirPostal = (string)$xmlResponse->Documento->Encabezado->Receptor->DirPostal;
-                $header->MntNeto = (string)$xmlResponse->Documento->Encabezado->Totales->MntNeto;
-                $header->MntExe = (string)$xmlResponse->Documento->Encabezado->Totales->MntExe;
-                $header->TasaIVA = (string)$xmlResponse->Documento->Encabezado->Totales->TasaIVA;
-                $header->IVA = (string)$xmlResponse->Documento->Encabezado->Totales->IVA;
-                $header->MntTotal = (string)$xmlResponse->Documento->Encabezado->Totales->MntTotal;
-            }
+        //dd($request);
 
-            if($xmlResponse->Documento->Detalle){
+        //$documentos = Solicitud::DocumentosSolicitud($id);
+        //$file = $documentos->where('tipo_documento_id', '1')->first()->name;
+        
+        //if (Storage::exists($file)) {
+            //$contents = Storage::get($file);
+            //$xmlResponse = simplexml_load_string($contents);
+            
+            //if($xmlResponse->Documento->Encabezado){
+        $factura = Factura::where('id_solicitud',$id)->first();
+        $adquiriente = Adquiriente::where('solicitud_id',$id)->first();
+        $compraPara = Para::where('solicitud_id',$id)->first();
+        $solicitud = Solicitud::where('id',$id)->first();
+
+        if($factura != null){        
+
+            $header->Folio = (string)$factura->num_factura;
+            /*
+            $header->FchEmis = (string)$xmlResponse->Documento->Encabezado->IdDoc->FchEmis;
+            $header->RUTEmisor = (string)$xmlResponse->Documento->Encabezado->Emisor->RUTEmisor;
+            $header->RznSoc = (string)$xmlResponse->Documento->Encabezado->Emisor->RznSoc;
+            $header->GiroEmis = (string)$xmlResponse->Documento->Encabezado->Emisor->GiroEmis;
+            $header->Sucursal = (string)$xmlResponse->Documento->Encabezado->Emisor->Sucursal;
+            $header->DirOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->DirOrigen;
+            $header->CmnaOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CmnaOrigen;
+            $header->CiudadOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CiudadOrigen;*/
+            $header->RUTRecep = (string)$factura->rut_receptor;
+            $header->RznSocRecep = (string)$factura->razon_social_recep;
+            $header->GiroRecep = (string)$factura->giro;
+            $header->Contacto = (string)$factura->contacto;
+            $header->DirRecep = (string)$factura->direccion;
+            $header->CmnaRecep = (string)$factura->comuna;
+            $header->CiudadRecep = (string)$factura->ciudad;
+            $header->DirPostal = (string)$factura->direccion;
+
+            $header->FchEmis = (string)$factura->fecha_emision;
+            $header->RUTEmisor = (string)$factura->rut_emisor;
+            $header->RznSoc = (string)$factura->razon_social_emisor;
+            $header->MntTotal = (string)$factura->monto_total_factura;
+            /*
+            $header->MntNeto = (string)$xmlResponse->Documento->Encabezado->Totales->MntNeto;
+            $header->MntExe = (string)$xmlResponse->Documento->Encabezado->Totales->MntExe;
+            $header->TasaIVA = (string)$xmlResponse->Documento->Encabezado->Totales->TasaIVA;
+            $header->IVA = (string)$xmlResponse->Documento->Encabezado->Totales->IVA;
+            $header->MntTotal = (string)$xmlResponse->Documento->Encabezado->Totales->MntTotal;*/
+        }
+            //}
+
+            /*if($xmlResponse->Documento->Detalle){
                 $detail->DscItem = (string)$xmlResponse->Documento->Detalle->DscItem;
                 $detail->DscItem = str_replace("\n", "", $detail->DscItem);
                 $detalle = explode('^^', $detail->DscItem);
-            }
-        }
+            }*/
+        //}
         // Generar Json
         $parametro = [
             'compraParaDTO' => [
-                'calidad' => 'N',
-                'calle' => $request->get('DirRecep'),
-                'comuna' => $request->get('comuna'),
-                'email' => is_null($request->get('email')) ? 'info@acobro.cl' : $request->get('email'),
+                'calidad' => $compraPara->tipo,
+                'calle' => $compraPara->calle,
+                'comuna' => $compraPara->comuna,
+                'email' => is_null($compraPara->email) ? 'info@acobro.cl' : $compraPara->email,
                 'ltrDomicilio' => '',
-                'nombresRazon' => $request->get('RznSocRecep'),
-                'nroDomicilio' => $request->get('nroDomicilio'),
-                'runRut' => str_replace('.', '', str_replace('-', '', substr($request->get('RUTRecep'), 0, -1))),
-                'telefono' => is_null($request->get('telefono')) ? '123456789' : $request->get('telefono'),
-                'aMaterno' => $request->get('aMaterno'),
-                'aPaterno' => $request->get('aPaterno'),
+                'nombresRazon' => $compraPara->nombre,
+                'nroDomicilio' => $compraPara->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($compraPara->rut, 0, -1))),
+                'telefono' => is_null($compraPara->telefono) ? '123456789' : $compraPara->telefono,
+                'aMaterno' => $compraPara->aMaterno,
+                'aPaterno' => $compraPara->aPaterno,
                 'cPostal' => '',
-                'rDomicilio' => ''
+                'rDomicilio' => $compraPara->rDomicilio
             ],
             'comunidadDTO' => [
                 'cantidad' => '0',
@@ -947,7 +1216,7 @@ class SolicitudController extends Controller
                 'mbTotal' => $header->MntTotal,
                 'numero' => $header->Folio,
                 'tipo' => 'FACTURA ELECTRONICA',
-                'rEmisor' => str_replace('.', '', str_replace('-', '', substr($header->RUTEmisor, 0, -1))),
+                'rEmisor' => str_replace('.', '', str_replace('-', '', $header->RUTEmisor)),
                 'tMoneda' => '$'
             ],
             'impuestoVerdeDTO' => [
@@ -957,19 +1226,19 @@ class SolicitudController extends Controller
                 'tFactura' => ''
             ],
             'listaAdquierente' => [
-                'calidad' => 'N',
-                'calle' => $request->get('DirRecep'),
-                'comuna' => $request->get('comuna'),
-                'email' => is_null($request->get('email')) ? 'info@acobro.cl' : $request->get('email'),
+                'calidad' => $adquiriente->tipo,
+                'calle' => $adquiriente->calle,
+                'comuna' => $adquiriente->comuna,
+                'email' => is_null($adquiriente->email) ? 'info@acobro.cl' : $adquiriente->email,
                 'ltrDomicilio' => '',
-                'nombresRazon' => $request->get('RznSocRecep'),
-                'nroDomicilio' => $request->get('nroDomicilio'),
-                'runRut' => str_replace('.', '', str_replace('-', '', substr($request->get('RUTRecep'), 0, -1))),
-                'telefono' => is_null($request->get('telefono')) ? '123456789' : $request->get('telefono'),
-                'aMaterno' => $request->get('aMaterno'),
-                'aPaterno' => $request->get('aPaterno'),
+                'nombresRazon' => $adquiriente->nombre,
+                'nroDomicilio' => $adquiriente->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($adquiriente->rut, 0, -1))),
+                'telefono' => is_null($adquiriente->telefono) ? '123456789' : $adquiriente->telefono,
+                'aMaterno' => $adquiriente->aMaterno,
+                'aPaterno' => $adquiriente->aPaterno,
                 'cPostal' => '',
-                'rDomicilio' => ''
+                'rDomicilio' => $adquiriente->rDomicilio
             ],
             'moto' => [
                 'agnoFabricacion' => $request->get('agnoFabricacion'),
@@ -986,7 +1255,7 @@ class SolicitudController extends Controller
                 'nroVin' => is_null($request->get('nroVin')) ? '' : $request->get('nroVin'),
                 'pbv' => is_null($request->get('pbv')) ? '0' : $request->get('pbv'),
                 'puertas' => is_null($request->get('puertas')) ? '0' : $request->get('puertas'),
-                'terminacionPPU' => $request->get('PPU'),
+                'terminacionPPU' => $solicitud->termino_1,
                 'tipoVehiculo' => is_null($request->get('tipoVehiculo')) ? 'MOTO' : $request->get('tipoVehiculo'),
                 'tCarga' => 'K',
                 'tPbv' => 'K'
@@ -1026,12 +1295,17 @@ class SolicitudController extends Controller
 
         
         $data = RegistroCivil::creaMoto($parametro);
+
+        //print_r($data);
+
         $salida = json_decode($data, true);
+
+        return dd($salida);
 
         if(!$salida['codigoresp']=='OK'){
             return view('general.errorRC', ['glosa' => $salida['glosa']]); 
         }
-        return dd($salida);
+        //return dd($salida);
         
         // OJO
         //return redirect()->route('solicitud.revision.facturaMoto', ['id' => $id]);
