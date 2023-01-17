@@ -23,8 +23,15 @@ class RegistroCivil{
     public static function creaMoto($parametro){
         //$wsdl = 'SpievAPI/WSDL/CreaSpieMoto_PID.wsdl';
         $url = 'http://localhost/RC_API/creaMoto.php';
-        $response = HTTP::post($url, $parametro);
-        return $response;
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
     }
 
     public static function creaAuto($parametro){

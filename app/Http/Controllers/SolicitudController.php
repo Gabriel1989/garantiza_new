@@ -152,7 +152,7 @@ class SolicitudController extends Controller
             }
 
             //PESO BRUTO VEHICULAR Y TIPO PESO BRUTO VEHICULAR
-            $peso_bruto_vehicular = str_ireplace(["&#160;","."],'',trim(substr($datos,stripos($datos,"peso bruto vehicular"),strlen($datos))));
+            $peso_bruto_vehicular = str_ireplace(["&#160;"],'',trim(substr($datos,stripos($datos,"peso bruto vehicular"),strlen($datos))));
             $tipo_pbv = stripos($peso_bruto_vehicular,"kg") !== false ? "K": "T";
             if($tipo_pbv == "K"){
                 $peso_bruto_vehicular = str_ireplace("kg",'',$peso_bruto_vehicular);
@@ -167,6 +167,13 @@ class SolicitudController extends Controller
                 $peso_bruto_vehicular = explode(" ",$peso_bruto_vehicular)[0];
             }
 
+            if(stripos($peso_bruto_vehicular,".") !== false){
+                $tipo_pbv = "T";
+            }
+
+            if(trim($tipo_pbv) == "K"){
+                $peso_bruto_vehicular = round($peso_bruto_vehicular);
+            }
 
             //TIPO VEHICULO
             $tipo_vehiculo = str_ireplace(["&#160;"],'',trim(substr($datos,stripos($datos,"tipo"),strlen($datos)))) ;
@@ -277,7 +284,7 @@ class SolicitudController extends Controller
                 $contacto = substr($contacto,3,strlen($contacto));
             }
             else{
-                $contacto = '';
+                $contacto = 0;
             }
 
             //RUT CLIENTE
@@ -305,6 +312,27 @@ class SolicitudController extends Controller
                 $razon_social = explode("<br>",$datos)[4];
             }
             
+            //CODIGO CIT
+            if(stripos($datos,"cit:") !== false){
+                $codigo_cit = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"cit:"),strlen($datos))));
+                $codigo_cit = str_ireplace(["cit: "],'',PdftoXML::substring($codigo_cit,0,strpos($codigo_cit,'<br>')));
+            }
+            else{
+                $codigo_cit = '';
+            }
+
+            //CODIGO CID
+
+            if(stripos($datos,"cid:") !== false){
+                $codigo_cid = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"cid:"),strlen($datos))));
+                $codigo_cid = str_ireplace(["cid: "],'',PdftoXML::substring($codigo_cid,0,strpos($codigo_cid,'<br>')));
+            }
+            else{
+                $codigo_cid = '';
+            }
+
+            
+
             
             $fac = new Factura();
             $fac->id_solicitud = $solicitud->id;
@@ -333,7 +361,8 @@ class SolicitudController extends Controller
             $fac->fecha_emision = trim($request->get('fecha_emision_fac'));
             $fac->monto_total_factura = trim($request->get('monto_factura'));
 
-            //$fac->codigo_cit = $codigo_cit;
+            $fac->codigo_cit = trim($codigo_cit);
+            $fac->codigo_cid = trim($codigo_cid);
 
 
             $fac->save();
@@ -379,7 +408,11 @@ class SolicitudController extends Controller
             echo "<br>";
             echo $rut_recep;
             echo "<br>";
-            echo $razon_social;*/
+            echo $razon_social;
+            echo "<br>";
+            echo $codigo_cit;
+            echo "<br>";
+            echo $codigo_cid;*/
 
             //die;
 
@@ -393,7 +426,7 @@ class SolicitudController extends Controller
 
         }
 
-        return redirect()->route('solicitud.adquirientes', ['id' => $solicitud->id]);
+        return $solicitud->id;
     }
 
     public function adquirientes($id){
@@ -1189,6 +1222,11 @@ class SolicitudController extends Controller
             }*/
         //}
         // Generar Json
+        $pbv = $request->get('pbv');
+        if($factura->tipo_pbv == "K"){
+            $pbv = round($pbv);
+        }
+
         $parametro = [
             'compraParaDTO' => [
                 'calidad' => $compraPara->tipo,
@@ -1253,34 +1291,34 @@ class SolicitudController extends Controller
                 'nroMotor' => $request->get('nroMotor'),
                 'nroSerie' => is_null($request->get('nroSerie')) ? '' : $request->get('nroSerie'),
                 'nroVin' => is_null($request->get('nroVin')) ? '' : $request->get('nroVin'),
-                'pbv' => is_null($request->get('pbv')) ? '0' : $request->get('pbv'),
+                'pbv' => is_null($pbv) ? '0' : $pbv,
                 'puertas' => is_null($request->get('puertas')) ? '0' : $request->get('puertas'),
                 'terminacionPPU' => $solicitud->termino_1,
                 'tipoVehiculo' => is_null($request->get('tipoVehiculo')) ? 'MOTO' : $request->get('tipoVehiculo'),
-                'tCarga' => 'K',
-                'tPbv' => 'K'
+                'tCarga' => $factura->tipo_carga,
+                'tPbv' => $factura->tipo_pbv
             ],
             'observaciones' => '',
-            'operadorDTO' => [
+            'operadorDTO' => array(
                 'region' => '13',
-                'runUsuario' => str_replace('.', '', str_replace('-', '', substr($request->get('Sol_RUTRecep'), 0, -1))), // Rut Garantiza
-                'rEmpresa' => str_replace('.', '', str_replace('-', '', substr($request->get('Sol_RUTRecep'), 0, -1))), // Rut Garantiza
-            ],
-            'solicitanteDTO' => [
+                'runUsuario' => '10796553',
+                'rEmpresa' => '77880510'
+            ),
+            'solicitanteDTO' => array(
                 'calidad' => 'N',
-                'calle' => $request->get('Sol_DirRecep'),
-                'comuna' => $request->get('Sol_comuna'),
-                'email' => $request->get('Sol_email'),
+                'calle' => 'LAS TINAJAS',
+                'comuna' => '106',
+                'email' => 'rodbay07@gmail.com',
                 'ltrDomicilio' => '',
-                'nombresRazon' => $request->get('Sol_RznSocRecep'),
-                'nroDomicilio' => $request->get('Sol_nroDomicilio'),
-                'runRut' => '13041719', //str_replace('.', '', str_replace('-', '', substr($request->get('Sol_RUTRecep'), 0, -1))),
-                'telefono' => $request->get('Sol_telefono'),
-                'aMaterno' => $request->get('Sol_aMaterno'),
-                'aPaterno' => $request->get('Sol_aPaterno'),
+                'nombresRazon' => 'ROMAN ALEXIS',
+                'nroDomicilio' => '1886',
+                'runRut' => '10796553',
+                'telefono' => '979761113',
+                'aMaterno' => 'RAVEST',
+                'aPaterno' => 'PINTO',
                 'cPostal' => '',
                 'rDomicilio' => ''
-            ],
+            )
         ];
         // Llamar RC
         $parametros = array(
@@ -1294,16 +1332,20 @@ class SolicitudController extends Controller
         //return json_encode($parametros);
 
         
-        $data = RegistroCivil::creaMoto($parametro);
+        $data = RegistroCivil::creaMoto(json_encode($parametro));
 
-        //print_r($data);
+        //dd($data);
 
         $salida = json_decode($data, true);
 
-        return dd($salida);
-
-        if(!$salida['codigoresp']=='OK'){
-            return view('general.errorRC', ['glosa' => $salida['glosa']]); 
+        //return dd($salida);
+        if(isset($salida['codigoresp'])){
+            if(!$salida['codigoresp']==1 || !$salida['codigoresp']==0){
+                return view('general.errorRC', ['glosa' => $salida['glosa']]); 
+            }
+            else{
+                return redirect()->route('solicitud.revision.facturaMoto', ['id' => $id]);
+            }
         }
         //return dd($salida);
         
@@ -1427,26 +1469,26 @@ class SolicitudController extends Controller
                 'tPbv' => 'K'
             ],
             'observaciones' => '',
-            'operadorDTO' => [
+            'operadorDTO' => array(
                 'region' => '13',
-                'runUsuario' => str_replace('.', '', str_replace('-', '', substr($request->get('Sol_RUTRecep'), 0, -1))), // Rut Garantiza
-                'rEmpresa' => str_replace('.', '', str_replace('-', '', substr($request->get('Sol_RUTRecep'), 0, -1))), // Rut Garantiza
-            ],
-            'solicitanteDTO' => [
+                'runUsuario' => '10796553',
+                'rEmpresa' => '77880510'
+            ),
+            'solicitanteDTO' => array(
                 'calidad' => 'N',
-                'calle' => $request->get('Sol_DirRecep'),
-                'comuna' => $request->get('Sol_comuna'),
-                'email' => $request->get('Sol_email'),
+                'calle' => 'LAS TINAJAS',
+                'comuna' => '106',
+                'email' => 'rodbay07@gmail.com',
                 'ltrDomicilio' => '',
-                'nombresRazon' => $request->get('Sol_RznSocRecep'),
-                'nroDomicilio' => $request->get('Sol_nroDomicilio'),
-                'runRut' => '13041719', //str_replace('.', '', str_replace('-', '', substr($request->get('Sol_RUTRecep'), 0, -1))),
-                'telefono' => $request->get('Sol_telefono'),
-                'aMaterno' => $request->get('Sol_aMaterno'),
-                'aPaterno' => $request->get('Sol_aPaterno'),
+                'nombresRazon' => 'ROMAN ALEXIS',
+                'nroDomicilio' => '1886',
+                'runRut' => '10796553',
+                'telefono' => '979761113',
+                'aMaterno' => 'RAVEST',
+                'aPaterno' => 'PINTO',
                 'cPostal' => '',
                 'rDomicilio' => ''
-            ],
+            )
         ];
         // Llamar RC
         $parametros = array(

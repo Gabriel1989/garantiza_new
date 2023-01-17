@@ -6,7 +6,7 @@
 @section('contenido')
 @include('includes.form-error-message')
 @include('includes.mensaje')
-<form enctype="multipart/form-data" class="form-documentos form-horizontal form-solicitud" action="{{route('solicitud.store')}}" method="POST">
+<form enctype="multipart/form-data" id="form-solicitud-create" class="form-documentos form-horizontal form-solicitud" action="{{route('solicitud.store')}}" method="POST">
     @csrf
     @method('POST')
     <div class="panel panel-info panel-border top">
@@ -111,6 +111,8 @@
 </div>
 </form>
 
+
+
 @endsection
 
 @section('scripts')
@@ -155,7 +157,8 @@
 
     });
 
-    $(".form-documentos").on('submit', function () {
+    $(".form-documentos").on('submit', function (e) {
+        e.preventDefault();
         if($('#sucursal_id').val()=='0'){
             new PNotify({
                 title: 'Crear Solicitud',
@@ -303,7 +306,18 @@
             return false;
         };
 
+        let formData = new FormData(document.getElementById('form-solicitud-create'));
 
+        $.ajax({
+            url: "{{route('solicitud.store')}}",
+            type: "post",
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function(data){
+                window.open("http://"+"{{$_SERVER['HTTP_HOST']}}"+"/solicitud/"+data+"/adquirientes");
+            }
+        });
 
         
     });
