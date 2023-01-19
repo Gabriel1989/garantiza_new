@@ -29,9 +29,9 @@
                                 <td scope="row">{{$item->id}}</td>
                                 <td>{{date('d-m-Y h:i A', strtotime($item->created_at))}}</td>
                                 <td>{{$item->sucursales}}</td>
-                                <td>{{$item->cliente}}</td>
+                                <td>{{$item->cliente->razon_social_recep}}</td>
                                 <td>
-                                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
+                                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('solicitud.continuar', ['id' => $item->id])}} '" data-old-onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
                                         <li class="fa fa-pencil"></li> Continuar Ingreso</button>
                                 </td>
                             </tr>

@@ -1,14 +1,7 @@
-@extends("themes.$themes.layout")
 
-@section('styles')
-@endsection
-
-@section('contenido')
-@include('includes.form-error-message')
-@include('includes.mensaje')
 <form enctype="multipart/form-data" class="form-documentos form-horizontal form-solicitud" action="{{route('solicitud.saveCompraPara', ['id' => $id])}}" method="POST">
     @csrf
-    @method('PUT')
+    @method('POST')
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
             <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de CompraPara</span>
@@ -18,7 +11,7 @@
                 <div class="form-group">
                     <label for="rut" class="col-lg-2 control-label">Rut :</label>
                     <label class="col-lg-2">
-                        <input type="text" name="rut" id="rut" class="form-control rut" placeholder="99.999.999-9" value="{{$adquirentes[0]->rut}}" >
+                        <input type="text" name="rut" id="rut2" class="form-control rut2" placeholder="99.999.999-9" value="{{$adquirentes[0]->rut}}" >
                     </label>
                     <label class="col-lg-2"></label>
                     
@@ -81,7 +74,7 @@
                 <div class="form-group">
                     <label for="tipoPersona" class="col-lg-2 control-label">Tipo de Persona :</label>
                     <label class="col-lg-4">
-                        <select class="col-sm-12 form-select" name="tipoPersona" id="tipoPersona" >
+                        <select class="col-sm-12 form-select" name="tipoPersona" id="tipoPersona2" >
                             <option value="N" @if ($adquirentes[0]->tipo=='N') selected @endif>NATURAL</option>
                             <option value="J" @if ($adquirentes[0]->tipo=='J') selected @endif>JURÍDICO</option>
                             <option value="E" @if ($adquirentes[0]->tipo=='E') selected @endif>EXTRANJERO</option>
@@ -98,28 +91,26 @@
 </div>
 </form>
 
-@endsection
-
 @section('scripts')
 <script src="/js/jquery.rut.min.js"></script>
 <script>
     $(document).ready(function() {
-        $("#rut").val($.formatRut($("#rut").val())); 
+        $("#rut2").val($.formatRut($("#rut").val())); 
 
         $('.comuna').multiselect({
             enableFiltering: true,
         });
         $('#tipoPersona').multiselect();
 
-        $(".rut").rut({
+        $(".rut2").rut({
             formatOn: 'keyup',
             minimumLength: 8, 
             validateOn: 'change' 
         });
 
-        $(".rut").rut().on('rutInvalido', function(e) {
+        $(".rut2").rut().on('rutInvalido', function(e) {
             new PNotify({
-                title: 'Rut de Concesionaria',
+                title: 'Rut de Compra Para',
                 text: 'El Rut ingresado no es válido.',
                 shadow: true,
                 opacity: '0.75',
@@ -137,7 +128,7 @@
             });
         });
 
-        $("#tipoPersona").on('change', function(){
+        $("#tipoPersona2").on('change', function(){
             if($(this).val()=='O'){
                 $('#agregar').show();
             }else{

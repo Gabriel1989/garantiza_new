@@ -95,13 +95,16 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::post('solicitud', 'SolicitudController@store')->name('solicitud.store');
     Route::get('solicitud/sinTerminar', 'SolicitudController@sinTerminar')->name('solicitud.sinTerminar');
     Route::get('solicitud/{id}/adquirientes', 'SolicitudController@adquirientes')->name('solicitud.adquirientes');
-    Route::put('solicitud/{id}/saveAdquirientes', 'SolicitudController@saveAdquirientes')->name('solicitud.saveAdquirientes');
+    Route::post('solicitud/{id}/saveAdquirientes', 'SolicitudController@saveAdquirientes')->name('solicitud.saveAdquirientes');
     Route::get('solicitud/{id}/compraPara', 'SolicitudController@compraPara')->name('solicitud.compraPara');
     Route::put('solicitud/{id}/saveCompraPara', 'SolicitudController@saveCompraPara')->name('solicitud.saveCompraPara');
     Route::get('solicitud/{id}/datosMoto', 'SolicitudController@datosMoto')->name('solicitud.datosMoto');
     Route::get('solicitud/{id}/datosAuto', 'SolicitudController@datosAuto')->name('solicitud.datosAuto');
     Route::get('solicitud/{id}/datosCamion', 'SolicitudController@datosCamion')->name('solicitud.datosCamion');
     Route::put('solicitud/{id}/saveDatosMoto', 'SolicitudController@saveDatosMoto')->name('solicitud.saveDatosMoto');
+
+    Route::delete('solicitud/delete/{id}', 'SolicitudController@destroy')->name('solicitud.destroy');
+    Route::get('solicitud/continuar/{id}','SolicitudController@continuarSolicitud')->name('solicitud.continuar');
 
     Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
     Route::put('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');

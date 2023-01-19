@@ -7,6 +7,7 @@
         <title>@yield('titulo', 'Garantiza')</title>
         <meta name="description" content="Garantiza - Soluciones TI - Registro Automotriz">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-token" content="{{ csrf_token() }}" />
 
         <!-- Font CSS (Via CDN) -->
         <link rel='stylesheet' type='text/css' href='http://fonts.googleapis.com/css?family=Open+Sans:400,600,700'>
@@ -138,6 +139,7 @@
                 Core.init();
             });
         </script>
+        <script type="text/javascript" src="/js/jquery.rut.min.js"></script>
 
         @yield('scripts')
     </body>

@@ -46,8 +46,46 @@ class SolicitudController extends Controller
         return view('solicitud.solicitarPPU', compact('region'));
     }
 
+    public function continuarSolicitud($id){
+        $id_solicitud = $id;
+        $comunas = Comuna::allOrder();
+
+        $header = new stdClass;
+        $factura = Factura::where('id_solicitud',$id_solicitud)->first();
+        $sucursales = Sucursal::all();
+        $tipo_vehiculos = Tipo_Vehiculo::all();
+        $ppu = array();
+        if($factura != null){
+            $header->RUTRecep = (string)$factura->rut_receptor;
+            $header->RznSocRecep = (string)$factura->razon_social_recep;
+            $header->GiroRecep = (string)$factura->giro;
+            $header->Contacto = (string)$factura->contacto;
+            $header->DirRecep = (string)$factura->direccion;
+            $header->CmnaRecep = (string)strtoupper($factura->comuna);
+            $header->CiudadRecep = (string)$factura->ciudad;
+            $header->DirPostal = (string)$factura->direccion;
+        }
+
+
+        $id_adquiriente = 0;
+
+        $adquirientes = Adquiriente::where('solicitud_id',$id_solicitud)->first();
+        if($adquirientes != null){
+            $id_adquiriente = $adquirientes->id;
+            $adquirentes = Adquiriente::getSolicitud($id_solicitud);
+            return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
+            
+        }
+        
+        return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente'));
+
+        
+    }
+
 
     public function consultaPPU(PPURequest $request){
+
+        $comunas = Comuna::allOrder();
 
         $parametro = [
             'Region' => $request->get('region'),
@@ -59,13 +97,48 @@ class SolicitudController extends Controller
         $data = RegistroCivil::PPUDisponible($parametro);
         $ppu = json_decode($data, true);
 
+        $id_solicitud = 0;
+        $id_adquiriente = 0;
+        //dd(session('solicitud_id'));
+        $id_solicitud = (session('solicitud_id') != null) ? session('solicitud_id') : 0;
+        //dd($id_solicitud);
+        
+
         if(isset($ppu['codigoresp'])){
 
             if($ppu['codigoresp']=='OK'){
                 $ppu = $ppu['PPU'];
                 $sucursales = Sucursal::all();
                 $tipo_vehiculos = Tipo_Vehiculo::all();
-                return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu'));
+                if($id_solicitud == 0){
+                    return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id_adquiriente'));
+                }
+                else{
+                    $header = new stdClass;
+                    $factura = Factura::where('id_solicitud',$id_solicitud)->first();
+                    $id = $id_solicitud;
+                    if($factura != null){
+                        $header->RUTRecep = (string)$factura->rut_receptor;
+                        $header->RznSocRecep = (string)$factura->razon_social_recep;
+                        $header->GiroRecep = (string)$factura->giro;
+                        $header->Contacto = (string)$factura->contacto;
+                        $header->DirRecep = (string)$factura->direccion;
+                        $header->CmnaRecep = (string)strtoupper($factura->comuna);
+                        $header->CiudadRecep = (string)$factura->ciudad;
+                        $header->DirPostal = (string)$factura->direccion;
+                    }
+
+                    $adquirientes = Adquiriente::where('solicitud_id',$id_solicitud)->first();
+                    if($adquirientes != null){
+                        $id_adquiriente = $adquirientes->id;
+                        $adquirentes = Adquiriente::getSolicitud($id_solicitud);
+                        return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
+                    }
+                    else{
+                        return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente'));
+                    }
+                    
+                }
             }else{
                 return view('general.errorRC', ['glosa' => $ppu['glosa']]); 
             }
@@ -426,7 +499,49 @@ class SolicitudController extends Controller
 
         }
 
-        return $solicitud->id;
+        //session('solicitud_id',$solicitud->id);
+        session(['solicitud_id' => $solicitud->id]);
+
+        $header = new stdClass;
+
+        $factura = Factura::where('id_solicitud',$solicitud->id)->first();
+
+        $id = $solicitud->id;
+
+        if($factura != null){
+            $header->RUTRecep = (string)$factura->rut_receptor;
+            $header->RznSocRecep = (string)$factura->razon_social_recep;
+            $header->GiroRecep = (string)$factura->giro;
+            $header->Contacto = (string)$factura->contacto;
+            $header->DirRecep = (string)$factura->direccion;
+            $header->CmnaRecep = (string)strtoupper($factura->comuna);
+            $header->CiudadRecep = (string)$factura->ciudad;
+            $header->DirPostal = (string)$factura->direccion;
+        }
+        /*
+        $documentos = Solicitud::DocumentosSolicitud($id);
+        $file = $documentos->where('tipo_documento_id', '1')->first()->name;
+        
+        if (Storage::exists($file)) {
+            $contents = Storage::get($file);
+            $xmlResponse = simplexml_load_string($contents);
+            
+            $receptor = $this->getNode($xmlResponse, 'Receptor');
+
+            $header->RUTRecep = (string)$receptor->RUTRecep;
+            $header->RznSocRecep = (string)$receptor->RznSocRecep;
+            $header->GiroRecep = (string)$receptor->GiroRecep;
+            $header->Contacto = (string)$receptor->Contacto;
+            $header->DirRecep = (string)$receptor->DirRecep;
+            $header->CmnaRecep = (string)strtoupper($receptor->CmnaRecep);
+            $header->CiudadRecep = (string)$receptor->CiudadRecep;
+            $header->DirPostal = (string)$receptor->DirPostal;
+        }
+        else{
+            
+        }*/
+        $comunas = Comuna::allOrder();
+        return view('solicitud.adquirientes', compact('id', 'comunas', 'header'));
     }
 
     public function adquirientes($id){
@@ -474,34 +589,38 @@ class SolicitudController extends Controller
      * Se debe validar el largo de los datos
      */
     public function saveAdquirientes(Request $request, $id){
+        
+        //dd($request);
         // Si tipo de persona es comunidad, se deben validar los otros adquirientes
         $errors = new MessageBag();
-        if(is_null($request->rut)) $errors->add('Garantiza', 'Debe Ingresar el Rut del Adquiriente.');
-        if(is_null($request->nombre)) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Adquiriente.');
-        if(is_null($request->calle)) $errors->add('Garantiza', 'Debe Ingresar la dirección del Adquiriente.');
-        if(is_null($request->numero)) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Adquiriente.');
-        if($request->comuna=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Adquiriente.');
-        if(is_null($request->email)) $errors->add('Garantiza', 'Debe Ingresar el email del Adquiriente.');
-        if(is_null($request->telefono)) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Adquiriente.');
-        if($request->tipoPersona=='O'){
+        if(is_null($request->input('rut'))) $errors->add('Garantiza', 'Debe Ingresar el Rut del Adquiriente.');
+        if(is_null($request->input('nombre'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Adquiriente.');
+        if(is_null($request->input('calle'))) $errors->add('Garantiza', 'Debe Ingresar la dirección del Adquiriente.');
+        if(is_null($request->input('numero'))) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Adquiriente.');
+        if($request->input('comuna')=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Adquiriente.');
+        if(is_null($request->input('email'))) $errors->add('Garantiza', 'Debe Ingresar el email del Adquiriente.');
+        if(is_null($request->input('telefono'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Adquiriente.');
+        if($request->input('tipoPersona')=='O'){
             // Revisa los datos del segundo adquiriente
-            if(is_null($request->rut2)) $errors->add('Garantiza', 'Debe Ingresar el Rut del Segundo Adquiriente.');
-            if(is_null($request->nombre2)) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Segundo Adquiriente.');
-            if(is_null($request->calle2)) $errors->add('Garantiza', 'Debe Ingresar la dirección del Segundo Adquiriente.');
-            if(is_null($request->numero2)) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Segundo Adquiriente.');
-            if($request->comuna2=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Segundo Adquiriente.');
-            if(is_null($request->email2)) $errors->add('Garantiza', 'Debe Ingresar el email del Segundo Adquiriente.');
-            if(is_null($request->telefono2)) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Segundo Adquiriente.');
+            if(is_null($request->input('rut2'))) $errors->add('Garantiza', 'Debe Ingresar el Rut del Segundo Adquiriente.');
+            if(is_null($request->input('nombre2'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Segundo Adquiriente.');
+            if(is_null($request->input('calle2'))) $errors->add('Garantiza', 'Debe Ingresar la dirección del Segundo Adquiriente.');
+            if(is_null($request->input('numero2'))) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Segundo Adquiriente.');
+            if($request->input('comuna2')=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Segundo Adquiriente.');
+            if(is_null($request->input('email2'))) $errors->add('Garantiza', 'Debe Ingresar el email del Segundo Adquiriente.');
+            if(is_null($request->input('telefono2'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Segundo Adquiriente.');
             // Revisa si viene un tercer adquiriente
-            if(!is_null($request->rut3)){
-                if(is_null($request->nombre3)) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Tercer Adquiriente.');
-                if(is_null($request->calle3)) $errors->add('Garantiza', 'Debe Ingresar la dirección del Tercer Adquiriente.');
-                if(is_null($request->numero3)) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Tercer Adquiriente.');
-                if($request->comuna3=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Tercer Adquiriente.');
-                if(is_null($request->email3)) $errors->add('Garantiza', 'Debe Ingresar el email del Tercer Adquiriente.');
-                if(is_null($request->telefono3)) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Tercer Adquiriente.');
+            if(!is_null($request->input('rut3'))){
+                if(is_null($request->input('nombre3'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Tercer Adquiriente.');
+                if(is_null($request->input('calle3'))) $errors->add('Garantiza', 'Debe Ingresar la dirección del Tercer Adquiriente.');
+                if(is_null($request->input('numero3'))) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Tercer Adquiriente.');
+                if($request->input('comuna3')=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Tercer Adquiriente.');
+                if(is_null($request->input('email3'))) $errors->add('Garantiza', 'Debe Ingresar el email del Tercer Adquiriente.');
+                if(is_null($request->input('telefono3'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Tercer Adquiriente.');
             }
         }
+
+        //dd($errors);
         if($errors->count()>0) return redirect()->route('solicitud.adquirientes', ['id' => $id])->withErrors($errors);
 
         DB::beginTransaction();
@@ -582,7 +701,10 @@ class SolicitudController extends Controller
         }
 
         DB::commit();
-        return redirect()->route('solicitud.compraPara', ['id' => $id]);
+        //return redirect()->route('solicitud.compraPara', ['id' => $id]);
+        $adquirentes = Adquiriente::getSolicitud($id);
+        $comunas = Comuna::allOrder();
+        return view('solicitud.compraPara', compact('id', 'comunas', 'adquirentes'));
     }
 
     public function compraPara($id){
@@ -675,18 +797,8 @@ class SolicitudController extends Controller
         $SolicitudItem = array();
         foreach($solicitudes as $item){
             try{
-                $documentos = Solicitud::DocumentosSolicitud($item->id);
-                $file = $documentos->where('tipo_documento_id', '1')->first()->name;
-
-                if (Storage::exists($file)) {
-                    $contents = Storage::get($file);
-                    $xmlResponse = simplexml_load_string($contents);
-
-                    $encabezado = $this->getNode($xmlResponse, 'Encabezado');
-                    if($encabezado){
-                        $item->cliente = (string)$encabezado->Receptor->RznSocRecep;
-                    }
-                }
+                $item->cliente = Factura::select('razon_social_recep')->where('id_solicitud',$item->id)->first();
+                
             }
             catch(Exception $e){
                 $item->cliente = '';
@@ -1576,20 +1688,8 @@ class SolicitudController extends Controller
         $SolicitudItem = array();
         foreach($solicitudes as $item){
             try{
-                $item->cliente = '';
-                $documentos = Solicitud::DocumentosSolicitud($item->id);
-                $file = $documentos->where('tipo_documento_id', '1')->first()->name;
-
-                if (Storage::exists($file)) {
-                    $contents = Storage::get($file);
-                    $xmlResponse = simplexml_load_string($contents);
-
-                    $encabezado = $this->getNode($xmlResponse, 'Encabezado');
-                    if($encabezado){
-                        $item->cliente = (string)$encabezado->Receptor->RznSocRecep;
-                    }
-                    
-                }
+                $item->cliente = Factura::select('razon_social_recep')->where('id_solicitud',$item->id)->first();
+                
             }
             catch(Exception $e){
                 $item->cliente = '';
@@ -1660,7 +1760,10 @@ class SolicitudController extends Controller
      */
     public function destroy($id)
     {
-        //
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        $solicitud = Solicitud::find($id);
+        $solicitud->delete();
+        session()->forget('solicitud_id');
     }
 
 }
