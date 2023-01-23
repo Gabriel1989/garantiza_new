@@ -16,11 +16,11 @@
             <li class="nav-item @if($id_solicitud != 0 && $id_adquiriente == 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_solicitud == 0)  disabled    @endif" id="pills-profile-tab" data-toggle="pill" @if($id_solicitud != 0) href="#pills-profile" @else href="#" @endif role="tab" aria-controls="pills-profile" aria-selected="false" @if($id_solicitud == 0) aria-disabled="true" @endif>Datos de Adquiriente</a>
             </li>
-            <li class="nav-item @if($id_adquiriente != 0)  active    @endif" role="presentation">
+            <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara == 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_adquiriente == 0)  disabled    @endif" id="pills-contact-tab" data-toggle="pill" @if($id_adquiriente != 0) href="#pills-contact" @else href="#" @endif role="tab" aria-controls="pills-contact" aria-selected="false"@if($id_adquiriente == 0) aria-disabled="true" @endif>Datos de Compra Para</a>
             </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link disabled" id="pills-invoice-tab" data-toggle="pill" href="#" role="tab" aria-controls="pills-invoice" aria-selected="false" aria-disabled="true">Datos de Factura</a>
+            <li class="nav-item @if($id_adquiriente != 0 || $id_comprapara != 0)  active    @endif" role="presentation">
+                <a class="nav-link @if($id_comprapara == 0)  disabled    @endif" id="pills-invoice-tab" data-toggle="pill" @if($id_comprapara != 0) href="#pills-invoice" @else href="#" @endif role="tab" aria-controls="pills-invoice" aria-selected="false" @if($id_comprapara == 0) aria-disabled="true" @endif>Datos de Factura</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link disabled" id="pills-docs-tab" data-toggle="pill" href="#" role="tab" aria-controls="pills-docs" aria-selected="false" aria-disabled="true">Adjuntar Documentación</a>
@@ -57,7 +57,7 @@
                                     <select name="sucursal_id" id="sucursal_id">
                                         <option value="0" selected>Seleccione Sucursal ...</option>
                                         @foreach ($sucursales as $item)
-                                        <option value="{{$item->id}}">{{$item->name}}</option>
+                                        <option value="{{$item->id}}" @if(!is_null($solicitud_data->sucursal_id)) @if($solicitud_data->sucursal_id==$item->id) selected  @endif @endif>{{$item->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -68,7 +68,7 @@
                                     <select name="tipoVehiculos_id" id="tipoVehiculos_id">
                                         <option value="0" selected>Seleccione Tipo de Vehículo ...</option>
                                         @foreach ($tipo_vehiculos as $item)
-                                        <option value="{{$item->id}}">{{$item->name}}</option>
+                                        <option value="{{$item->id}}"  @if(!is_null($solicitud_data->tipoVehiculos_id))  @if($solicitud_data->tipoVehiculos_id==$item->id) selected   @endif   @endif>{{$item->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -90,10 +90,14 @@
                                 <label for="ppu_terminacion" class="col-lg-1 control-label">PPU Disponibles:</label>
                                 <label class="col-lg-5">
                                     <select name="ppu_terminacion" id="ppu_terminacion">
-                                        <option value="" selected>Seleccione PPU ...</option>
-                                        @foreach ($ppu as $item)
-                                        <option value="{{$item['Terminacion']}}">{{$item['Terminacion']}}</option>
-                                        @endforeach
+                                        @if(is_null($solicitud_data->termino_1)) 
+                                            <option value="" selected>Seleccione PPU ...</option>
+                                            @foreach ($ppu as $item)
+                                            <option value="{{$item['Terminacion']}}">{{$item['Terminacion']}}</option>
+                                            @endforeach
+                                        @else
+                                        <option value="{{$solicitud_data->termino_1}}">{{$solicitud_data->termino_1}}</option>
+                                        @endif
                                     </select>
                                 </label>
 
@@ -111,21 +115,21 @@
 
                                         <div class="col-lg-3">
                                             <label>Nombre o Razón Social Emisor</label>
-                                            <input class="form-control" name="razon_soc_emisor" id="razon_soc_emisor" maxlength="35">
+                                            <input class="form-control" name="razon_soc_emisor" id="razon_soc_emisor" maxlength="35" value="{{ !is_null($header->RznSoc)? $header->RznSoc : ''}}">
                                         </div>
 
                                         <div class="col-lg-3">
                                             <label>Rut emisor</label>
-                                            <input type="number" class="form-control" name="rut_emisor" id="rut_emisor">
+                                            <input type="number" class="form-control" name="rut_emisor" id="rut_emisor" value="{{!is_null($header->RUTEmisor)? $header->RUTEmisor : ''}}">
                                         </div>
 
                                         <div class="col-lg-3">
                                             <label>Fecha Emisión</label>
-                                            <input class="form-control" name="fecha_emision_fac" id="fecha_emision_fac">
+                                            <input class="form-control" name="fecha_emision_fac" id="fecha_emision_fac" value="{{!is_null($header->FchEmis)? $header->FchEmis : ''}}">
                                         </div>
                                         <div class="col-lg-3">
                                             <label>Monto Total Factura</label>
-                                            <input type="number" class="form-control" name="monto_factura" id="monto_factura">
+                                            <input type="number" class="form-control" name="monto_factura" id="monto_factura" value="{{!is_null($header->MntTotal)? $header->MntTotal : ''}}">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -149,12 +153,27 @@
                     @include('solicitud.adquirientes')
                 @endif
             </div>
-            <div class="tab-pane fade @if($id_adquiriente != 0) show  active in @endif" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+            <div class="tab-pane fade @if($id_adquiriente != 0 && $id_comprapara == 0) show  active in @endif" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
                 @if ($id_adquiriente != 0)
                     @include('solicitud.compraPara')
                 @endif
 
             </div>
+            <div class="tab-pane fade @if($id_comprapara != 0)  show active in @endif" id="pills-invoice" role="tabpanel" aria-labelledby="pills-invoice-tab">
+                @if ($id_comprapara != 0)
+                    @if($id_tipo_vehiculo == 1)
+                        @include('solicitud.revision.facturaAuto')
+                    @elseif ($id_tipo_vehiculo == 2)
+                        @include('solicitud.revision.facturaMoto')
+                    @else
+                        @include('solicitud.revision.facturaCamion')
+                    @endif
+                @endif
+            </div>
+            <div class="tab-pane fade" id="pills-docs" role="tabpanel" aria-labelledby="pills-docs-tab">
+
+            </div>
+
         </div>
     </div>
     <div class="panel-footer">
@@ -169,7 +188,8 @@
 
 @endsection
 
-@section('scripts')
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
 <script>
     $(document).ready(function() {
@@ -212,7 +232,7 @@
 
     });
 
-    $(".form-documentos").on('submit', function(e) {
+    $(document).on('submit',"#form-solicitud-create", function(e) {
         e.preventDefault();
         if ($('#sucursal_id').val() == '0') {
             new PNotify({
@@ -377,9 +397,7 @@
                 $("#pills-profile-tab").toggleClass('disabled');
                 $("#pills-profile-tab").attr("aria-disabled",false);
                 $("#pills-profile-tab").click();
-                var rut_format = $("#rut").val();
-                rut_format = rut_format + $.computeDv(rut_format);
-                $("#rut").val($.formatRut(rut_format));
+                
 
                 $('.comuna').multiselect({
                     enableFiltering: true,
@@ -465,26 +483,28 @@
     $(document).on("click","#pills-home-tab",function(e){
         $("#pills-profile").removeClass('show');
         $("#pills-contact").removeClass('show');
+        $("#pills-invoice").removeClass('show');
     });
 
     $(document).on("click","#pills-profile-tab",function(e){
         $("#pills-home").removeClass('show');
         $("#pills-contact").removeClass('show');
+        $("#pills-invoice").removeClass('show');
     });
 
-    $(document).on("click","#btnCancelProcess",function(){
-        if(confirm("¿Está seguro de eliminar la solicitud y los datos asociados?")){
-
-            $.ajax({
-                url: "solicitud/{id}",
-                type: "delete",
-                success: function(){
-                    window.location.href= "http://"+"{{ $_SERVER['HTTP_HOST'] }}"+ "/solicitud/solicitarPPU";
-                }
-            })
-        }
-
+    $(document).on("click","#pills-contact-tab",function(e){
+        $("#pills-home").removeClass('show');
+        $("#pills-profile").removeClass('show');
+        $("#pills-invoice").removeClass('show');
     });
+
+    $(document).on("click","#pills-invoice-tab",function(e){
+        $("#pills-home").removeClass('show');
+        $("#pills-profile").removeClass('show');
+        $("#pills-contact").removeClass('show');
+    });
+
+    
 
     function elimina(adquiriente) {
         if (adquiriente == 2) {
@@ -498,4 +518,3 @@
 
 
 </script>
-@endsection

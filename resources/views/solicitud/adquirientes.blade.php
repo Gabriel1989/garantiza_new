@@ -11,6 +11,7 @@
                 <div class="form-group">
                     <label for="rut" class="col-lg-2 control-label">Rut :</label>
                     <label class="col-lg-2">
+                        <input type="hidden" name="adquiriente_1" id="adquiriente_1" value="{{ isset($adquirentes[0]->id)? $adquirentes[0]->id :  0}}">
                         <input type="text" name="rut" id="rut" class="form-control rut" placeholder="99.999.999-9" value="{{ isset($adquirentes[0]->rut)? str_replace(".","",explode("-",$adquirentes[0]->rut)[0]) : $header->RUTRecep}}" required>
                     </label>
                     <label class="col-lg-2"></label>
@@ -23,30 +24,30 @@
                 <div class="form-group">
                     <label for="aPaterno" class="col-lg-2 control-label">Apellido Paterno :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="aPaterno" id="aPaterno" class="form-control" placeholder="Apellido Paterno" value="{{ isset($adquirentes[0]->aPaterno)? $adquirentes[0]->aPaterno: ''}}">
+                        <input type="text" name="aPaterno" id="aPaterno" class="form-control" placeholder="Apellido Paterno" value="{{ isset($adquirentes[0]->aPaterno)? $adquirentes[0]->aPaterno: old('aPaterno')}}">
                     </label>
                     
                     <label for="aMaterno" class="col-lg-2 control-label">Apellido Materno :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="aMaterno" id="aMaterno" class="form-control" placeholder="Apellido Materno" value="{{ isset($adquirentes[0]->aMaterno)? $adquirentes[0]->aMaterno : ''}}">
+                        <input type="text" name="aMaterno" id="aMaterno" class="form-control" placeholder="Apellido Materno" value="{{ isset($adquirentes[0]->aMaterno)? $adquirentes[0]->aMaterno : old('aMaterno')}}">
                     </label>
                 </div>
                 <div class="form-group">
                     <label for="calle" class="col-lg-2 control-label">Dirección (calle) :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="calle" id="calle" class="form-control" placeholder="Calle de la dirección" value="{{ isset($adquirentes[0]->calle)?  $adquirentes[0]->calle : ''}}" required>
+                        <input type="text" name="calle" id="calle" class="form-control" placeholder="Calle de la dirección" value="{{ isset($adquirentes[0]->calle)?  $adquirentes[0]->calle : $header->DirRecep}}" required>
                     </label>
                     
                     <label for="numero" class="col-lg-2 control-label">Número :</label>
                     <label class="col-lg-2">
-                        <input type="text" name="numero" id="numero" class="form-control" placeholder="Número de la dirección" value="{{ isset($adquirentes[0]->numero)? $adquirentes[0]->numero : ''}}" required>
+                        <input type="text" name="numero" id="numero" class="form-control" placeholder="Número de la dirección" value="{{ isset($adquirentes[0]->numero)? $adquirentes[0]->numero : old('numero')}}" required>
                     </label>
                     <label class="col-lg-2"></label>
                 </div>
                 <div class="form-group">
                     <label for="rDireccion" class="col-lg-2 control-label">Complemento de dirección :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="rDireccion" id="rDireccion" class="form-control" placeholder="Complemento de la dirección" value="{{ isset($adquirentes[0]->rDomicilio)? $adquirentes[0]->rDomicilio : '' }}">
+                        <input type="text" name="rDireccion" id="rDireccion" class="form-control" placeholder="Complemento de la dirección" value="{{ isset($adquirentes[0]->rDomicilio)? $adquirentes[0]->rDomicilio : old('rDireccion') }}">
                     </label>
                     
                     <label for="comuna" class="col-lg-2 control-label">Comuna :</label>
@@ -102,6 +103,7 @@
                     
                     <label for="rut2" class="col-lg-2 control-label">Rut :</label>
                     <label class="col-lg-2">
+                        <input type="hidden" name="adquiriente_2" id="adquiriente_2" value="{{ isset($adquirentes[1]->id)? $adquirentes[1]->id :  0}}">
                         <input type="text" name="rut2" id="rut2" class="form-control rut" placeholder="99.999.999-9" value="{{old('rut2')}}">
                     </label>
                     <label class="col-lg-2"></label>
@@ -169,6 +171,7 @@
                 <div class="form-group">
                     <label for="rut3" class="col-lg-2 control-label">Rut :</label>
                     <label class="col-lg-2">
+                        <input type="hidden" name="adquiriente_3" id="adquiriente_3" value="{{ isset($adquirentes[2]->id)? $adquirentes[2]->id :  0}}">
                         <input type="text" name="rut3" id="rut3" class="form-control rut" placeholder="99.999.999-9" value="{{old('rut3')}}">
                     </label>
                     <label class="col-lg-2"></label>
@@ -239,7 +242,7 @@
 </div>
 </form>
 
-@section('scripts')
+
 <script>
     $(document).ready(function() {
 
@@ -335,7 +338,7 @@
 
     });
 
-    $(document).submit("#form-adquirientes",function(e){
+    $(document).on("submit","#form-adquirientes",function(e){
         e.preventDefault();
         let formData = new FormData(document.getElementById('form-adquirientes'));
         
@@ -352,14 +355,35 @@
             processData: false,  // tell jQuery not to process the data
             contentType: false,   // tell jQuery not to set contentType
             success: function(data){
-                $("#pills-contact").html(data);
-                $("#pills-profile").toggleClass('show');
-                $("#pills-home").removeClass('show');
-                $("#pills-contact").toggleClass('show');
-                $("#pills-contact-tab").attr("href","#pills-contact");
-                $("#pills-contact-tab").toggleClass('disabled');
-                $("#pills-contact-tab").attr("aria-disabled",false);
-                $("#pills-contact-tab").click();
+                if(parseFloat($("#adquiriente_1").val()) == 0){
+                    $("#pills-contact").html(data);
+                    $("#pills-profile").toggleClass('show');
+                    $("#pills-home").removeClass('show');
+                    $("#pills-contact").removeClass('show');
+                    $("#pills-contact-tab").attr("href","#pills-contact");
+                    $("#pills-contact-tab").toggleClass('disabled');
+                    $("#pills-contact-tab").attr("aria-disabled",false);
+                    $("#pills-contact-tab").click();
+                }
+                else{
+                    new PNotify({
+                        title: 'Editar adquiriente',
+                        text: 'Adquiriente editado correctamente',
+                        shadow: true,
+                        opacity: '0.75',
+                        addclass: 'stack_top_right',
+                        type: 'success',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '290px',
+                        delay: 2000
+                    });
+                }
             }
         });
 
@@ -385,4 +409,3 @@
         }
     }
 </script>
-@endsection

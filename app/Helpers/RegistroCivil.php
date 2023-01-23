@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 class RegistroCivil{
     public static function PPUDisponible($parametro){
         //$wsdl = 'SpievAPI/WSDL/PPUDisponible_porTipo_PID.wsdl';
-        $url = 'http://localhost/RC_API/PPUDisponible.php';
+        $url = 'http://172.16.10.221/RC_API/PPUDisponible.php';
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);
@@ -22,7 +22,7 @@ class RegistroCivil{
 
     public static function creaMoto($parametro){
         //$wsdl = 'SpievAPI/WSDL/CreaSpieMoto_PID.wsdl';
-        $url = 'http://localhost/RC_API/creaMoto.php';
+        $url = 'http://172.16.10.221/RC_API/creaMoto.php';
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);

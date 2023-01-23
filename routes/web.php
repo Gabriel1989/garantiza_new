@@ -97,7 +97,7 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::get('solicitud/{id}/adquirientes', 'SolicitudController@adquirientes')->name('solicitud.adquirientes');
     Route::post('solicitud/{id}/saveAdquirientes', 'SolicitudController@saveAdquirientes')->name('solicitud.saveAdquirientes');
     Route::get('solicitud/{id}/compraPara', 'SolicitudController@compraPara')->name('solicitud.compraPara');
-    Route::put('solicitud/{id}/saveCompraPara', 'SolicitudController@saveCompraPara')->name('solicitud.saveCompraPara');
+    Route::post('solicitud/{id}/saveCompraPara', 'SolicitudController@saveCompraPara')->name('solicitud.saveCompraPara');
     Route::get('solicitud/{id}/datosMoto', 'SolicitudController@datosMoto')->name('solicitud.datosMoto');
     Route::get('solicitud/{id}/datosAuto', 'SolicitudController@datosAuto')->name('solicitud.datosAuto');
     Route::get('solicitud/{id}/datosCamion', 'SolicitudController@datosCamion')->name('solicitud.datosCamion');
@@ -107,8 +107,8 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::get('solicitud/continuar/{id}','SolicitudController@continuarSolicitud')->name('solicitud.continuar');
 
     Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
-    Route::put('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
-    Route::put('solicitud/{id}/updateRevisionFacturaAuto', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
+    Route::post('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
+    Route::post('solicitud/{id}/updateRevisionFacturaAuto', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
     
 
     Route::get('solicitud/{id}/show', 'SolicitudController@show')->name('solicitud.show');

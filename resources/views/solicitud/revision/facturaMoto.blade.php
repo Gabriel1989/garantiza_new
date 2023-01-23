@@ -1,4 +1,4 @@
-@extends("themes.$themes.layout")
+
 
 
 
@@ -16,10 +16,10 @@
 </style>
 @endsection
 
-@section('contenido')
+
 
 @include('includes.form-error-message')
-<form method="post" action="{{route('solicitud.updateRevisionFacturaMoto', ['id' => $id])}}" role="form" class="form-horizontal form-revision" >
+<form method="post" id="formFacturaMoto" old-action="{{route('solicitud.updateRevisionFacturaMoto', ['id' => $id])}}" role="form" class="form-horizontal form-revision" >
     @csrf
     @method('PUT')
     <div class="panel panel-info panel-border top">
@@ -161,7 +161,7 @@
 </form>
     
 
-@endsection
+
 
 @section('scripts')
 
@@ -170,6 +170,39 @@
 
 
     });
+
+
+    $(document).on("submit","#formFacturaMoto",function(e){
+        e.preventDefault();
+        let formData = new FormData(document.getElementById("formFacturaMoto"));
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            url: "/solicitud/{{$id}}/updateRevisionFacturaMoto",
+            type: "post",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data){
+                $("#pills-docs").html(data);
+                $("#pills-docs").toggleClass('show');
+                $("#pills-home").removeClass('show');
+                $("#pills-contact").removeClass('show');
+                $("#pills-profile").removeClass('show');
+                $("#pills-invoice").removeClass('show');
+                $("#pills-docs-tab").attr("href","#pills-docs");
+                $("#pills-docs-tab").toggleClass('disabled');
+                $("#pills-docs-tab").attr("aria-disabled",false);
+                $("#pills-docs-tab").click();
+            }
+        });
+
+    })
 
     
 </script>
