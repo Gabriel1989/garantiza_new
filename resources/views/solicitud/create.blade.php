@@ -19,7 +19,7 @@
             <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara == 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_adquiriente == 0)  disabled    @endif" id="pills-contact-tab" data-toggle="pill" @if($id_adquiriente != 0) href="#pills-contact" @else href="#" @endif role="tab" aria-controls="pills-contact" aria-selected="false"@if($id_adquiriente == 0) aria-disabled="true" @endif>Datos de Compra Para</a>
             </li>
-            <li class="nav-item @if($id_adquiriente != 0 || $id_comprapara != 0)  active    @endif" role="presentation">
+            <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara != 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_comprapara == 0)  disabled    @endif" id="pills-invoice-tab" data-toggle="pill" @if($id_comprapara != 0) href="#pills-invoice" @else href="#" @endif role="tab" aria-controls="pills-invoice" aria-selected="false" @if($id_comprapara == 0) aria-disabled="true" @endif>Datos de Factura</a>
             </li>
             <li class="nav-item" role="presentation">
