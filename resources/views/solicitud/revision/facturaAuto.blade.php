@@ -1,7 +1,3 @@
-@extends("themes.$themes.layout")
-
-
-
 @section('styles')
 <!-- FlowChart CSS -->
 <link rel="stylesheet" type="text/css" href="{{asset("assets/$themes/vendor/plugins/flowchart/jquery.flowchart.min.css")}}">
@@ -16,7 +12,7 @@
 </style>
 @endsection
 
-@section('contenido')
+
 
 @include('includes.form-error-message')
 <form method="post" action="{{route('solicitud.updateRevisionFacturaAuto', ['id' => $id])}}" role="form" class="form-horizontal form-revision" >
@@ -41,7 +37,7 @@
                                 <div class="row">
                                     <label for="agnoFabricacion" class="col-lg-3 control-label ">Año Fabricación:</label>
                                     <label class="col-lg-2">
-                                        <input type="input" name="agnoFabricacion" id="agnoFabricacion" class="form-control" placeholder="{{ now()->year }}" required>
+                                        <input type="input" name="agnoFabricacion" id="agnoFabricacion" value="{{ $header->AnnioFabricacion}}" class="form-control" placeholder="{{ now()->year }}" required>
                                     </label>
                                 </div>
                                 <div class="row">
@@ -161,7 +157,7 @@
 </form>
     
 
-@endsection
+
 
 @section('scripts')
 

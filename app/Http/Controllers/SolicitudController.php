@@ -499,7 +499,25 @@ class SolicitudController extends Controller
                 $codigo_cid = '';
             }
 
-            
+            //PUERTAS
+
+            if(stripos($datos,"puertas:") !== false){
+                $puertas = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"puertas:"),strlen($datos))));
+                $puertas = str_ireplace(["puertas: "],'',PdftoXML::substring($puertas,0,strpos($puertas,'<br>')));
+            }
+            else{
+                $puertas = '';
+            }
+
+            //ASIENTOS
+
+            if(stripos($datos,"asientos:") !== false){
+                $asientos = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"asientos:"),strlen($datos))));
+                $asientos = str_ireplace(["asientos: "],'',PdftoXML::substring($asientos,0,strpos($asientos,'<br>')));
+            }
+            else{
+                $asientos = '';
+            }
 
             
             $fac = new Factura();
@@ -528,6 +546,8 @@ class SolicitudController extends Controller
             $fac->rut_emisor = trim($request->get('rut_emisor'));
             $fac->fecha_emision = trim($request->get('fecha_emision_fac'));
             $fac->monto_total_factura = trim($request->get('monto_factura'));
+            $fac->puertas = trim($puertas);
+            $fac->asientos = trim($asientos);
 
             $fac->codigo_cit = trim($codigo_cit);
             $fac->codigo_cid = trim($codigo_cid);
