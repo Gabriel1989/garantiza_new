@@ -44,22 +44,46 @@ class RegistroCivil{
     public static function consultaEstadoSolicitud($parametro){
         //$wsdl = 'SpievAPI/WSDL/EstadoSolicitud_PID.wsdl';
         $url = 'http://localhost/RC_API/consultaEstadoSolicitud.php';
-        $response = HTTP::post($url, $parametro);
-        return $response;
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
     }
 
     public static function consultaSolicitudRVM($parametro){
         //$wsdl = 'SpievAPI/WSDL/PID_ConsultaSolicitudRVMI.wsdl';
         $url = 'http://localhost/RC_API/consultaSolicitudRVM.php';
-        $response = HTTP::post($url, $parametro);
-        return $response;
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
     }
 
     public static function subirDocumentos($parametro){
         //$wsdl = 'SpievAPI/WSDL/Documentos_PID.wsdl';
-        $url = 'http://localhost/RC_API/cargaDocumentosPID.php';
-        $response = HTTP::post($url, $parametro);
-        return $response;
+        $url = 'http://172.16.10.221/RC_API/cargaDocumentosPID.php';
+
+        $curl = curl_init($url);
+
+        //dd($parametro);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
     }
 
     public static function consultaLimitacion($parametro){

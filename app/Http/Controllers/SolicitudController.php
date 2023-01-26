@@ -20,6 +20,7 @@ use App\Models\Tipo_Vehiculo;
 use App\Models\TipoTramite_Solicitud;
 use App\Models\Region;
 use App\Models\Factura;
+use App\Models\SolicitudRC;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -93,6 +94,7 @@ class SolicitudController extends Controller
         $id_adquiriente = 0;
         $id_comprapara = 0;
         $id_tipo_vehiculo = 0;
+        $id_solicitud_rc = 0;
         $detalle = array();
 
         $adquirientes = Adquiriente::where('solicitud_id',$id_solicitud)->first();
@@ -101,6 +103,10 @@ class SolicitudController extends Controller
             $id_adquiriente = $adquirientes->id;
             $adquirentes = Adquiriente::getSolicitud($id_solicitud);
             $tipo_vehiculo = Solicitud::getTipoVehiculo($id_solicitud);
+            $solicitud_rc = SolicitudRC::getSolicitud($id_solicitud);
+            //dd($solicitud_rc);
+            $id_solicitud_rc = @isset($solicitud_rc[0]->numeroSol)? $solicitud_rc[0]->numeroSol : 0;
+            //dd($id_solicitud_rc);
             $comprapara = CompraPara::where('solicitud_id', $id_solicitud)->first();
             if ($comprapara != null) {
                 $id_comprapara = $comprapara->id;
@@ -120,11 +126,11 @@ class SolicitudController extends Controller
                 }
             }
             return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
-            'id_tipo_vehiculo','id_comprapara','detalle','comprapara'));
+            'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
             
         }
         //Menu adquiriente: solicitud recién creada
-        return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
+        return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
 
         
     }
@@ -146,6 +152,9 @@ class SolicitudController extends Controller
 
         $id_solicitud = 0;
         $id_adquiriente = 0;
+        $id_comprapara = 0;
+        $id_solicitud_rc = 0;
+        $solicitud_data = null;
         //dd(session('solicitud_id'));
         $id_solicitud = (session('solicitud_id') != null) ? session('solicitud_id') : 0;
         //dd($id_solicitud);
@@ -158,10 +167,12 @@ class SolicitudController extends Controller
                 $sucursales = Sucursal::all();
                 $tipo_vehiculos = Tipo_Vehiculo::all();
                 if($id_solicitud == 0){
-                    return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id_adquiriente'));
+                    $header = new stdClass;
+                    return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
                 }
                 else{
                     $header = new stdClass;
+                    $solicitud_data = Solicitud::find($id_solicitud);
                     $factura = Factura::where('id_solicitud',$id_solicitud)->first();
                     $id = $id_solicitud;
                     if($factura != null){
@@ -173,17 +184,53 @@ class SolicitudController extends Controller
                         $header->CmnaRecep = (string)strtoupper($factura->comuna);
                         $header->CiudadRecep = (string)$factura->ciudad;
                         $header->DirPostal = (string)$factura->direccion;
+
+                        $header->AnnioFabricacion = (string)$factura->agno_fabricacion;
+                        $header->Color = (string)$factura->color;
+                        $header->TipoCombustible = (string)$factura->tipo_combustible;
+                        $header->Marca = (string)$factura->marca;
+                        $header->Modelo = (string)$factura->modelo;
+                        $header->NroChasis = (string)$factura->nro_chasis;
+                        $header->NroMotor = (string)$factura->motor;
+                        $header->NroVin  = (string)$factura->nro_vin;
+                        $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
+                        $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
                     }
 
                     $adquirientes = Adquiriente::where('solicitud_id',$id_solicitud)->first();
                     if($adquirientes != null){
                         $id_adquiriente = $adquirientes->id;
                         $adquirentes = Adquiriente::getSolicitud($id_solicitud);
+                        //Menu compra para
+                        $tipo_vehiculo = Solicitud::getTipoVehiculo($id_solicitud);
+                        $solicitud_rc = SolicitudRC::getSolicitud($id_solicitud);
+                        $id_solicitud_rc = @isset($solicitud_rc->numeroSol)? $solicitud_rc->numeroSol : 0;
+                        $comprapara = CompraPara::where('solicitud_id', $id_solicitud)->first();
+                        $detalle = array();
+                        if ($comprapara != null) {
+                            $id_comprapara = $comprapara->id;
+                        }
+                        if ($tipo_vehiculo != null) {
+                            switch ($tipo_vehiculo[0]->tipo) {
+                                case 1:
+                                    $id_tipo_vehiculo = 1;
+                                    break;
 
-                        return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
+                                case 2:
+                                    $id_tipo_vehiculo = 2;
+                                    break;
+                                case 3:
+                                    $id_tipo_vehiculo = 3;
+                                    break;
+                            }
+                        }
+                        return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+                        'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
+                        //return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
                     }
                     else{
-                        return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente'));
+                        //Menu adquiriente: solicitud recién creada
+                        return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
                     }
                     
                 }
@@ -773,7 +820,8 @@ class SolicitudController extends Controller
         //return redirect()->route('solicitud.compraPara', ['id' => $id]);
         $adquirentes = Adquiriente::getSolicitud($id);
         $comunas = Comuna::allOrder();
-        return view('solicitud.compraPara', compact('id', 'comunas', 'adquirentes'));
+        $comprapara = null;
+        return view('solicitud.compraPara', compact('id', 'comunas', 'adquirentes','comprapara'));
     }
 
     public function compraPara($id){
@@ -1590,14 +1638,31 @@ class SolicitudController extends Controller
 
         $salida = json_decode($data, true);
 
-        return dd($salida);
+        //return dd($salida);
         if(isset($salida['codigoresp'])){
-            if(!$salida['codigoresp']==1 || !$salida['codigoresp']==0){
-                return view('general.errorRC', ['glosa' => $salida['glosa']]); 
+            //dd((int)$salida['codigoresp']);
+            $cod_salida_resp = (int)$salida['codigoresp'];
+            if($cod_salida_resp==1 || $cod_salida_resp==0){
+                $nro_solicitud_rc = $salida['solicitudDTO']['numeroSol'];
+                $ppu_rc = $salida['solicitudDTO']['ppu'];
+                $fecha = $salida['solicitudDTO']['fecha'];
+                $hora = $salida['solicitudDTO']['hora'];
+                $oficina = $salida['solicitudDTO']['oficina'];
+                $tipo_sol = $salida['solicitudDTO']['tipoSol'];
+
+                $solicitud_rc = new SolicitudRC();
+                $solicitud_rc->fecha = $fecha;
+                $solicitud_rc->hora = $hora;
+                $solicitud_rc->numeroSol = $nro_solicitud_rc;
+                $solicitud_rc->oficina = $oficina;
+                $solicitud_rc->ppu = $ppu_rc;
+                $solicitud_rc->tipoSol = $tipo_sol;
+                $solicitud_rc->solicitud_id = $id;
+                $solicitud_rc->save();
+                return view('solicitud.revision.docsIdentidadMoto', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
             }
             else{
-
-                return view('solicitud.revision.docsIdentidadMoto', compact('header', 'detalle', 'id', 'comunas', 'PPU'));
+                return view('general.errorRC', ['glosa' => $salida['glosa']]);
             }
         }
         //return dd($salida);
@@ -1839,6 +1904,74 @@ class SolicitudController extends Controller
 
         return view('solicitud.verSolicitudes', compact('solicitudes'));
 
+    }
+
+    public function verEstado(Request $request, $id){
+
+        $solicitud_rc = SolicitudRC::where('solicitud_id',$id)->first();
+
+        //dd($solicitud_rc);
+
+        $parametro = [
+            'PPU' => str_replace(".","",explode("-",$solicitud_rc->ppu)[0]),
+            'Oficina' => $solicitud_rc->oficina,
+            'NumeroSolicitud' => $request->get('id_solicitud_rc'),
+            'Ano' => substr($solicitud_rc->fecha,0,4)
+        ];
+
+        //dd($parametro);
+
+
+        $data = RegistroCivil::consultaEstadoSolicitud($parametro);
+
+        $salida = json_decode($data, true);
+
+        //dd($salida);
+        foreach($salida as $index => $detalle){
+            if($index != "Solicitud"){
+                echo '<label>'.$index.': </label> '.$detalle."<br>";
+            }
+            else{
+                foreach($detalle as $index2 => $detalle_sol){
+                    if($index2 != "Rechazos"){
+                        echo '<label>'.$index2.': </label> '.$detalle_sol."<br>";
+                    }
+                    else{
+                        foreach($detalle_sol as $index3 => $rechazo){
+                            echo '<label>'.$index3.': </label> '.$rechazo."<br>";
+                        }
+                    }
+                }
+            }
+        }
+
+        echo '<h2>Datos Registro RVM</h2>';
+
+        $parametro = [
+            'consumidor' => 'ACOBRO',
+            'servicio' => 'CONSULTA SOLICITUD RVM',
+            'ppu' => str_replace(".","",explode("-",$solicitud_rc->ppu)[0]),
+            'nroSolicitud' => $request->get('id_solicitud_rc'),
+            'anho' => substr($solicitud_rc->fecha,0,4)
+        ];
+
+        //dd($parametro);
+
+
+        $data = RegistroCivil::consultaSolicitudRVM($parametro);
+
+        $salida = json_decode($data, true);
+        $codigoresp = null;
+
+        foreach($salida as $index => $detalle){
+            if($index == "codigoresp"){
+                $codigoresp = $detalle;
+            }
+            if($codigoresp != null){
+                echo "<label>".$index.': </label> '.$detalle.'<br>';
+            }
+        }
+        die;
     }
 
     public function aprobacion($id)

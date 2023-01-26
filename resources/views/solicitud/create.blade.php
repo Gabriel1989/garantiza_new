@@ -19,11 +19,11 @@
             <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara == 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_adquiriente == 0)  disabled    @endif" id="pills-contact-tab" data-toggle="pill" @if($id_adquiriente != 0) href="#pills-contact" @else href="#" @endif role="tab" aria-controls="pills-contact" aria-selected="false"@if($id_adquiriente == 0) aria-disabled="true" @endif>Datos de Compra Para</a>
             </li>
-            <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara != 0)  active    @endif" role="presentation">
+            <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara != 0 && $id_solicitud_rc == 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_comprapara == 0)  disabled    @endif" id="pills-invoice-tab" data-toggle="pill" @if($id_comprapara != 0) href="#pills-invoice" @else href="#" @endif role="tab" aria-controls="pills-invoice" aria-selected="false" @if($id_comprapara == 0) aria-disabled="true" @endif>Datos de Factura</a>
             </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link disabled" id="pills-docs-tab" data-toggle="pill" href="#" role="tab" aria-controls="pills-docs" aria-selected="false" aria-disabled="true">Adjuntar Documentación</a>
+            <li class="nav-item @if($id_solicitud_rc != 0)  active @endif" role="presentation">
+                <a class="nav-link @if($id_solicitud_rc == 0)  disabled    @endif" id="pills-docs-tab" data-toggle="pill" @if($id_solicitud_rc != 0) href="#pills-docs" @else href="#" @endif role="tab" aria-controls="pills-docs" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Adjuntar Documentación</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link disabled" id="pills-limitation-tab" data-toggle="pill" href="#" role="tab" aria-controls="pills-limitation" aria-selected="false" aria-disabled="true">Configurar Limitación</a>
@@ -57,7 +57,7 @@
                                     <select name="sucursal_id" id="sucursal_id">
                                         <option value="0" selected>Seleccione Sucursal ...</option>
                                         @foreach ($sucursales as $item)
-                                        <option value="{{$item->id}}" @if(!is_null($solicitud_data->sucursal_id)) @if($solicitud_data->sucursal_id==$item->id) selected  @endif @endif>{{$item->name}}</option>
+                                        <option value="{{$item->id}}" @if(!@is_null($solicitud_data->sucursal_id)) @if($solicitud_data->sucursal_id==$item->id) selected  @endif @endif>{{$item->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -68,7 +68,7 @@
                                     <select name="tipoVehiculos_id" id="tipoVehiculos_id">
                                         <option value="0" selected>Seleccione Tipo de Vehículo ...</option>
                                         @foreach ($tipo_vehiculos as $item)
-                                        <option value="{{$item->id}}"  @if(!is_null($solicitud_data->tipoVehiculos_id))  @if($solicitud_data->tipoVehiculos_id==$item->id) selected   @endif   @endif>{{$item->name}}</option>
+                                        <option value="{{$item->id}}"  @if(!@is_null($solicitud_data->tipoVehiculos_id))  @if($solicitud_data->tipoVehiculos_id==$item->id) selected   @endif   @endif>{{$item->name}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -90,7 +90,7 @@
                                 <label for="ppu_terminacion" class="col-lg-1 control-label">PPU Disponibles:</label>
                                 <label class="col-lg-5">
                                     <select name="ppu_terminacion" id="ppu_terminacion">
-                                        @if(is_null($solicitud_data->termino_1)) 
+                                        @if(@is_null($solicitud_data->termino_1)) 
                                             <option value="" selected>Seleccione PPU ...</option>
                                             @foreach ($ppu as $item)
                                             <option value="{{$item['Terminacion']}}">{{$item['Terminacion']}}</option>
@@ -115,21 +115,21 @@
 
                                         <div class="col-lg-3">
                                             <label>Nombre o Razón Social Emisor</label>
-                                            <input class="form-control" name="razon_soc_emisor" id="razon_soc_emisor" maxlength="35" value="{{ !is_null($header->RznSoc)? $header->RznSoc : ''}}">
+                                            <input class="form-control" name="razon_soc_emisor" id="razon_soc_emisor" maxlength="35" value="{{ !@is_null($header->RznSoc)? $header->RznSoc : ''}}">
                                         </div>
 
                                         <div class="col-lg-3">
                                             <label>Rut emisor</label>
-                                            <input type="number" class="form-control" name="rut_emisor" id="rut_emisor" value="{{!is_null($header->RUTEmisor)? $header->RUTEmisor : ''}}">
+                                            <input type="number" class="form-control" name="rut_emisor" id="rut_emisor" value="{{!@is_null($header->RUTEmisor)? $header->RUTEmisor : ''}}">
                                         </div>
 
                                         <div class="col-lg-3">
                                             <label>Fecha Emisión</label>
-                                            <input class="form-control" name="fecha_emision_fac" id="fecha_emision_fac" value="{{!is_null($header->FchEmis)? $header->FchEmis : ''}}">
+                                            <input class="form-control" name="fecha_emision_fac" id="fecha_emision_fac" value="{{!@is_null($header->FchEmis)? $header->FchEmis : ''}}">
                                         </div>
                                         <div class="col-lg-3">
                                             <label>Monto Total Factura</label>
-                                            <input type="number" class="form-control" name="monto_factura" id="monto_factura" value="{{!is_null($header->MntTotal)? $header->MntTotal : ''}}">
+                                            <input type="number" class="form-control" name="monto_factura" id="monto_factura" value="{{!@is_null($header->MntTotal)? $header->MntTotal : ''}}">
                                         </div>
                                     </div>
                                     <div class="row">
@@ -159,7 +159,7 @@
                 @endif
 
             </div>
-            <div class="tab-pane fade @if($id_comprapara != 0)  show active in @endif" id="pills-invoice" role="tabpanel" aria-labelledby="pills-invoice-tab">
+            <div class="tab-pane fade @if($id_comprapara != 0 && $id_solicitud_rc == 0)  show active in @endif" id="pills-invoice" role="tabpanel" aria-labelledby="pills-invoice-tab">
                 @if ($id_comprapara != 0)
                     @if($id_tipo_vehiculo == 1)
                         @include('solicitud.revision.facturaAuto')
@@ -170,8 +170,16 @@
                     @endif
                 @endif
             </div>
-            <div class="tab-pane fade" id="pills-docs" role="tabpanel" aria-labelledby="pills-docs-tab">
-
+            <div class="tab-pane fade @if($id_solicitud_rc != 0)  active show in @endif" id="pills-docs" role="tabpanel" aria-labelledby="pills-docs-tab">
+                @if($id_solicitud_rc != 0)
+                    @if($id_tipo_vehiculo == 1)
+                        @include('solicitud.revision.docsIdentidadAuto')
+                    @elseif ($id_tipo_vehiculo == 2)
+                        @include('solicitud.revision.docsIdentidadMoto')
+                    @else
+                        @include('solicitud.revision.docsIdentidadCamion')
+                    @endif
+                @endif
             </div>
 
         </div>

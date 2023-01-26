@@ -1,7 +1,5 @@
-@extends("themes.$themes.layout")
 
-@section('contenido')
-
+<section id="content_error" class="animated fadeIn error-page sb-l-o sb-r-c">
 <div class="center-block mt50 mw800 animated fadeIn">
     <h1 class="error-title"> Error 500 </h1>
     <h2 class="error-subtitle">{{$glosa}}</h2>
@@ -24,13 +22,13 @@
 
     </div>
 </div>
+</section>
 
-@endsection
 
 @section('scripts')
 <script type="text/javascript">
     jQuery(document).ready(function() {
-        $('body').addClass('error-page sb-l-o sb-r-c')
+        $('#content_error').addClass('error-page sb-l-o sb-r-c')
     });
 </script>
 @endsection

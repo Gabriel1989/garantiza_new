@@ -21,7 +21,7 @@
 @include('includes.form-error-message')
 <form method="post" id="formFacturaMoto" old-action="{{route('solicitud.updateRevisionFacturaMoto', ['id' => $id])}}" role="form" class="form-horizontal form-revision" >
     @csrf
-    @method('PUT')
+    @method('post')
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
             <span class="panel-title">Revisión de Solicitud N° {{$id}} - Datos de Factura</span>

@@ -113,10 +113,13 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
 
     Route::get('solicitud/{id}/show', 'SolicitudController@show')->name('solicitud.show');
     Route::get('solicitud/verSolicitudes', 'SolicitudController@verSolicitudes')->name('solicitud.verSolicitudes');
+    Route::post('solicitud/{id}/verEstadoSolicitud','SolicitudController@verEstado')->name('solicitud.estadoSolicitud');
 
     // Documentos
     Route::get('documento/{id}/create', 'DocumentoController@create')->name('documento.create');
     Route::post('documento', 'DocumentoController@store')->name('documento.store');
+
+    Route::post('documento/{id}/cargadocs', 'DocumentoController@CargaDocumentos')->name('documento.cargadocs.rc');
 });
 
 Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {

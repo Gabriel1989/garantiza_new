@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Documento;
 use App\Models\Para;
 use App\Models\Solicitud;
+use App\Models\SolicitudRC;
+use App\Models\CompraPara;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
+use App\Helpers\RegistroCivil;
 
 class DocumentoController extends Controller
 {
@@ -182,5 +185,52 @@ class DocumentoController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function CargaDocumentos(Request $request, $id){
+
+        $solicitud_rc = SolicitudRC::getSolicitud($id);
+
+        //dd($request);
+        $parametros = [
+            'consumidor' => 'ACOBRO',
+            'servicio' => 'INGRESO DOCUMENTOS RVM',
+            'file' => base64_encode($request->file('Cedula_PDF')),
+            'patente' => str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]),
+            'nro' => $solicitud_rc[0]->numeroSol,
+            'tipo_sol' => $solicitud_rc[0]->tipoSol,
+            'tipo_doc' => "PDF",
+            'clasificacion' => 1,
+            'fecha_ing' => date('d-m-Y'),
+            'nombre' => $request->file('Cedula_PDF')->getClientOriginalName()
+        ];
+
+        //dd($parametros);
+
+        $data = RegistroCivil::subirDocumentos(json_encode($parametros));
+        //var_dump($data); die;
+        $salida = json_decode($data, true);
+
+        var_dump($salida); die;
+
+        if(!is_null(CompraPara::getSolicitud($id))){
+            $parametros = array(
+                'consumidor' => 'ACOBRO',
+                'servicio' => 'INGRESO DOCUMENTOS RVM',
+                'file' => base64_encode($request->file('Cedula_Para_PDF')),
+                'patente' => str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]),
+                'nro' => $solicitud_rc[0]->numeroSol,
+                'tipo_sol' => $solicitud_rc[0]->tipoSol,
+                'tipo_doc' => "PDF",
+                'clasificacion' => 1,
+                'fecha_ing' => date('d-m-Y'),
+                'nombre' => $request->file('Cedula_Para_PDF')->getClientOriginalName()
+            );
+    
+            $data = RegistroCivil::subirDocumentos($parametros);
+            $salida = json_decode($data, true);
+
+        }
     }
 }

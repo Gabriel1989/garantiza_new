@@ -98,6 +98,14 @@ class Solicitud extends Model
                      'sucursales.name as sucursales')
             ->get();
     }
+
+
+    public static function getSolicitudRC($id){
+        return DB::table('solicitudes_rc')
+            ->where('solicitudes_rc.solicitud_id', '=', $id)
+            ->select('solicitudes_rc.*')
+            ->get();
+    }
 }
 
 
