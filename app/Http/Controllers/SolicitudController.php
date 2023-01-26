@@ -504,6 +504,10 @@ class SolicitudController extends Controller
             if(stripos($datos,"puertas:") !== false){
                 $puertas = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"puertas:"),strlen($datos))));
                 $puertas = str_ireplace(["puertas: "],'',PdftoXML::substring($puertas,0,strpos($puertas,'<br>')));
+                if(stripos($puertas," ") !== false){
+                    $puertas = trim($puertas);
+                    $puertas = explode(" ",$puertas)[0];
+                }
             }
             else{
                 $puertas = '';
@@ -514,6 +518,10 @@ class SolicitudController extends Controller
             if(stripos($datos,"asientos:") !== false){
                 $asientos = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"asientos:"),strlen($datos))));
                 $asientos = str_ireplace(["asientos: "],'',PdftoXML::substring($asientos,0,strpos($asientos,'<br>')));
+                if(stripos($asientos," ") !== false){
+                    $asientos = trim($asientos);
+                    $asientos = explode(" ",$asientos)[0];
+                }
             }
             else{
                 $asientos = '';
@@ -600,9 +608,13 @@ class SolicitudController extends Controller
             echo "<br>";
             echo $codigo_cit;
             echo "<br>";
-            echo $codigo_cid;*/
-
-            //die;
+            echo $codigo_cid;
+            echo "<br>";
+            echo $puertas;
+            echo "<br>";
+            echo $asientos;
+            
+            die;*/
 
             
         }else{
