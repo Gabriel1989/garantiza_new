@@ -40,13 +40,18 @@ use App\Models\CompraPara;
                         <label id="lbl_Cedula_PDF"></label>
                     </div>
                 </div>
-                @if(!is_null(CompraPara::getSolicitud($id)))
+                <?php
+                    //dd(CompraPara::getSolicitud($id));
+
+                ?>
+
+                @if(count(CompraPara::getSolicitud($id)) > 0)
                 <div class="col-sm-4 col-lg-4 mb5">
                     <div class="col-lg-6">
-                        <span class="btn btn-warning fileinput-button col-sm-12" name="CedulaParaPDF" id="CedulaParaPDF">
+                        <span class="btn btn-warning fileinput-button col-sm-12" name="CedulaParaPDF" id="CedulaParaPDF" style="white-space: normal;">
                             Seleccionar Cédula Para PDF</span>
                     </div>
-                    <div class="col-lg-6">
+                    <div class="col-lg-3">
                         <input id="Cedula_Para_PDF" name="Cedula_Para_PDF" type="file" style="display:none" accept="application/pdf" />
                         <label id="lbl_Cedula_Para_PDF"></label>
                     </div>

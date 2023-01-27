@@ -21,6 +21,7 @@ use App\Models\TipoTramite_Solicitud;
 use App\Models\Region;
 use App\Models\Factura;
 use App\Models\SolicitudRC;
+use App\Models\NoPara;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -44,7 +45,22 @@ class SolicitudController extends Controller
     public function solicitaPPU(){
 
         $region = Region::all();
-        return view('solicitud.solicitarPPU', compact('region'));
+        $solicita_ppu = false;
+        $sucursales = Sucursal::all();
+        $tipo_vehiculos = Tipo_Vehiculo::all();
+        $solicitud_data = null;
+        $ppu = array();
+        $comunas = Comuna::allOrder();
+        $id_solicitud = 0;
+        $id_adquiriente = 0;
+        $id_comprapara = 0;
+        $id_solicitud_rc = 0;
+        $header = new stdClass;
+        session()->forget('solicitud_id');
+
+        //return view('solicitud.solicitarPPU', compact('region'));
+
+        return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
     }
 
     public function continuarSolicitud($id){
@@ -57,6 +73,8 @@ class SolicitudController extends Controller
         $sucursales = Sucursal::all();
         $tipo_vehiculos = Tipo_Vehiculo::all();
         $ppu = array();
+        $region = Region::all();
+        $solicita_ppu = true;
         if($factura != null){
             $header->RUTRecep = (string)$factura->rut_receptor;
             $header->RznSocRecep = (string)$factura->razon_social_recep;
@@ -95,13 +113,11 @@ class SolicitudController extends Controller
             
         }
 
-
         $id_adquiriente = 0;
         $id_comprapara = 0;
         $id_tipo_vehiculo = 0;
         $id_solicitud_rc = 0;
         $detalle = array();
-
         $adquirientes = Adquiriente::where('solicitud_id',$id_solicitud)->first();
         if($adquirientes != null){
             //Menu compra para
@@ -115,6 +131,15 @@ class SolicitudController extends Controller
             $comprapara = CompraPara::where('solicitud_id', $id_solicitud)->first();
             if ($comprapara != null) {
                 $id_comprapara = $comprapara->id;
+            }
+            else{
+                $no_para = NoPara::where('solicitud_id', $id_solicitud)->first();
+                if($no_para != null){
+                    $id_comprapara = $no_para->id;
+                }
+                else{
+                    $id_comprapara = 0;
+                }
             }
             if ($tipo_vehiculo != null) {
                 switch ($tipo_vehiculo[0]->tipo) {
@@ -130,14 +155,11 @@ class SolicitudController extends Controller
                         break;
                 }
             }
-            return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+            return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
             'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
-            
         }
         //Menu adquiriente: solicitud recién creada
-        return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
-
-        
+        return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
     }
 
 
@@ -163,7 +185,8 @@ class SolicitudController extends Controller
         //dd(session('solicitud_id'));
         $id_solicitud = (session('solicitud_id') != null) ? session('solicitud_id') : 0;
         //dd($id_solicitud);
-        
+        $solicita_ppu = true;
+        $region = Region::all();
 
         if(isset($ppu['codigoresp'])){
 
@@ -171,9 +194,10 @@ class SolicitudController extends Controller
                 $ppu = $ppu['PPU'];
                 $sucursales = Sucursal::all();
                 $tipo_vehiculos = Tipo_Vehiculo::all();
+                
                 if($id_solicitud == 0){
                     $header = new stdClass;
-                    return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
+                    return view('solicitud.createsolicitudnew', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
                 }
                 else{
                     $header = new stdClass;
@@ -220,6 +244,15 @@ class SolicitudController extends Controller
                         if ($comprapara != null) {
                             $id_comprapara = $comprapara->id;
                         }
+                        else{
+                            $no_para = NoPara::where('solicitud_id', $id_solicitud)->first();
+                            if($no_para != null){
+                                $id_comprapara = $no_para->id;
+                            }
+                            else{
+                                $id_comprapara = 0;
+                            }
+                        }
                         if ($tipo_vehiculo != null) {
                             switch ($tipo_vehiculo[0]->tipo) {
                                 case 1:
@@ -234,13 +267,13 @@ class SolicitudController extends Controller
                                     break;
                             }
                         }
-                        return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+                        return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
                         'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
                         //return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
                     }
                     else{
                         //Menu adquiriente: solicitud recién creada
-                        return view('solicitud.create', compact('sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
+                        return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
                     }
                     
                 }
@@ -494,6 +527,10 @@ class SolicitudController extends Controller
             if(stripos($datos,"cit:") !== false){
                 $codigo_cit = str_replace("&#160;",'',trim(substr($datos,stripos($datos,"cit:"),strlen($datos))));
                 $codigo_cit = str_ireplace(["cit: "],'',PdftoXML::substring($codigo_cit,0,strpos($codigo_cit,'<br>')));
+                if(stripos($codigo_cit," ") !== false){
+                    $codigo_cit = trim($codigo_cit);
+                    $codigo_cit = explode(" ",$codigo_cit)[0];
+                }
             }
             else{
                 $codigo_cit = '';
@@ -520,7 +557,7 @@ class SolicitudController extends Controller
                 }
             }
             else{
-                $puertas = '';
+                $puertas = 0;
             }
 
             //ASIENTOS
@@ -534,7 +571,7 @@ class SolicitudController extends Controller
                 }
             }
             else{
-                $asientos = '';
+                $asientos = 0;
             }
 
             
@@ -576,53 +613,53 @@ class SolicitudController extends Controller
             //echo $datos;
             
             /*
-            echo trim($chasis);
+            echo 'CHASIS: '.trim($chasis);
             echo "<br>";
-            echo trim($nro_vin);
+            echo 'NRO VIN: '.trim($nro_vin);
             echo "<br>";
-            echo trim($motor);
+            echo 'MOTOR: '.trim($motor);
             echo "<br>";
-            echo trim($marca);
+            echo 'MARCA: '.trim($marca);
             echo "<br>";
-            echo trim($modelo);
+            echo 'MODELO: '.trim($modelo);
             echo "<br>";
-            echo trim($peso_bruto_vehicular);
+            echo 'PBV: '.trim($peso_bruto_vehicular);
             echo "<br>";
-            echo $tipo_vehiculo2;
+            echo 'TIPO VEHICULO: '.$tipo_vehiculo2;
             echo "<br>";
-            echo $combustible;
+            echo 'COMBUSTIBLE: '.$combustible;
             echo "<br>";
-            echo $anno;
+            echo 'AÑO: '.$anno;
             echo "<br>";
-            echo $color;
+            echo 'COLOR: '.$color;
             echo "<br>";
-            echo $tipo_carga;
+            echo 'TIPO CARGA: '.$tipo_carga;
             echo "<br>";
-            echo $tipo_pbv;
+            echo 'TIPO PBV: '.$tipo_pbv;
             echo "<br>";
-            echo $num_factura;
+            echo 'NUM FACTURA: '.$num_factura;
             echo "<br>";
-            echo $giro;
+            echo 'GIRO: '.$giro;
             echo "<br>";
-            echo $direccion;
+            echo 'DIRECCION: '.$direccion;
             echo "<br>";
-            echo $comuna;
+            echo 'COMUNA: '.$comuna;
             echo "<br>";
-            echo $ciudad;
+            echo 'CIUDAD: '.$ciudad;
             echo "<br>";
-            echo $contacto;
+            echo 'CONTACTO: '.$contacto;
             echo "<br>";
-            echo $rut_recep;
+            echo 'RUT RECEPTOR: '.$rut_recep;
             echo "<br>";
-            echo $razon_social;
+            echo 'RAZON SOCIAL: '.$razon_social;
             echo "<br>";
-            echo $codigo_cit;
+            echo 'CIT: '.$codigo_cit;
             echo "<br>";
-            echo $codigo_cid;
+            echo 'CID: '.$codigo_cid;
             echo "<br>";
-            echo $puertas;
+            echo 'PUERTAS: '.$puertas;
             echo "<br>";
-            echo $asientos;
+            echo 'ASIENTOS: '.$asientos;
             
             die;*/
 
@@ -873,62 +910,77 @@ class SolicitudController extends Controller
     }
 
     public function saveCompraPara(Request $request, $id){
-        $errors = new MessageBag();
-        if(!is_null($request->rut)){
-            if(is_null($request->nombre)) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Compra/Para.');
-            if(is_null($request->calle)) $errors->add('Garantiza', 'Debe Ingresar la dirección del Compra/Para.');
-            if(is_null($request->numero)) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Compra/Para.');
-            if($request->comuna=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Compra/Para.');
-            if(is_null($request->email)) $errors->add('Garantiza', 'Debe Ingresar el email del Compra/Para.');
-            if(is_null($request->telefono)) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Compra/Para.');
-        }
-        if($errors->count()>0) return redirect()->route('solicitud.compraPara', ['id' => $id])->withErrors($errors);
-
-        DB::beginTransaction();
-
-
-        if($request->input('id_comprapara') != 0){
-            //Edita adquiriente principal
-            $id_comprapara = $request->input('id_comprapara');
-            $para = CompraPara::find($id_comprapara);
-            $para->rut = $request->get('rut');
-            $para->nombre = $request->get('nombre');
-            $para->aPaterno = $request->get('aPaterno');
-            $para->aMaterno = $request->get('aMaterno');
-            $para->calle = $request->get('calle');
-            $para->numero = $request->get('numero');
-            $para->rDomicilio = $request->get('rDireccion');
-            $para->comuna = $request->get('comuna');
-            $para->telefono = $request->get('telefono');
-            $para->email = $request->get('email');
-            $para->tipo = $request->get('tipoPersona');
-            $para->save();
-            DB::commit();
-
-            return true;
-        }
-
-        // Graba adquiriente principal
-        if(!is_null($request->rut)){
-            $para = new CompraPara();
-            $para->solicitud_id = $id;
-            $para->rut = $request->get('rut');
-            $para->nombre = $request->get('nombre');
-            $para->aPaterno = $request->get('aPaterno');
-            $para->aMaterno = $request->get('aMaterno');
-            $para->calle = $request->get('calle');
-            $para->numero = $request->get('numero');
-            $para->rDomicilio = $request->get('rDireccion');
-            $para->comuna = $request->get('comuna');
-            $para->telefono = $request->get('telefono');
-            $para->email = $request->get('email');
-            $para->tipo = $request->get('tipoPersona');
-        
-            if(!$para->save()){
-                DB::rollBack();
-                $errors->add('Garantiza', 'Problemas al grabar CompraPara.');
-                return redirect()->route('solicitud.compraPara', ['id' => $id])->withErrors($errors);
+        $no_guardacomprapara = (bool)$request->input('no_guardar');
+        if (!$no_guardacomprapara) {
+            $errors = new MessageBag();
+            if (!is_null($request->rut)) {
+                if (is_null($request->nombre))
+                    $errors->add('Garantiza', 'Debe Ingresar el Nombre del Compra/Para.');
+                if (is_null($request->calle))
+                    $errors->add('Garantiza', 'Debe Ingresar la dirección del Compra/Para.');
+                if (is_null($request->numero))
+                    $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Compra/Para.');
+                if ($request->comuna == "0")
+                    $errors->add('Garantiza', 'Debe Ingresar la comuna del Compra/Para.');
+                if (is_null($request->email))
+                    $errors->add('Garantiza', 'Debe Ingresar el email del Compra/Para.');
+                if (is_null($request->telefono))
+                    $errors->add('Garantiza', 'Debe Ingresar el teléfono del Compra/Para.');
             }
+            if ($errors->count() > 0)
+                return redirect()->route('solicitud.compraPara', ['id' => $id])->withErrors($errors);
+
+            DB::beginTransaction();
+
+
+            if ($request->input('id_comprapara') != 0) {
+                //Edita adquiriente principal
+                $id_comprapara = $request->input('id_comprapara');
+                $para = CompraPara::find($id_comprapara);
+                $para->rut = $request->get('rut');
+                $para->nombre = $request->get('nombre');
+                $para->aPaterno = $request->get('aPaterno');
+                $para->aMaterno = $request->get('aMaterno');
+                $para->calle = $request->get('calle');
+                $para->numero = $request->get('numero');
+                $para->rDomicilio = $request->get('rDireccion');
+                $para->comuna = $request->get('comuna');
+                $para->telefono = $request->get('telefono');
+                $para->email = $request->get('email');
+                $para->tipo = $request->get('tipoPersona');
+                $para->save();
+                DB::commit();
+
+                return true;
+            }
+
+            // Graba adquiriente principal
+            if (!is_null($request->rut)) {
+                $para = new CompraPara();
+                $para->solicitud_id = $id;
+                $para->rut = $request->get('rut');
+                $para->nombre = $request->get('nombre');
+                $para->aPaterno = $request->get('aPaterno');
+                $para->aMaterno = $request->get('aMaterno');
+                $para->calle = $request->get('calle');
+                $para->numero = $request->get('numero');
+                $para->rDomicilio = $request->get('rDireccion');
+                $para->comuna = $request->get('comuna');
+                $para->telefono = $request->get('telefono');
+                $para->email = $request->get('email');
+                $para->tipo = $request->get('tipoPersona');
+
+                if (!$para->save()) {
+                    DB::rollBack();
+                    $errors->add('Garantiza', 'Problemas al grabar CompraPara.');
+                    return redirect()->route('solicitud.compraPara', ['id' => $id])->withErrors($errors);
+                }
+            }
+        }
+        else{
+            $no_para = new NoPara();
+            $no_para->solicitud_id = $id;
+            $no_para->save();
         }
 
         $solicitud = Solicitud::find($id);
@@ -1577,6 +1629,7 @@ class SolicitudController extends Controller
         $adquiriente = Adquiriente::where('solicitud_id',$id)->first();
         $compraPara = Para::where('solicitud_id',$id)->first();
         $solicitud = Solicitud::where('id',$id)->first();
+        
 
         if($factura != null){        
 
@@ -1624,8 +1677,9 @@ class SolicitudController extends Controller
             $pbv = round($pbv);
         }
 
-        $parametro = [
-            'compraParaDTO' => [
+        $datosCompraPara = null;
+        if($compraPara != null){
+            $datosCompraPara = array(
                 'calidad' => $compraPara->tipo,
                 'calle' => $compraPara->calle,
                 'comuna' => $compraPara->comuna,
@@ -1639,7 +1693,27 @@ class SolicitudController extends Controller
                 'aPaterno' => $compraPara->aPaterno,
                 'cPostal' => '',
                 'rDomicilio' => $compraPara->rDomicilio
-            ],
+            );
+        }
+        else{
+            $datosCompraPara = array(
+                'calidad' => '',
+                'calle' => '',
+                'comuna' => '',
+                'email' => '',
+                'ltrDomicilio' => '',
+                'nombresRazon' => '',
+                'nroDomicilio' => '',
+                'runRut' => '',
+                'telefono' => '',
+                'aMaterno' => '',
+                'aPaterno' => '',
+                'cPostal' => '',
+                'rDomicilio' => ''
+            );
+        }
+
+        $parametro = [
             'comunidadDTO' => [
                 'cantidad' => '0',
                 'esComunidad' => 'NO'
@@ -1717,6 +1791,7 @@ class SolicitudController extends Controller
                 'rDomicilio' => ''
             )
         ];
+        $parametro['compraParaDTO'] = $datosCompraPara;
         // Llamar RC
         $parametros = array(
             'llave' => array(
@@ -1756,6 +1831,10 @@ class SolicitudController extends Controller
                 $solicitud_rc->tipoSol = $tipo_sol;
                 $solicitud_rc->solicitud_id = $id;
                 $solicitud_rc->save();
+
+                sleep(4);
+
+                $solicitud_rc = SolicitudRC::getSolicitud($id);
                 return view('solicitud.revision.docsIdentidadMoto', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
             }
             else{
@@ -1776,6 +1855,8 @@ class SolicitudController extends Controller
         $adquiriente = Adquiriente::where('solicitud_id',$id)->first();
         $compraPara = Para::where('solicitud_id',$id)->first();
         $solicitud = Solicitud::where('id',$id)->first();
+
+        //dd($compraPara);
 
         $exige_impuestoverde = false;
         $tipo_vehiculo = trim($request->input('tipoVehiculo'));
@@ -1871,13 +1952,10 @@ class SolicitudController extends Controller
             $header->MntTotal = (string)$factura->monto_total_factura;
         }
 
-        
 
-        //dd('impuesto verde: '.$exige_impuestoverde);
-
-        // Generar Json
-        $parametro = [
-            'compraParaDTO' => [
+        $datosCompraPara = null;
+        if($compraPara != null){
+            $datosCompraPara = array(
                 'calidad' => $compraPara->tipo,
                 'calle' => $compraPara->calle,
                 'comuna' => $compraPara->comuna,
@@ -1891,7 +1969,32 @@ class SolicitudController extends Controller
                 'aPaterno' => $compraPara->aPaterno,
                 'cPostal' => '',
                 'rDomicilio' => $compraPara->rDomicilio
-            ],
+            );
+        }
+        else{
+            $datosCompraPara = array(
+                'calidad' => '',
+                'calle' => '',
+                'comuna' => '',
+                'email' => '',
+                'ltrDomicilio' => '',
+                'nombresRazon' => '',
+                'nroDomicilio' => '',
+                'runRut' => '',
+                'telefono' => '',
+                'aMaterno' => '',
+                'aPaterno' => '',
+                'cPostal' => '',
+                'rDomicilio' => ''
+            );
+        }
+
+        
+
+        //dd('impuesto verde: '.$exige_impuestoverde);
+
+        // Generar Json
+        $parametro = [
             'comunidadDTO' => [
                 'cantidad' => '0',
                 'esComunidad' => 'NO'
@@ -1979,6 +2082,7 @@ class SolicitudController extends Controller
                 'ppu' => ''
             )
         ];
+        $parametro['compraParaDTO'] = $datosCompraPara;
         // Llamar RC
         $parametros = array(
             'llave' => array(
@@ -2018,6 +2122,9 @@ class SolicitudController extends Controller
                 $solicitud_rc->tipoSol = $tipo_sol;
                 $solicitud_rc->solicitud_id = $id;
                 $solicitud_rc->save();
+
+                sleep(4);
+                $solicitud_rc = SolicitudRC::getSolicitud($id);
                 return view('solicitud.revision.docsIdentidadAuto', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
             }
             else{

@@ -163,7 +163,7 @@
 
 
 
-@section('scripts')
+
 
 <script type="text/javascript">
     jQuery(document).ready(function() {
@@ -199,6 +199,7 @@
                 $("#pills-docs-tab").toggleClass('disabled');
                 $("#pills-docs-tab").attr("aria-disabled",false);
                 $("#pills-docs-tab").click();
+                
             }
         });
 
@@ -207,4 +208,4 @@
     
 </script>
 
-@endsection
+

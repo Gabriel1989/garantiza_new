@@ -1,12 +1,12 @@
-@extends("themes.$themes.layout")
+
 
 @section('styles')
 @endsection
 
-@section('contenido')
+
 @include('includes.form-error-message')
 @include('includes.mensaje')
-<form enctype="multipart/form-data" class="form-documentos form-horizontal form-solicitud" action="{{route('solicitud.consultaPPU')}}" method="POST">
+<form enctype="multipart/form-data" id="formSolicitaPPU" class="form-documentos form-horizontal form-solicitud" old-action="{{route('solicitud.consultaPPU')}}" method="POST">
     @csrf
     @method('POST')
     <div class="panel panel-info panel-border top">
@@ -52,12 +52,11 @@
 </div>
 </form>
 
-@endsection
-
 @section('scripts')
 <script>
     $(document).ready(function() {
 
+        /*
         $('#sucursal_id').multiselect();
         $('#tipoVehiculos_id').multiselect();
 
@@ -68,9 +67,10 @@
         $('#Factura_XML').on('change', function(){
             $('#lbl_Factura_XML').text($('#Factura_XML').val());
         });
-
+        */
     });
 
+    /*
     $(".form-documentos").on('submit', function () {
         if($('#sucursal_id').val()=='0'){
             new PNotify({
@@ -136,6 +136,31 @@
         };
 
         
+    });*/
+
+
+    $(document).on("submit","#formSolicitaPPU",function(e){
+        e.preventDefault();
+
+        let formData = new FormData(document.getElementById("formSolicitaPPU"));
+
+        $.ajax({
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "post",
+            url: "{{route('solicitud.consultaPPU')}}",
+            success: function(data){
+                $("#pills-home").html(data);
+                $("#pills-home").toggleClass('show');
+                $("#pills-ppu").removeClass('show');
+                $("#pills-home-tab").attr("href","#pills-home");
+                $("#pills-home-tab").toggleClass('disabled');
+                $("#pills-home-tab").attr("aria-disabled",false);
+                $("#pills-home-tab").click();
+            }
+        })
+
     });
 
 </script>

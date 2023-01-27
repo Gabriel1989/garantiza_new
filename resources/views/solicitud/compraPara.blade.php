@@ -106,6 +106,7 @@
         </div>
     <div class="panel-footer">
         <button type="submit" class="btn btn-system"> <li class="fa fa-save"></li> Grabar y Continuar</button>
+        <button type="button" class="btn btn-warning btnContinuaSolicitud"><li class="fa fa-arrow-right"></li> No registrar Compra Para y Continuar </button>
     </div>
 </div>
 </form>
@@ -162,9 +163,46 @@
 
     });
 
+
+    $(document).on("click",".btnContinuaSolicitud",function(e){
+        e.preventDefault();
+        let formData = new FormData(document.getElementById("form_compraPara"));
+        formData.append('no_guardar',true);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            url: "/solicitud/{{$id}}/saveCompraPara",
+            data: formData,
+            processData: false,
+            contentType: false,
+            type: "POST",
+            success: function(data){
+                
+                $("#pills-invoice").html(data);
+                $("#pills-invoice").toggleClass('show');
+                $("#pills-home").removeClass('show');
+                $("#pills-contact").removeClass('show');
+                $("#pills-profile").removeClass('show');
+                $("#pills-invoice-tab").attr("href","#pills-invoice");
+                $("#pills-invoice-tab").toggleClass('disabled');
+                $("#pills-invoice-tab").attr("aria-disabled",false);
+                $("#pills-invoice-tab").click();
+                
+            }
+        });
+
+
+
+    })
+
     $(document).on("submit","#form_compraPara",function(e){
         e.preventDefault();
         let formData = new FormData(document.getElementById("form_compraPara"));
+        formData.append('no_guardar',false);
 
         $.ajaxSetup({
             headers: {
