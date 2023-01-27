@@ -95,13 +95,13 @@
                                 <div class="row">
                                     <label for="nroSerie" class="col-lg-3 control-label ">N° de Serie:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="nroSerie" id="nroSerie" class="form-control" placeholder="">
+                                        <input type="input" name="nroSerie" id="nroSerie" class="form-control" placeholder="" required>
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="nroVin" class="col-lg-3 control-label ">N° de VIN:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" value="{{ $header->NroVin}}" name="nroVin" id="nroVin" class="form-control" placeholder="">
+                                        <input type="input" value="{{ $header->NroVin}}" name="nroVin" id="nroVin" class="form-control" placeholder="" required>
                                     </label>
                                 </div>
                                 <div class="row">

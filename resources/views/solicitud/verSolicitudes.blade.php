@@ -33,7 +33,7 @@
                                 <td scope="row">{{$item->id}}</td>
                                 <td>{{date('d-m-Y h:i A', strtotime($item->created_at))}}</td>
                                 <td>{{$item->sucursales}}</td>
-                                <td>{{$item->cliente->razon_social_recep}}</td>
+                                <td>{{@$item->cliente->razon_social_recep}}</td>
                                 <td>
                                     <?php
                                     $solicitud_rc = Solicitud::getSolicitudRC($item->id);

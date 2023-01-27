@@ -77,6 +77,11 @@ class SolicitudController extends Controller
             $header->NroVin  = (string)$factura->nro_vin;
             $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
             $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
+            $header->Asientos = (string) $factura->asientos;
+            $header->Puertas = (string) $factura->puertas;
+            $header->CitModelo = (string) $factura->codigo_cit;
+            $header->TipoPBV = (string) $factura->tipo_pbv;
+            $header->TipoCarga = (string) $factura->tipo_carga;
 
             $header->FchEmis = (string)$factura->fecha_emision;
             $header->RUTEmisor = (string)$factura->rut_emisor;
@@ -195,6 +200,11 @@ class SolicitudController extends Controller
                         $header->NroVin  = (string)$factura->nro_vin;
                         $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
                         $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
+                        $header->Asientos = (string) $factura->asientos;
+                        $header->Puertas = (string) $factura->puertas;
+                        $header->CitModelo = (string) $factura->codigo_cit;
+                        $header->TipoPBV = (string) $factura->tipo_pbv;
+                        $header->TipoCarga = (string) $factura->tipo_carga;
                     }
 
                     $adquirientes = Adquiriente::where('solicitud_id',$id_solicitud)->first();
@@ -937,6 +947,56 @@ class SolicitudController extends Controller
         switch($solicitud[0]->tipo){
             case 1:
                 $ruta = 'solicitud.datosAuto';
+                $header = new stdClass;
+                $detail = new stdClass;
+                $detalle = array();
+                $factura = Factura::where('id_solicitud',$id)->first();
+                if($factura != null){
+
+                    $header->Folio = (string)$factura->num_factura;
+                    $header->FchEmis = '';
+                    $header->RUTEmisor = '';
+                    $header->RznSoc = '';
+                    $header->GiroEmis = '';
+                    $header->Sucursal = '';
+                    $header->DirOrigen = '';
+                    $header->CmnaOrigen = '';
+                    $header->CiudadOrigen = '';
+
+                    $header->RUTRecep = (string)$factura->rut_receptor;
+                    $header->RznSocRecep = (string)$factura->razon_social_recep;
+                    $header->GiroRecep = (string)$factura->giro;
+                    $header->Contacto = (string)$factura->contacto;
+                    $header->DirRecep = (string)$factura->direccion;
+                    $header->CmnaRecep = (string)$factura->comuna;
+                    $header->CiudadRecep = (string)$factura->ciudad;
+                    $header->DirPostal = (string)$factura->direccion;
+
+                    $header->AnnioFabricacion = (string)$factura->agno_fabricacion;
+                    $header->Color = (string)$factura->color;
+                    $header->TipoCombustible = (string)$factura->tipo_combustible;
+                    $header->Marca = (string)$factura->marca;
+                    $header->Modelo = (string)$factura->modelo;
+                    $header->NroChasis = (string)$factura->nro_chasis;
+                    $header->NroMotor = (string)$factura->motor;
+                    $header->NroVin  = (string)$factura->nro_vin;
+                    $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
+                    $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
+                    $header->Asientos = (string) $factura->asientos;
+                    $header->Puertas = (string) $factura->puertas;
+                    $header->CitModelo = (string) $factura->codigo_cit;
+                    $header->TipoPBV = (string) $factura->tipo_pbv;
+                    $header->TipoCarga = (string) $factura->tipo_carga;
+
+                    $header->MntNeto = '';
+                    $header->MntExe = '';
+                    $header->TasaIVA = '';
+                    $header->IVA = '';
+                    $header->MntTotal = '';
+                }
+                $comunas = Comuna::allOrder();
+
+                return view('solicitud.revision.facturaAuto', compact('id', 'comunas', 'header', 'detalle'));
                 break;
             case 2:
                 $ruta = 'solicitud.datosMoto';
@@ -978,6 +1038,11 @@ class SolicitudController extends Controller
                     $header->NroVin  = (string)$factura->nro_vin;
                     $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
                     $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
+                    $header->Asientos = (string) $factura->asientos;
+                    $header->Puertas = (string) $factura->puertas;
+                    $header->CitModelo = (string) $factura->codigo_cit;
+                    $header->TipoPBV = (string) $factura->tipo_pbv;
+                    $header->TipoCarga = (string) $factura->tipo_carga;
 
                     $header->MntNeto = '';
                     $header->MntExe = '';
@@ -1707,61 +1772,125 @@ class SolicitudController extends Controller
         $header = new stdClass;
         $detail = new stdClass;
 
-        $documentos = Solicitud::DocumentosSolicitud($id);
-        $file = $documentos->where('tipo_documento_id', '1')->first()->name;
+        $factura = Factura::where('id_solicitud',$id)->first();
+        $adquiriente = Adquiriente::where('solicitud_id',$id)->first();
+        $compraPara = Para::where('solicitud_id',$id)->first();
+        $solicitud = Solicitud::where('id',$id)->first();
 
-        if (Storage::exists($file)) {
-            $contents = Storage::get($file);
-            $xmlResponse = simplexml_load_string($contents);
-            
-            if($xmlResponse->Documento->Encabezado){
-                $header->Folio = (string)$xmlResponse->Documento->Encabezado->IdDoc->Folio;
-                $header->FchEmis = (string)$xmlResponse->Documento->Encabezado->IdDoc->FchEmis;
-                $header->RUTEmisor = (string)$xmlResponse->Documento->Encabezado->Emisor->RUTEmisor;
-                $header->RznSoc = (string)$xmlResponse->Documento->Encabezado->Emisor->RznSoc;
-                $header->GiroEmis = (string)$xmlResponse->Documento->Encabezado->Emisor->GiroEmis;
-                $header->Sucursal = (string)$xmlResponse->Documento->Encabezado->Emisor->Sucursal;
-                $header->DirOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->DirOrigen;
-                $header->CmnaOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CmnaOrigen;
-                $header->CiudadOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CiudadOrigen;
-                $header->RUTRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->RUTRecep;
-                $header->RznSocRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->RznSocRecep;
-                $header->GiroRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->GiroRecep;
-                $header->Contacto = (string)$xmlResponse->Documento->Encabezado->Receptor->Contacto;
-                $header->DirRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->DirRecep;
-                $header->CmnaRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->CmnaRecep;
-                $header->CiudadRecep = (string)$xmlResponse->Documento->Encabezado->Receptor->CiudadRecep;
-                $header->DirPostal = (string)$xmlResponse->Documento->Encabezado->Receptor->DirPostal;
-                $header->MntNeto = (string)$xmlResponse->Documento->Encabezado->Totales->MntNeto;
-                $header->MntExe = (string)$xmlResponse->Documento->Encabezado->Totales->MntExe;
-                $header->TasaIVA = (string)$xmlResponse->Documento->Encabezado->Totales->TasaIVA;
-                $header->IVA = (string)$xmlResponse->Documento->Encabezado->Totales->IVA;
-                $header->MntTotal = (string)$xmlResponse->Documento->Encabezado->Totales->MntTotal;
+        $exige_impuestoverde = false;
+        $tipo_vehiculo = trim($request->input('tipoVehiculo'));
+        $pbv = trim($request->input('pbv'));
+        $carga = trim($request->input('carga'));
+        $tpbv = trim($request->input('tpbv'));
+        $tipo_carga = trim($request->input('tCarga'));
+        $asientos = trim($request->input('asientos'));
+
+        /*
+            If ((Tipo-Vehiculo == “AUTOMOVIL”) ||
+            (Tipo-Vehiculo == “STATION WAGON”) ||
+            (Tipo-Vehiculo == “JEEP”) ||
+            (Tipo-Vehiculo == “LIMUSINA”)){
+                Exige-Impuesto-Verde
             }
 
-            if($xmlResponse->Documento->Detalle){
-                $detail->DscItem = (string)$xmlResponse->Documento->Detalle->DscItem;
-                $detail->DscItem = str_replace("\n", "", $detail->DscItem);
-                $detalle = explode('^^', $detail->DscItem);
+            If(Tipo-Vehiculo == “CAMIONETA”) {
+                If((PBV < 3860) && (tPbv == “K”) ||
+                    (PBV < 3.86) && (tPbv == “T”)) {
+                    If((CARGA < 2000) && (tCarga == “K”) ||
+                    (CARGA < 2) && (tCarga == “T”)) {
+                        Exige-Impuesto-Verde
+                    } Else {
+                        NO- Exige-Impuesto-Verde
+                    }
+                } Else {
+                    NO- Exige-Impuesto-Verde
+                }
+            }
+
+            If(Tipo-Vehiculo == “MINIBUS”) {
+                If(asientos < 10) {
+                    If((PBV < 3860) && (tPbv == “K”) ||
+                    (PBV < 3.86) && (tPbv == “T”)) {
+                        Exige-Impuesto-Verde
+                    } Else {
+                        NO- Exige-Impuesto-Verde
+                    }
+                } Else {
+                    NO- Exige-Impuesto-Verde
+                }
+            }
+
+        */
+        $pbv = $request->get('pbv');
+        if($factura->tipo_pbv == "K"){
+            $pbv = round($pbv);
+        }
+
+        if((trim($tipo_vehiculo) == "AUTOMOVIL") || (trim($tipo_vehiculo) == "STATION WAGON") || (trim($tipo_vehiculo) == "JEEP") || (trim($tipo_vehiculo) == "LIMUSINA")){
+            $exige_impuestoverde = true;
+        }
+
+        if(trim($tipo_vehiculo) == "CAMIONETA") {
+            if(($pbv < 3860) && ($tpbv == "K") || ($pbv < 3.86) && ($tpbv == "T")) {
+                if(($carga < 2000) && ($tipo_carga == "K") || ($carga < 2) && ($tipo_carga == "T")) {
+                    $exige_impuestoverde = true;
+                } else {
+                    $exige_impuestoverde = false;
+                }
+            } else {
+                $exige_impuestoverde = false;
             }
         }
+
+        if(trim($tipo_vehiculo) == "MINIBUS") {
+            if($asientos < 10) {
+                if(($pbv < 3860) && ($tpbv == "K") || ($pbv < 3.86) && ($tpbv == "T")) {
+                    $exige_impuestoverde = true;
+                } else {
+                    $exige_impuestoverde = false;
+                }
+            } else {
+                $exige_impuestoverde = false;
+            }
+        }
+
+        if($factura != null){
+            $header->Folio = (string)$factura->num_factura;
+            $header->RUTRecep = (string)$factura->rut_receptor;
+            $header->RznSocRecep = (string)$factura->razon_social_recep;
+            $header->GiroRecep = (string)$factura->giro;
+            $header->Contacto = (string)$factura->contacto;
+            $header->DirRecep = (string)$factura->direccion;
+            $header->CmnaRecep = (string)$factura->comuna;
+            $header->CiudadRecep = (string)$factura->ciudad;
+            $header->DirPostal = (string)$factura->direccion;
+
+            $header->FchEmis = (string)$factura->fecha_emision;
+            $header->RUTEmisor = (string)$factura->rut_emisor;
+            $header->RznSoc = (string)$factura->razon_social_emisor;
+            $header->MntTotal = (string)$factura->monto_total_factura;
+        }
+
+        
+
+        //dd('impuesto verde: '.$exige_impuestoverde);
 
         // Generar Json
         $parametro = [
             'compraParaDTO' => [
-                'calidad' => 'N',
-                'calle' => $request->get('DirRecep'),
-                'comuna' => $request->get('comuna'),
-                'email' => is_null($request->get('email')) ? 'info@acobro.cl' : $request->get('email'),
+                'calidad' => $compraPara->tipo,
+                'calle' => $compraPara->calle,
+                'comuna' => $compraPara->comuna,
+                'email' => is_null($compraPara->email) ? 'info@acobro.cl' : $compraPara->email,
                 'ltrDomicilio' => '',
-                'nombresRazon' => $request->get('RznSocRecep'),
-                'nroDomicilio' => $request->get('nroDomicilio'),
-                'runRut' => str_replace('.', '', str_replace('-', '', substr($request->get('RUTRecep'), 0, -1))),
-                'telefono' => is_null($request->get('telefono')) ? '123456789' : $request->get('telefono'),
-                'aMaterno' => $request->get('aMaterno'),
-                'aPaterno' => $request->get('aPaterno'),
+                'nombresRazon' => $compraPara->nombre,
+                'nroDomicilio' => $compraPara->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($compraPara->rut, 0, -1))),
+                'telefono' => is_null($compraPara->telefono) ? '123456789' : $compraPara->telefono,
+                'aMaterno' => $compraPara->aMaterno,
+                'aPaterno' => $compraPara->aPaterno,
                 'cPostal' => '',
-                'rDomicilio' => ''
+                'rDomicilio' => $compraPara->rDomicilio
             ],
             'comunidadDTO' => [
                 'cantidad' => '0',
@@ -1774,35 +1903,38 @@ class SolicitudController extends Controller
                 'mbTotal' => $header->MntTotal,
                 'numero' => $header->Folio,
                 'tipo' => 'FACTURA ELECTRONICA',
-                'rEmisor' => str_replace('.', '', str_replace('-', '', substr($header->RUTEmisor, 0, -1))),
+                'rEmisor' => str_replace('.', '', str_replace('-', '', $header->RUTEmisor)),
                 'tMoneda' => '$'
             ],
             'impuestoVerdeDTO' => [
-                'cid' => '',
-                'cit' => '',
-                'mImpuesto' => '',
-                'tFactura' => ''
+                'cid' => ($exige_impuestoverde) ? trim($request->input('codigoCid')) : '',
+                'cit' => ($exige_impuestoverde) ? trim($request->input('codigoCit')) : '',
+                'mImpuesto' => ($exige_impuestoverde) ? trim($request->input('mImpuesto')) : '',
+                'tFactura' => ($exige_impuestoverde) ? $header->MntTotal : ''
             ],
-            'adquierenteDTO' => [
-                'calidad' => 'N',
-                'calle' => $request->get('DirRecep'),
-                'comuna' => $request->get('comuna'),
-                'email' => is_null($request->get('email')) ? 'info@acobro.cl' : $request->get('email'),
+            'listaAdquierente' => [
+                'calidad' => $adquiriente->tipo,
+                'calle' => $adquiriente->calle,
+                'comuna' => $adquiriente->comuna,
+                'email' => is_null($adquiriente->email) ? 'info@acobro.cl' : $adquiriente->email,
                 'ltrDomicilio' => '',
-                'nombresRazon' => $request->get('RznSocRecep'),
-                'nroDomicilio' => $request->get('nroDomicilio'),
-                'runRut' => str_replace('.', '', str_replace('-', '', substr($request->get('RUTRecep'), 0, -1))),
-                'telefono' => is_null($request->get('telefono')) ? '123456789' : $request->get('telefono'),
-                'aMaterno' => $request->get('aMaterno'),
-                'aPaterno' => $request->get('aPaterno'),
+                'nombresRazon' => $adquiriente->nombre,
+                'nroDomicilio' => $adquiriente->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($adquiriente->rut, 0, -1))),
+                'telefono' => is_null($adquiriente->telefono) ? '123456789' : $adquiriente->telefono,
+                'aMaterno' => $adquiriente->aMaterno,
+                'aPaterno' => $adquiriente->aPaterno,
                 'cPostal' => '',
-                'rDomicilio' => ''
+                'rDomicilio' => $adquiriente->rDomicilio
             ],
-            'livMedWs' => [
+            'vehiculoLM' => [
                 'agnoFabricacion' => $request->get('agnoFabricacion'),
                 'asientos' => $request->get('asientos'),
-                'carga' => $request->get('carga'),
-                'citModelo' => '',
+                'carga' => (trim($tipo_vehiculo) == "CAMIONETA")? $request->get('carga') : 0,
+                'citModelo' => ((trim($tipo_vehiculo) == "AUTOMOVIL") || 
+                (trim($tipo_vehiculo) == "STATION WAGON") || (trim($tipo_vehiculo) == "CAMIONETA") ||
+                (trim($tipo_vehiculo) == "MINIBUS") ||
+                (trim($tipo_vehiculo) == "JEEP") || (trim($tipo_vehiculo) == "LIMUSINA")) ? $request->get('codigoCit'): '',
                 'color' => $request->get('color'),
                 'combustible' => $request->get('combustible'),
                 'marca' => $request->get('marca'),
@@ -1813,10 +1945,10 @@ class SolicitudController extends Controller
                 'nroVin' => is_null($request->get('nroVin')) ? '' : $request->get('nroVin'),
                 'pbv' => is_null($request->get('pbv')) ? '0' : $request->get('pbv'),
                 'puertas' => is_null($request->get('puertas')) ? '0' : $request->get('puertas'),
-                'terminacionPPU' => $request->get('PPU'),
+                'terminacionPPU' => $solicitud->termino_1,
                 'tipoVehiculo' => is_null($request->get('tipoVehiculo')) ? 'MOTO' : $request->get('tipoVehiculo'),
-                'tCarga' => 'K',
-                'tPbv' => 'K'
+                'tCarga' => $tipo_carga,
+                'tPbv' => $tpbv
             ],
             'observaciones' => '',
             'operadorDTO' => array(
@@ -1838,6 +1970,13 @@ class SolicitudController extends Controller
                 'aPaterno' => 'PINTO',
                 'cPostal' => '',
                 'rDomicilio' => ''
+            ),
+            'reIngreso' => array(
+                'fechaResExenta' => '',
+                'fechaSolRech' => '',
+                'nroResExenta' => '',
+                'nroSolicitud' => '',
+                'ppu' => ''
             )
         ];
         // Llamar RC
@@ -1847,18 +1986,44 @@ class SolicitudController extends Controller
                 'servicio' => 'PRIMERA INSCRIPCION AUTOS',
                 'tramite' => 'PRUEBA'
             ),
-            'spieMoto' => $parametro
+            'spieVws' => $parametro
         );
+        //dd($parametros);
+        //dd($parametro);
         //return json_encode($parametros);
 
         
-        $data = RegistroCivil::creaAuto($parametro);
+        $data = RegistroCivil::creaAuto(json_encode($parametro));
         $salida = json_decode($data, true);
 
-        if(!$salida['codigoresp']=='OK'){
-            return view('general.errorRC', ['glosa' => $salida['glosa']]); 
+        dd($salida);
+
+        if(isset($salida['codigoresp'])){
+            //dd((int)$salida['codigoresp']);
+            $cod_salida_resp = (int)$salida['codigoresp'];
+            if($cod_salida_resp==1 || $cod_salida_resp==0){
+                $nro_solicitud_rc = $salida['solicitudDTO']['numeroSol'];
+                $ppu_rc = $salida['solicitudDTO']['ppu'];
+                $fecha = $salida['solicitudDTO']['fecha'];
+                $hora = $salida['solicitudDTO']['hora'];
+                $oficina = $salida['solicitudDTO']['oficina'];
+                $tipo_sol = $salida['solicitudDTO']['tipoSol'];
+
+                $solicitud_rc = new SolicitudRC();
+                $solicitud_rc->fecha = $fecha;
+                $solicitud_rc->hora = $hora;
+                $solicitud_rc->numeroSol = $nro_solicitud_rc;
+                $solicitud_rc->oficina = $oficina;
+                $solicitud_rc->ppu = $ppu_rc;
+                $solicitud_rc->tipoSol = $tipo_sol;
+                $solicitud_rc->solicitud_id = $id;
+                $solicitud_rc->save();
+                return view('solicitud.revision.docsIdentidadAuto', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
+            }
+            else{
+                return view('general.errorRC', ['glosa' => $salida['glosa']]);
+            }
         }
-        return dd($salida);
         
         // OJO
         //return redirect()->route('solicitud.revision.facturaMoto', ['id' => $id]);
