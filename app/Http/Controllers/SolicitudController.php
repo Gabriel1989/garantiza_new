@@ -22,6 +22,7 @@ use App\Models\Region;
 use App\Models\Factura;
 use App\Models\SolicitudRC;
 use App\Models\NoPara;
+use App\Models\Tipo_Carroceria;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -57,10 +58,11 @@ class SolicitudController extends Controller
         $id_solicitud_rc = 0;
         $header = new stdClass;
         session()->forget('solicitud_id');
+        $tipo_carroceria = Tipo_Carroceria::all();
 
         //return view('solicitud.solicitarPPU', compact('region'));
 
-        return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
     }
 
     public function continuarSolicitud($id){
@@ -74,6 +76,7 @@ class SolicitudController extends Controller
         $tipo_vehiculos = Tipo_Vehiculo::all();
         $ppu = array();
         $region = Region::all();
+        $tipo_carroceria = Tipo_Carroceria::all();
         $solicita_ppu = true;
         if($factura != null){
             $header->RUTRecep = (string)$factura->rut_receptor;
@@ -155,11 +158,11 @@ class SolicitudController extends Controller
                         break;
                 }
             }
-            return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+            return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
             'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
         }
         //Menu adquiriente: solicitud recién creada
-        return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
     }
 
 
@@ -187,6 +190,7 @@ class SolicitudController extends Controller
         //dd($id_solicitud);
         $solicita_ppu = true;
         $region = Region::all();
+        $tipo_carroceria = Tipo_Carroceria::all();
 
         if(isset($ppu['codigoresp'])){
 
@@ -267,13 +271,13 @@ class SolicitudController extends Controller
                                     break;
                             }
                         }
-                        return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+                        return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
                         'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
                         //return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
                     }
                     else{
                         //Menu adquiriente: solicitud recién creada
-                        return view('solicitud.create', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
+                        return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
                     }
                     
                 }
@@ -1004,7 +1008,6 @@ class SolicitudController extends Controller
                 $detalle = array();
                 $factura = Factura::where('id_solicitud',$id)->first();
                 if($factura != null){
-
                     $header->Folio = (string)$factura->num_factura;
                     $header->FchEmis = '';
                     $header->RUTEmisor = '';
@@ -1047,20 +1050,15 @@ class SolicitudController extends Controller
                     $header->MntTotal = '';
                 }
                 $comunas = Comuna::allOrder();
-
                 return view('solicitud.revision.facturaAuto', compact('id', 'comunas', 'header', 'detalle'));
                 break;
             case 2:
                 $ruta = 'solicitud.datosMoto';
                 $header = new stdClass;
                 $detail = new stdClass;
-
                 $detalle = array();
-
                 $factura = Factura::where('id_solicitud',$id)->first();
-
                 if($factura != null){
-
                     $header->Folio = (string)$factura->num_factura;
                     $header->FchEmis = '';
                     $header->RUTEmisor = '';
@@ -1102,13 +1100,59 @@ class SolicitudController extends Controller
                     $header->IVA = '';
                     $header->MntTotal = '';
                 }
-
                 $comunas = Comuna::allOrder();
-                
                 return view('solicitud.revision.facturaMoto', compact('id', 'comunas', 'header', 'detalle'));
                 break;
             case 3:
                 $ruta = 'solicitud.datosCamion';
+                $header = new stdClass;
+                $detail = new stdClass;
+                $detalle = array();
+                $factura = Factura::where('id_solicitud',$id)->first();
+                if($factura != null){
+                    $header->Folio = (string)$factura->num_factura;
+                    $header->FchEmis = '';
+                    $header->RUTEmisor = '';
+                    $header->RznSoc = '';
+                    $header->GiroEmis = '';
+                    $header->Sucursal = '';
+                    $header->DirOrigen = '';
+                    $header->CmnaOrigen = '';
+                    $header->CiudadOrigen = '';
+
+                    $header->RUTRecep = (string)$factura->rut_receptor;
+                    $header->RznSocRecep = (string)$factura->razon_social_recep;
+                    $header->GiroRecep = (string)$factura->giro;
+                    $header->Contacto = (string)$factura->contacto;
+                    $header->DirRecep = (string)$factura->direccion;
+                    $header->CmnaRecep = (string)$factura->comuna;
+                    $header->CiudadRecep = (string)$factura->ciudad;
+                    $header->DirPostal = (string)$factura->direccion;
+                    $header->AnnioFabricacion = (string)$factura->agno_fabricacion;
+                    $header->Color = (string)$factura->color;
+                    $header->TipoCombustible = (string)$factura->tipo_combustible;
+                    $header->Marca = (string)$factura->marca;
+                    $header->Modelo = (string)$factura->modelo;
+                    $header->NroChasis = (string)$factura->nro_chasis;
+                    $header->NroMotor = (string)$factura->motor;
+                    $header->NroVin  = (string)$factura->nro_vin;
+                    $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
+                    $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
+                    $header->Asientos = (string) $factura->asientos;
+                    $header->Puertas = (string) $factura->puertas;
+                    $header->CitModelo = (string) $factura->codigo_cit;
+                    $header->TipoPBV = (string) $factura->tipo_pbv;
+                    $header->TipoCarga = (string) $factura->tipo_carga;
+
+                    $header->MntNeto = '';
+                    $header->MntExe = '';
+                    $header->TasaIVA = '';
+                    $header->IVA = '';
+                    $header->MntTotal = '';
+                }
+                $comunas = Comuna::allOrder();
+                $tipo_carroceria = Tipo_Carroceria::all();
+                return view('solicitud.revision.facturaCamion', compact('id','tipo_carroceria', 'comunas', 'header', 'detalle'));
                 break;
         }
 
@@ -1902,8 +1946,8 @@ class SolicitudController extends Controller
             }
 
         */
-        $pbv = $request->get('pbv');
-        if($factura->tipo_pbv == "K"){
+        $pbv = trim($request->get('pbv'));
+        if(trim($request->get('tpbv')) == "K"){
             $pbv = round($pbv);
         }
 
@@ -2100,7 +2144,7 @@ class SolicitudController extends Controller
         $data = RegistroCivil::creaAuto(json_encode($parametro));
         $salida = json_decode($data, true);
 
-        dd($salida);
+        //dd($salida);
 
         if(isset($salida['codigoresp'])){
             //dd((int)$salida['codigoresp']);
@@ -2134,6 +2178,192 @@ class SolicitudController extends Controller
         
         // OJO
         //return redirect()->route('solicitud.revision.facturaMoto', ['id' => $id]);
+    }
+
+    public function updateRevisionFacturaCamion(Request $request, $id){
+        $header = new stdClass;
+        $detail = new stdClass;
+
+        $factura = Factura::where('id_solicitud',$id)->first();
+        $adquiriente = Adquiriente::where('solicitud_id',$id)->first();
+        $compraPara = Para::where('solicitud_id',$id)->first();
+        $solicitud = Solicitud::where('id',$id)->first();
+        $tipo_vehiculo = trim($request->input('tipoVehiculo'));
+
+        if($factura != null){
+            $header->Folio = (string)$factura->num_factura;
+            $header->RUTRecep = (string)$factura->rut_receptor;
+            $header->RznSocRecep = (string)$factura->razon_social_recep;
+            $header->GiroRecep = (string)$factura->giro;
+            $header->Contacto = (string)$factura->contacto;
+            $header->DirRecep = (string)$factura->direccion;
+            $header->CmnaRecep = (string)$factura->comuna;
+            $header->CiudadRecep = (string)$factura->ciudad;
+            $header->DirPostal = (string)$factura->direccion;
+
+            $header->FchEmis = (string)$factura->fecha_emision;
+            $header->RUTEmisor = (string)$factura->rut_emisor;
+            $header->RznSoc = (string)$factura->razon_social_emisor;
+            $header->MntTotal = (string)$factura->monto_total_factura;
+        }
+
+        $pbv = $request->get('pbv');
+        if(trim($request->get('tpbv')) == "K"){
+            $pbv = round($pbv);
+        }
+
+        $datosCompraPara = null;
+        if($compraPara != null){
+            $datosCompraPara = array(
+                'calidad' => $compraPara->tipo,
+                'calle' => $compraPara->calle,
+                'comuna' => $compraPara->comuna,
+                'email' => is_null($compraPara->email) ? 'info@acobro.cl' : $compraPara->email,
+                'ltrDomicilio' => '',
+                'nombresRazon' => $compraPara->nombre,
+                'nroDomicilio' => $compraPara->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($compraPara->rut, 0, -1))),
+                'telefono' => is_null($compraPara->telefono) ? '123456789' : $compraPara->telefono,
+                'aMaterno' => $compraPara->aMaterno,
+                'aPaterno' => $compraPara->aPaterno,
+                'cPostal' => '',
+                'rDomicilio' => $compraPara->rDomicilio
+            );
+        }
+        else{
+            $datosCompraPara = array(
+                'calidad' => '',
+                'calle' => '',
+                'comuna' => '',
+                'email' => '',
+                'ltrDomicilio' => '',
+                'nombresRazon' => '',
+                'nroDomicilio' => '',
+                'runRut' => '',
+                'telefono' => '',
+                'aMaterno' => '',
+                'aPaterno' => '',
+                'cPostal' => '',
+                'rDomicilio' => ''
+            );
+        }
+
+        $parametro = [
+            'comunidadDTO' => [
+                'cantidad' => '0',
+                'esComunidad' => 'NO'
+            ],
+            'documentoDTO' => [
+                'emisor' => $header->RznSoc,
+                'fecha' => str_replace('-', '', $header->FchEmis),
+                'lugar' => '94',
+                //Nro Comuna Sucursal -> Maipu
+                'mbTotal' => $header->MntTotal,
+                'numero' => $header->Folio,
+                'tipo' => 'FACTURA ELECTRONICA',
+                'rEmisor' => str_replace('.', '', str_replace('-', '', $header->RUTEmisor)),
+                'tMoneda' => '$'
+            ],
+            'impuestoVerdeDTO' => [
+                'cid' => '',
+                'cit' => '',
+                'mImpuesto' => '',
+                'tFactura' => ''
+            ],
+            'listaAdquierente' => [
+                'calidad' => $adquiriente->tipo,
+                'calle' => $adquiriente->calle,
+                'comuna' => $adquiriente->comuna,
+                'email' => is_null($adquiriente->email) ? 'info@acobro.cl' : $adquiriente->email,
+                'ltrDomicilio' => '',
+                'nombresRazon' => $adquiriente->nombre,
+                'nroDomicilio' => $adquiriente->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($adquiriente->rut, 0, -1))),
+                'telefono' => is_null($adquiriente->telefono) ? '123456789' : $adquiriente->telefono,
+                'aMaterno' => $adquiriente->aMaterno,
+                'aPaterno' => $adquiriente->aPaterno,
+                'cPostal' => '',
+                'rDomicilio' => $adquiriente->rDomicilio
+            ],
+            'cargaws' => [
+                'agnoFabricacion' => $request->get('agnoFabricacion'),
+                'asientos' => $request->get('asientos'),
+                'carga' => $request->get('carga'),
+                'citModelo' => '',
+                'color' => $request->get('color'),
+                'combustible' => $request->get('combustible'),
+                'marca' => $request->get('marca'),
+                'modelo' => $request->get('modelo'),
+                'nroChasis' => $request->get('nroChasis'),
+                'nroMotor' => $request->get('nroMotor'),
+                'nroSerie' => is_null($request->get('nroSerie')) ? '' : $request->get('nroSerie'),
+                'nroVin' => is_null($request->get('nroVin')) ? '' : $request->get('nroVin'),
+                'pbv' => is_null($request->get('pbv')) ? '0' : $request->get('pbv'),
+                'puertas' => '',
+                'terminacionPPU' => $solicitud->termino_1,
+                'tipoVehiculo' => is_null($request->get('tipoVehiculo')) ? 'CAMION' : $request->get('tipoVehiculo'),
+                'tCarga' => $request->get('tCarga'),
+                'tPbv' => trim($request->get('tpbv')),
+                'tipoTraccion' => trim($request->get('tipoTraccion')),
+                'tipoPotencia' => (trim((trim($tipo_vehiculo) == "CAMION") || 
+                (trim($tipo_vehiculo) == "TRACTOCAMION")))? trim($request->get('tipoPotencia')) : '',
+                'tipoCarroceria' => trim($request->get('tipoCarroceria')),
+                'potencia' => (trim((trim($tipo_vehiculo) == "CAMION") || 
+                (trim($tipo_vehiculo) == "TRACTOCAMION")))? trim($request->get('potenciaMotor')) : '',
+                'otraCarroceria' => '',
+                'nroDipsEjes' => trim($request->get('nroEjes'))
+            ],
+            'observaciones' => '',
+            'operadorDTO' => array(
+                'region' => '13',
+                'runUsuario' => '10796553',
+                'rEmpresa' => '77880510'
+            ),
+            'solicitanteDTO' => array(
+                'calidad' => 'N',
+                'calle' => 'LAS TINAJAS',
+                'comuna' => '106',
+                'email' => 'rodbay07@gmail.com',
+                'ltrDomicilio' => '',
+                'nombresRazon' => 'ROMAN ALEXIS',
+                'nroDomicilio' => '1886',
+                'runRut' => '10796553',
+                'telefono' => '979761113',
+                'aMaterno' => 'RAVEST',
+                'aPaterno' => 'PINTO',
+                'cPostal' => '',
+                'rDomicilio' => ''
+            ),
+            'reIngreso' => array(
+                'fechaResExenta' => '',
+                'fechaSolRech' => '',
+                'nroResExenta' => '',
+                'nroSolicitud' => '',
+                'ppu' => ''
+            )
+        ];
+
+        $parametro['compraParaDTO'] = $datosCompraPara;
+
+        $parametros = array(
+            'llave' => array(
+                'consumidor' => 'ACOBRO',
+                'servicio' => 'SOLICITUD PRIMERA INSCRIPCION VEHICULO PESADOS',
+                'tramite' => 'A'
+            ),
+            'spieCarga' => $parametro
+        );
+        //dd($parametros);
+        //dd($parametro);
+        //return json_encode($parametros);
+
+        
+        $data = RegistroCivil::creaCarga(json_encode($parametro));
+        $salida = json_decode($data, true);
+
+        dd($salida);
+
+
     }
 
     public function ver($id)
