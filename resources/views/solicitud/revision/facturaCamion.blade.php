@@ -141,7 +141,13 @@
                                 <div class="row">
                                     <label for="tipoPotencia" class="col-lg-3 control-label ">Tipo Potencia:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="tipoPotencia" id="tipoPotencia" class="form-control" placeholder="">
+                                        <select name="tipoPotencia" id="tipoPotencia" class="form-control">
+                                            @foreach($tipo_potencia as $tipo)
+                                                <option value="{{$tipo->unidad_medida}}">{{$tipo->unidad_medida}}</option>
+
+                                            @endforeach
+
+                                        </select>
                                     </label>
                                 </div>
                                 <div class="row">

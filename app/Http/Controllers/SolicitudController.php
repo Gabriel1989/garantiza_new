@@ -23,6 +23,7 @@ use App\Models\Factura;
 use App\Models\SolicitudRC;
 use App\Models\NoPara;
 use App\Models\Tipo_Carroceria;
+use App\Models\TipoPotencia;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -59,10 +60,9 @@ class SolicitudController extends Controller
         $header = new stdClass;
         session()->forget('solicitud_id');
         $tipo_carroceria = Tipo_Carroceria::all();
+        $tipo_potencia = TipoPotencia::all();
 
-        //return view('solicitud.solicitarPPU', compact('region'));
-
-        return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
     }
 
     public function continuarSolicitud($id){
@@ -74,6 +74,7 @@ class SolicitudController extends Controller
         $solicitud_data = Solicitud::find($id);
         $sucursales = Sucursal::all();
         $tipo_vehiculos = Tipo_Vehiculo::all();
+        $tipo_potencia = TipoPotencia::all();
         $ppu = array();
         $region = Region::all();
         $tipo_carroceria = Tipo_Carroceria::all();
@@ -158,11 +159,11 @@ class SolicitudController extends Controller
                         break;
                 }
             }
-            return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+            return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
             'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
         }
         //Menu adquiriente: solicitud recién creada
-        return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
     }
 
 
@@ -191,6 +192,7 @@ class SolicitudController extends Controller
         $solicita_ppu = true;
         $region = Region::all();
         $tipo_carroceria = Tipo_Carroceria::all();
+        $tipo_potencia = TipoPotencia::all();
 
         if(isset($ppu['codigoresp'])){
 
@@ -271,13 +273,13 @@ class SolicitudController extends Controller
                                     break;
                             }
                         }
-                        return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+                        return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
                         'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
                         //return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
                     }
                     else{
                         //Menu adquiriente: solicitud recién creada
-                        return view('solicitud.create', compact('tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
+                        return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
                     }
                     
                 }
@@ -1109,6 +1111,7 @@ class SolicitudController extends Controller
                 $detail = new stdClass;
                 $detalle = array();
                 $factura = Factura::where('id_solicitud',$id)->first();
+                
                 if($factura != null){
                     $header->Folio = (string)$factura->num_factura;
                     $header->FchEmis = '';
@@ -1152,7 +1155,8 @@ class SolicitudController extends Controller
                 }
                 $comunas = Comuna::allOrder();
                 $tipo_carroceria = Tipo_Carroceria::all();
-                return view('solicitud.revision.facturaCamion', compact('id','tipo_carroceria', 'comunas', 'header', 'detalle'));
+                $tipo_potencia = TipoPotencia::all();
+                return view('solicitud.revision.facturaCamion', compact('id','tipo_potencia','tipo_carroceria', 'comunas', 'header', 'detalle'));
                 break;
         }
 
@@ -2333,13 +2337,6 @@ class SolicitudController extends Controller
                 'aPaterno' => 'PINTO',
                 'cPostal' => '',
                 'rDomicilio' => ''
-            ),
-            'reIngreso' => array(
-                'fechaResExenta' => '',
-                'fechaSolRech' => '',
-                'nroResExenta' => '',
-                'nroSolicitud' => '',
-                'ppu' => ''
             )
         ];
 
@@ -2362,6 +2359,36 @@ class SolicitudController extends Controller
         $salida = json_decode($data, true);
 
         dd($salida);
+
+        if(isset($salida['codigoresp'])){
+            //dd((int)$salida['codigoresp']);
+            $cod_salida_resp = (int)$salida['codigoresp'];
+            if($cod_salida_resp==1 || $cod_salida_resp==0){
+                $nro_solicitud_rc = $salida['solicitudDTO']['numeroSol'];
+                $ppu_rc = $salida['solicitudDTO']['ppu'];
+                $fecha = $salida['solicitudDTO']['fecha'];
+                $hora = $salida['solicitudDTO']['hora'];
+                $oficina = $salida['solicitudDTO']['oficina'];
+                $tipo_sol = $salida['solicitudDTO']['tipoSol'];
+
+                $solicitud_rc = new SolicitudRC();
+                $solicitud_rc->fecha = $fecha;
+                $solicitud_rc->hora = $hora;
+                $solicitud_rc->numeroSol = $nro_solicitud_rc;
+                $solicitud_rc->oficina = $oficina;
+                $solicitud_rc->ppu = $ppu_rc;
+                $solicitud_rc->tipoSol = $tipo_sol;
+                $solicitud_rc->solicitud_id = $id;
+                $solicitud_rc->save();
+
+                sleep(4);
+                $solicitud_rc = SolicitudRC::getSolicitud($id);
+                return view('solicitud.revision.docsIdentidadCamion', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
+            }
+            else{
+                return view('general.errorRC', ['glosa' => $salida['glosa']]);
+            }
+        }
 
 
     }
