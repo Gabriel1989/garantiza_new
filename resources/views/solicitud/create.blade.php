@@ -29,7 +29,7 @@
                 <a class="nav-link @if($id_solicitud_rc == 0)  disabled    @endif" id="pills-docs-tab" data-toggle="pill" @if($id_solicitud_rc != 0) href="#pills-docs" @else href="#" @endif role="tab" aria-controls="pills-docs" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Documentación</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link disabled" id="pills-limitation-tab" data-toggle="pill" href="#" role="tab" aria-controls="pills-limitation" aria-selected="false" aria-disabled="true">Limitación</a>
+                <a class="nav-link @if($id_solicitud_rc == 0)  disabled  @endif" id="pills-limitation-tab" data-toggle="pill" @if($id_solicitud_rc != 0) href="#pills-limitation" @else href="#" @endif role="tab" aria-controls="pills-limitation" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Limitación</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link disabled" id="pills-pay-tab" data-toggle="pill" href="#" role="tab" aria-controls="pills-pay" aria-selected="false" aria-disabled="true">Pago</a>
@@ -78,6 +78,11 @@
                     @else
                         @include('solicitud.revision.docsIdentidadCamion')
                     @endif
+                @endif
+            </div>
+            <div class="tab-pane fade" id="pills-limitation" role="tabpanel" aria-labelledby="pills-limitation-tab">
+                @if($id_solicitud_rc != 0)
+                    @include('solicitud.limitacion')
                 @endif
             </div>
 
@@ -354,6 +359,7 @@
         $("#pills-contact").removeClass('show');
         $("#pills-invoice").removeClass('show');
         $("#pills-docs").removeClass('show');
+        $("#pills-limitation").removeClass('show');
     });
 
     $(document).on("click","#pills-profile-tab",function(e){
@@ -361,6 +367,7 @@
         $("#pills-contact").removeClass('show');
         $("#pills-invoice").removeClass('show');
         $("#pills-docs").removeClass('show');
+        $("#pills-limitation").removeClass('show');
     });
 
     $(document).on("click","#pills-contact-tab",function(e){
@@ -368,6 +375,7 @@
         $("#pills-profile").removeClass('show');
         $("#pills-invoice").removeClass('show');
         $("#pills-docs").removeClass('show');
+        $("#pills-limitation").removeClass('show');
     });
 
     $(document).on("click","#pills-invoice-tab",function(e){
@@ -375,9 +383,17 @@
         $("#pills-profile").removeClass('show');
         $("#pills-contact").removeClass('show');
         $("#pills-docs").removeClass('show');
+        $("#pills-limitation").removeClass('show');
     });
 
-    
+    $(document).on("click","#pills-limitation-tab",function(e){
+        $("#pills-home").removeClass('show');
+        $("#pills-profile").removeClass('show');
+        $("#pills-contact").removeClass('show');
+        $("#pills-docs").removeClass('show');
+        $("#pills-invoice").removeClass('show');
+
+    });
 
     function elimina(adquiriente) {
         if (adquiriente == 2) {

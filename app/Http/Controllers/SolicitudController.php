@@ -37,6 +37,11 @@ use stdClass;
 
 class SolicitudController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     public function create()
     {
         $sucursales = Sucursal::all();

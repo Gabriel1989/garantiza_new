@@ -24,7 +24,7 @@
     @method('post')
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
-            <span class="panel-title">Revisión de Solicitud N° {{$id}} - Datos de Factura</span>
+            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de Factura</span>
         </div>
         <div class="panel-body">
             <div class="form-group">
