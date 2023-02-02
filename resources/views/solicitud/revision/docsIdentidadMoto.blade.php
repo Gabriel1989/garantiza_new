@@ -40,10 +40,7 @@ use App\Models\CompraPara;
                         <label id="lbl_Cedula_PDF"></label>
                     </div>
                 </div>
-                <?php
-                    //dd(CompraPara::getSolicitud($id));
-
-                ?>
+                
 
                 @if(count(CompraPara::getSolicitud($id)) > 0)
                 <div class="col-sm-4 col-lg-4 mb5">
@@ -134,6 +131,47 @@ $(document).on("submit","#form_subeDocs",function(e){
         contentType: false,
         data: formData,
         success: function(data){
+            let json = JSON.parse(data);
+            if(json.status == "ERROR"){
+                new PNotify({
+                    title: 'Subir documentos',
+                    text: json.msj,
+                    shadow: true,
+                    opacity: '0.75',
+                    addclass: 'stack_top_right',
+                    type: 'danger',
+                    stack: {
+                        "dir1": "down",
+                        "dir2": "left",
+                        "push": "top",
+                        "spacing1": 10,
+                        "spacing2": 10
+                    },
+                    width: '290px',
+                    delay: 2000
+                });
+                return false;
+            }
+            else{
+                new PNotify({
+                    title: 'Subir documentos',
+                    text: json.msj,
+                    shadow: true,
+                    opacity: '0.75',
+                    addclass: 'stack_top_right',
+                    type: 'success',
+                    stack: {
+                        "dir1": "down",
+                        "dir2": "left",
+                        "push": "top",
+                        "spacing1": 10,
+                        "spacing2": 10
+                    },
+                    width: '290px',
+                    delay: 2000
+                });
+                return true;
+            }
 
         }
     })
