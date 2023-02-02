@@ -16,6 +16,7 @@
 
 use App\Models\Factura;
 use App\Models\Tipo_Documento;
+use App\Models\Acreedor;
 
 ?>
 
@@ -32,21 +33,24 @@ use App\Models\Tipo_Documento;
         <?php
             $factura = Factura::where('id_solicitud',$id)->first();
             $tipo_documento = Tipo_Documento::whereIn('id',[6,7])->get();
+            $acreedores = Acreedor::all();
 
         ?>
         <div class="panel-body">
             <div class="form-group">
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Acreedor</h4></div></div>
                 <div class="row">
-                    <label for="runAcreedor" class="col-lg-3 control-label ">Ingrese Rut Acreedor:</label>
+                    <label for="runAcreedor" class="col-lg-3 control-label ">Seleccione Acreedor:</label>
                     <label class="col-lg-3">
-                        <input type="number" min="1" max="99999999" name="runAcreedor" id="runAcreedor" value="" class="form-control" placeholder="SIN PUNTOS NI DIGITO VERIFICADOR" required>
-                    </label>
-                </div>
-                <div class="row">
-                    <label for="nombreRazon" class="col-lg-3 control-label ">Ingrese Nombre Acreedor:</label>
-                    <label class="col-lg-3">
-                        <input type="text" name="nombreRazon" id="nombreRazon" value="" class="form-control" required>
+                        <select name="runAcreedor" id="runAcreedor" class="form-control" required>
+                            <option value="0">Seleccione Acreedor</option>
+                            @foreach($acreedores as $acre)
+                                <option value="{{$acre->rut}}">{{$acre->nombre}}</option>
+                            @endforeach
+                        </select>
+
+
+                        <input type="hidden" name="nombreRazon" id="nombreRazon" class="form-control" required>
                     </label>
                 </div>
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Vehiculo</h4></div></div>
@@ -86,7 +90,7 @@ use App\Models\Tipo_Documento;
                     <label class="col-lg-3">
                         <select name="tipoDoc" id="tipoDoc2" class="form-control" required>
                             @foreach($tipo_documento as $tipo)
-                                <option value="{{$tipo->name}}">{{$tipo->name}}</option>
+                                <option value="{{trim($tipo->name)}}">{{$tipo->name}}</option>
                             @endforeach
 
                         </select>
@@ -140,10 +144,47 @@ use App\Models\Tipo_Documento;
         });
     });
 
+    $(document).on("change","#runAcreedor",function(){
+        if(parseFloat($(this).val()) != 0){
+            $("#nombreRazon").val($("#runAcreedor option:selected").text());
+        }
+        else{
+            $("#nombreRazon").val('');
+        }
+
+
+    });
+
 
     $(document).on("submit","#formLimitacion",function(e){
         e.preventDefault();
         let formData = new FormData(document.getElementById("formLimitacion"));
+
+        if(parseFloat($("#runAcreedor").val()) == 0){
+            new PNotify({
+                title: 'Inscribir limitación',
+                text: 'Debe seleccionar un acreedor',
+                shadow: true,
+                opacity: '0.75',
+                addclass: 'stack_top_right',
+                type: 'danger',
+                stack: {
+                    "dir1": "down",
+                    "dir2": "left",
+                    "push": "top",
+                    "spacing1": 10,
+                    "spacing2": 10
+                },
+                width: '290px',
+                delay: 2000
+            });
+            return false;
+
+        }
+
+
+
+
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

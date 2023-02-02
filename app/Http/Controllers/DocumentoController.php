@@ -192,14 +192,17 @@ class DocumentoController extends Controller
 
         $solicitud_rc = SolicitudRC::getSolicitud($id);
 
+        //$base64string = base64_encode(file_get_contents($request->file('Cedula_PDF')->getRealPath()));
+        //file_put_contents($request->file('Cedula_PDF')->getClientOriginalName(), base64_decode($base64string));
+        //exit;
         //dd($request);
         $parametros = [
             'consumidor' => 'ACOBRO',
             'servicio' => 'INGRESO DOCUMENTOS RVM',
-            'file' => base64_encode($request->file('Cedula_PDF')),
+            'file' => base64_encode(file_get_contents($request->file('Cedula_PDF')->getRealPath())),
             'patente' => str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]),
             'nro' => $solicitud_rc[0]->numeroSol,
-            'tipo_sol' => $solicitud_rc[0]->tipoSol,
+            'tipo_sol' => 'P',
             'tipo_doc' => "PDF",
             'clasificacion' => 1,
             'fecha_ing' => date('d-m-Y'),
@@ -218,10 +221,10 @@ class DocumentoController extends Controller
             $parametros = array(
                 'consumidor' => 'ACOBRO',
                 'servicio' => 'INGRESO DOCUMENTOS RVM',
-                'file' => base64_encode($request->file('Cedula_Para_PDF')),
+                'file' => base64_encode(file_get_contents($request->file('Cedula_Para_PDF')->getRealPath())),
                 'patente' => str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]),
                 'nro' => $solicitud_rc[0]->numeroSol,
-                'tipo_sol' => $solicitud_rc[0]->tipoSol,
+                'tipo_sol' => 'P',
                 'tipo_doc' => "PDF",
                 'clasificacion' => 1,
                 'fecha_ing' => date('d-m-Y'),

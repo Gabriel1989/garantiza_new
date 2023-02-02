@@ -39,7 +39,7 @@
             <div class="form-group">
                 <label for="tipoVehiculos_id" class="col-lg-1">Nombre de Institución: </label>
                 <div class="col-lg-5">
-                    <input id="nombre_institucion" name="nombre_institucion" class="form-control">
+                    <input id="nombre_institucion" name="nombre_institucion" class="form-control" value="ACOBRO">
                 </div>
 
             </div>

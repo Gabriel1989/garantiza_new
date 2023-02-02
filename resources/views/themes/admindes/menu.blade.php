@@ -77,6 +77,10 @@
                         <a href="{{route('tipo_documento.index')}}">
                             <span class="glyphicon glyphicon-file"></span> Tipo de Documentos </a>
                     </li>
+                    <li  class="{{!Route::is('acreedor.*') ?: 'active'}}">
+                        <a href="{{route('acreedor.index')}}">
+                            <span class="glyphicon glyphicon-briefcase"></span> Acreedores </a>
+                    </li>
                 </ul>
             </li>
             <li>
@@ -111,7 +115,7 @@
                     <span class="glyphicons glyphicons-check"></span>
                     <span class="sidebar-title">Para Revisar</span>
                     <span class="sidebar-title-tray">
-                        <span class="label label-xs bg-danger">3</span>
+                        <!--<span class="label label-xs bg-danger">3</span>-->
                     </span>
                 </a>
             </li>

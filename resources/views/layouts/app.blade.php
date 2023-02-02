@@ -64,6 +64,11 @@
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                                         @csrf
                                     </form>
+
+                                    <!--<a class="dropdown-item" href="{{ route('register') }}">
+                                        {{ __('Register') }}
+                                        {{-- <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a> --}}
+                                    </a>-->
                                 </div>
                             </li>
                         @endguest

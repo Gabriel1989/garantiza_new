@@ -183,6 +183,8 @@ class SolicitudController extends Controller
             'Institucion' => $request->get('nombre_institucion')
         ];
 
+        $tipo_placa = $request->get('placa_patente_id');
+
         $data = RegistroCivil::PPUDisponible($parametro);
         $ppu = json_decode($data, true);
 
@@ -204,7 +206,26 @@ class SolicitudController extends Controller
             if($ppu['codigoresp']=='OK'){
                 $ppu = $ppu['PPU'];
                 $sucursales = Sucursal::all();
-                $tipo_vehiculos = Tipo_Vehiculo::all();
+                switch($tipo_placa){
+                    case "A":
+                        $tipo_vehiculos = Tipo_Vehiculo::whereIn('id',[1,2,3,4,5,6,7,14,15])->get();
+                        break;
+
+                    case "M":
+                        $tipo_vehiculos = Tipo_Vehiculo::where('tipo',2)->get();
+                        break;
+
+
+                    case "R":
+                        $tipo_vehiculos = Tipo_Vehiculo::whereIn('id',[16,17])->get();
+                        break;
+
+                    default:
+
+                        $tipo_vehiculos = Tipo_Vehiculo::all();
+                        break;
+                }
+                
                 
                 if($id_solicitud == 0){
                     $header = new stdClass;
@@ -300,14 +321,29 @@ class SolicitudController extends Controller
 
     public function store(SolicitudRequest $request)
     {
+        $solicitud_id = $request->get('solicitud_id');
+        if($solicitud_id != 0){
+            $solicitud = Solicitud::find($solicitud_id);
+            $solicitud->sucursal_id = $request->get('sucursal_id');
+            $solicitud->user_id = Auth::user()->id;
+            $solicitud->estado_id = 1;
+            $solicitud->tipoVehiculos_id = $request->get('tipoVehiculos_id');
+            $solicitud->termino_1 = $request->get('ppu_terminacion');
+            $solicitud->save();
+
+            return 0;
+        }
+        else{
+            $solicitud = new Solicitud();
+            $solicitud->sucursal_id = $request->get('sucursal_id');
+            $solicitud->user_id = Auth::user()->id;
+            $solicitud->estado_id = 1;
+            $solicitud->tipoVehiculos_id = $request->get('tipoVehiculos_id');
+            $solicitud->termino_1 = $request->get('ppu_terminacion');
+            $solicitud->save();
+        }
         
-        $solicitud = new Solicitud();
-        $solicitud->sucursal_id = $request->get('sucursal_id');
-        $solicitud->user_id = Auth::user()->id;
-        $solicitud->estado_id = 1;
-        $solicitud->tipoVehiculos_id = $request->get('tipoVehiculos_id');
-        $solicitud->termino_1 = $request->get('ppu_terminacion');
-        $solicitud->save();
+        
 
         if($request->hasFile('Factura_XML')){
             $doc = new Documento();
@@ -726,7 +762,9 @@ class SolicitudController extends Controller
             
         }*/
         $comunas = Comuna::allOrder();
-        return view('solicitud.adquirientes', compact('id', 'comunas', 'header'));
+        $html = view('solicitud.adquirientes', compact('id', 'comunas', 'header'))->render();
+        return json_encode(array('html'=>$html,'solicitud_id'=>$id));
+
     }
 
     public function adquirientes($id){
@@ -1885,12 +1923,19 @@ class SolicitudController extends Controller
                 $solicitud_rc->solicitud_id = $id;
                 $solicitud_rc->save();
 
+                $solicitud2 = Solicitud::find($id);
+                $solicitud2->estado_id = 6;
+                $solicitud2->save();
+
                 sleep(4);
 
                 $solicitud_rc = SolicitudRC::getSolicitud($id);
                 return view('solicitud.revision.docsIdentidadMoto', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
             }
             else{
+                $solicitud2 = Solicitud::find($id);
+                $solicitud2->estado_id = 11;
+                $solicitud2->save();
                 return view('general.errorRC', ['glosa' => $salida['glosa']]);
             }
         }
@@ -2552,6 +2597,7 @@ class SolicitudController extends Controller
     public function revision()
     {
         $solicitudes = Solicitud::PorAprobar();
+        
 
         $SolicitudItem = array();
         foreach($solicitudes as $item){

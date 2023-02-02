@@ -72,6 +72,18 @@ Route::group(['prefix' => 'administrador', 'middleware' => ['auth', 'admin']], f
     Route::put('tipo_documento/{id}', 'TipoDocumentoController@update')->name('tipo_documento.update');
     Route::delete('tipo_documento/{id}', 'TipoDocumentoController@destroy')->name('tipo_documento.destroy');
 
+
+    //Acreedores
+
+    Route::get('acreedor/index', 'AcreedorController@index')->name('acreedor.index');
+    Route::get('acreedor/create', 'AcreedorController@create')->name('acreedor.create');
+    Route::post('acreedor', 'AcreedorController@store')->name('acreedor.store');
+    Route::get('acreedor/{id}/edit', 'AcreedorController@edit')->name('acreedor.edit');
+    Route::put('acreedor/{id}', 'AcreedorController@update')->name('acreedor.update');
+    Route::delete('acreedor/{id}', 'AcreedorController@destroy')->name('acreedor.destroy');
+
+
+
     // Usuarios
     Route::get('usuario/index', 'UserController@index')->name('usuario.index');
     Route::get('usuario/create', 'UserController@create')->name('usuario.create');

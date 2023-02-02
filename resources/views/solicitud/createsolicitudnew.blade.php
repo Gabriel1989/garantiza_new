@@ -1,6 +1,7 @@
 <form enctype="multipart/form-data" id="form-solicitud-create" class="form-documentos form-horizontal form-solicitud" old-action="{{route('solicitud.store')}}" method="POST">
     @csrf
     @method('POST')
+    <input type="hidden" name="solicitud_id" id="solicitud_id" value="{{ isset($id_solicitud)? $id_solicitud :  0}}">
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
             <span class="panel-title">Crear Nueva Solicitud</span>

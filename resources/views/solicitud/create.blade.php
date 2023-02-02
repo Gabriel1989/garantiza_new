@@ -264,14 +264,17 @@
             contentType: false,
             data: formData,
             success: function(data) {
-                $("#pills-profile").html(data);
-                $("#pills-profile").toggleClass('show');
-                $("#pills-home").toggleClass('show');
-                $("#pills-profile-tab").attr("href","#pills-profile");
-                $("#pills-profile-tab").toggleClass('disabled');
-                $("#pills-profile-tab").attr("aria-disabled",false);
-                $("#pills-profile-tab").click();
-                
+                let jsondata = JSON.parse(data);
+                let solicitud_id = jsondata.solicitud_id;
+                if(parseInt(solicitud_id) != 0){                
+                    $("#pills-profile").html(jsondata.html);
+                    $("#pills-profile").toggleClass('show');
+                    $("#pills-home").toggleClass('show');
+                    $("#pills-profile-tab").attr("href","#pills-profile");
+                    $("#pills-profile-tab").toggleClass('disabled');
+                    $("#pills-profile-tab").attr("aria-disabled",false);
+                    $("#pills-profile-tab").click();
+                }
 
                 $('.comuna').multiselect({
                     enableFiltering: true,
@@ -337,6 +340,29 @@
                     };
                 });
 
+                if(parseInt(solicitud_id) != 0){
+                    window.location.href= "http://"+"{{$_SERVER['HTTP_HOST']}}"+ "/solicitud/continuar/"+ solicitud_id;
+                }
+                else{
+                    new PNotify({
+                        title: 'Crear Solicitud',
+                        text: 'Solicitud actualizada exitosamente',
+                        shadow: true,
+                        opacity: '0.75',
+                        addclass: 'stack_top_right',
+                        type: 'success',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '290px',
+                        delay: 2000
+                    });
+                    return true;
+                }
 
                 /*let json = JSON.parse(data);
                 $(".num_solicitud_interno").text(json.solicitud_id);
@@ -360,6 +386,8 @@
         $("#pills-invoice").removeClass('show');
         $("#pills-docs").removeClass('show');
         $("#pills-limitation").removeClass('show');
+        $("#pills-ppu").removeClass('show');
+
     });
 
     $(document).on("click","#pills-profile-tab",function(e){
@@ -368,6 +396,8 @@
         $("#pills-invoice").removeClass('show');
         $("#pills-docs").removeClass('show');
         $("#pills-limitation").removeClass('show');
+        $("#pills-ppu").removeClass('show');
+
     });
 
     $(document).on("click","#pills-contact-tab",function(e){
@@ -376,6 +406,8 @@
         $("#pills-invoice").removeClass('show');
         $("#pills-docs").removeClass('show');
         $("#pills-limitation").removeClass('show');
+        $("#pills-ppu").removeClass('show');
+
     });
 
     $(document).on("click","#pills-invoice-tab",function(e){
@@ -384,6 +416,8 @@
         $("#pills-contact").removeClass('show');
         $("#pills-docs").removeClass('show');
         $("#pills-limitation").removeClass('show');
+        $("#pills-ppu").removeClass('show');
+
     });
 
     $(document).on("click","#pills-limitation-tab",function(e){
@@ -392,8 +426,21 @@
         $("#pills-contact").removeClass('show');
         $("#pills-docs").removeClass('show');
         $("#pills-invoice").removeClass('show');
+        $("#pills-ppu").removeClass('show');
 
     });
+
+    $(document).on("click","#pills-ppu-tab",function(e){
+        $("#pills-home").removeClass('show');
+        $("#pills-profile").removeClass('show');
+        $("#pills-contact").removeClass('show');
+        $("#pills-docs").removeClass('show');
+        $("#pills-invoice").removeClass('show');
+        $("#pills-limitation").removeClass('show');
+
+    });
+
+
 
     function elimina(adquiriente) {
         if (adquiriente == 2) {
