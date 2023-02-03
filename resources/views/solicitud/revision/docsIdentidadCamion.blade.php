@@ -10,7 +10,7 @@ use App\Models\CompraPara;
     @method('POST')
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
-            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Adjuntar Documentación para la inscripción/limitación del vehículo</span>
+            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Adjuntar Documentación para la inscripción del vehículo</span>
         </div>
 
         <div class="panel-body">
