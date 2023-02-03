@@ -205,19 +205,20 @@ class DocumentoController extends Controller
         ];
         $data = RegistroCivil::subirDocumentos(json_encode($parametros));
         $salida = json_decode($data, true);
+        //dd($salida);
         if (isset($salida['OUTPUT'])) {
             if ($salida['OUTPUT'] != "OK") {
-                return json_encode(['status'=>'ERROR','msj'=>'Error al subir cédula de adquiriente']);
+                return json_encode(['status'=>'ERROR','msj'=>'Error al subir cédula de adquiriente 1']);
             }
         }
         else{
-            return json_encode(['status'=>'ERROR','msj'=>'Error al subir cédula de adquiriente']);
+            return json_encode(['status'=>'ERROR','msj'=>'Error al subir cédula de adquiriente 2']);
         }
-
+        sleep(4);
 
         //Cédula de compra para
         if (!is_null(CompraPara::getSolicitud($id))) {
-            $parametros = array(
+            $parametros2 = array(
                 'consumidor' => 'ACOBRO',
                 'servicio' => 'INGRESO DOCUMENTOS RVM',
                 'file' => base64_encode(file_get_contents($request->file('Cedula_Para_PDF')->getRealPath())),
@@ -229,20 +230,20 @@ class DocumentoController extends Controller
                 'fecha_ing' => date('d-m-Y'),
                 'nombre' => $request->file('Cedula_Para_PDF')->getClientOriginalName()
             );
-            $data = RegistroCivil::subirDocumentos($parametros);
+            $data = RegistroCivil::subirDocumentos(json_encode($parametros2));
             $salida = json_decode($data, true);
             if (isset($salida['OUTPUT'])) {
                 if ($salida['OUTPUT'] != "OK") {
-                    return json_encode(['status'=>'ERROR','msj'=>'Error al subir cédula de estipulante o compra para']);
+                    return json_encode(['status'=>'ERROR','msj'=>'Error al subir cédula de estipulante o compra para 1']);
                 }
             }
             else{
-                return json_encode(['status'=>'ERROR','msj'=>'Error al subir cédula de estipulante o compra para']);
+                return json_encode(['status'=>'ERROR','msj'=>'Error al subir cédula de estipulante o compra para 2']);
             }
         }
-
+        sleep(4);
         //Factura
-        $parametros = [
+        $parametros3 = [
             'consumidor' => 'ACOBRO',
             'servicio' => 'INGRESO DOCUMENTOS RVM',
             'file' => base64_encode(file_get_contents($request->file('Factura_PDF_RC')->getRealPath())),
@@ -254,18 +255,18 @@ class DocumentoController extends Controller
             'fecha_ing' => date('d-m-Y'),
             'nombre' => $request->file('Factura_PDF_RC')->getClientOriginalName()
         ];
-        $data = RegistroCivil::subirDocumentos(json_encode($parametros));
+        $data = RegistroCivil::subirDocumentos(json_encode($parametros3));
         $salida = json_decode($data, true);
         if (isset($salida['OUTPUT'])) {
             if ($salida['OUTPUT'] != "OK") {
-                return json_encode(['status'=>'ERROR','msj'=>'Error al subir factura en PDF']);
+                return json_encode(['status'=>'ERROR','msj'=>'Error al subir factura en PDF 1']);
             }
         }
         else{
-            return json_encode(['status'=>'ERROR','msj'=>'Error al subir factura en PDF']);
+            return json_encode(['status'=>'ERROR','msj'=>'Error al subir factura en PDF 2']);
         }
 
 
-        
+        return json_encode(['status'=>'OK','msj'=>'Archivos enviados exitosamente a Registro Civil']);
     }
 }
