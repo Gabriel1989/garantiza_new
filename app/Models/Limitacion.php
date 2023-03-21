@@ -15,4 +15,11 @@ class Limitacion extends Model
             ->select('limitaciones.*')
             ->get();
     }
+
+    public static function getLimitacionRC($id){
+        return DB::table('limitaciones_rc')
+            ->where('limitaciones_rc.solicitud_id', '=', $id)
+            ->select('limitaciones_rc.*')
+            ->get();
+    }
 }

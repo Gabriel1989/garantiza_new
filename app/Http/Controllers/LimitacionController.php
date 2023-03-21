@@ -111,8 +111,8 @@ class LimitacionController extends Controller{
 
         if(isset($salida['codigoresp'])){
             //dd((int)$salida['codigoresp']);
-            $cod_salida_resp = (int)$salida['codigoresp'];
-            if($cod_salida_resp==1 || $cod_salida_resp==0){
+            $cod_salida_resp = $salida['codigoresp'];
+            if(trim($cod_salida_resp)=="OK"){
                 $nro_limitacion_rc = $salida['solicitud']['numeroSol'];
                 $ppu_rc = $salida['solicitud']['ppu'];
                 $fecha = $salida['solicitud']['fecha'];
@@ -130,13 +130,46 @@ class LimitacionController extends Controller{
                 $limitacion_rc->solicitud_id = $id;
                 $limitacion_rc->save();
                 sleep(4);
-                $limitacion_rc = LimitacionRC::getSolicitud($id);
+                $limitacion_rc_2 = LimitacionRC::getSolicitud($id);
                 
             }
             else{
                 return view('general.errorRC', ['glosa' => $salida['glosa']]);
             }
         }
+
+    }
+
+    public function verEstado(Request $request, $id){
+        $solicitud_rc = LimitacionRC::where('solicitud_id',$id)->first();
+
+        echo '<h2>Datos Registro Limitación</h2>';
+
+        $parametro = [
+            'consumidor' => 'ACOBRO',
+            'servicio' => 'CONSULTA LIMITACION',
+            'ppu' => str_replace(".","",explode("-",$solicitud_rc->ppu)[0]),
+            'nroSolicitud' => $request->get('id_solicitud_rc'),
+            'anho' => substr($solicitud_rc->fecha,0,4)
+        ];
+
+        //dd($parametro);
+
+
+        $data = RegistroCivil::consultaLimitacion($parametro);
+
+        $salida = json_decode($data, true);
+        $codigoresp = null;
+
+        foreach($salida as $index => $detalle){
+            if($index == "codigoresp"){
+                $codigoresp = $detalle;
+            }
+            if($codigoresp != null){
+                echo "<label>".$index.': </label> '.$detalle.'<br>';
+            }
+        }
+        die;
 
     }
 

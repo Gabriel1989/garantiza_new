@@ -5,6 +5,7 @@
 
 <?php
     use App\Models\Solicitud;
+    use App\Models\Limitacion;
 ?>
 <div class="panel panel-info panel-border top">
     <div class="panel-heading">
@@ -39,10 +40,23 @@
                                     $solicitud_rc = Solicitud::getSolicitudRC($item->id);
                                     ?>
                                     @if(count($solicitud_rc) > 0)
-                                        <button type="button" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="{{$item->id}}" data-numsol="{{ $solicitud_rc[0]->numeroSol }}" class="btn btn-dark btn-sm btnRevisaSolicitud">
+                                        <button type="button" style="margin-bottom:5px;" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="{{$item->id}}" data-numsol="{{ $solicitud_rc[0]->numeroSol }}" class="btn btn-dark btn-sm btnRevisaSolicitud">
                                             <li class="fa fa-pencil"></li> Revisar estado solicitud en RC
                                         </button>
                                     @endif    
+                                    
+                                    <?php
+                                    $limitacion_rc = Limitacion::getLimitacionRC($item->id);
+                                    ?>
+
+                                    @if(count($limitacion_rc) > 0)
+                                    <button type="button" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="{{$item->id}}" data-numsol="{{ $limitacion_rc[0]->numSol }}" class="btn btn-dark btn-sm btnRevisaLimitacion">
+                                        <li class="fa fa-pencil"></li> Revisar estado solicitud de limitación/prohibición en RC
+                                    </button>
+                                    @endif       
+
+
+
                                 </td>
                             </tr>
                         @endforeach
@@ -102,6 +116,26 @@
 
             $.ajax({
                 url: "/solicitud/"+numSolGarantiza+"/verEstadoSolicitud",
+                type: "post",
+                data: {
+                    id_solicitud_rc: numSolRC,
+                    _token: "{{ csrf_token() }}"
+                },
+                success: function(data){
+        
+                    $("#modal_solicitud_body").html(data);
+                }
+            })
+
+        })
+
+        $(document).on("click",".btnRevisaLimitacion",function(e){
+            e.preventDefault();
+            let numSolRC = $(this).data('numsol');
+            let numSolGarantiza = $(this).data('garantizasol');
+
+            $.ajax({
+                url: "/solicitud/"+numSolGarantiza+"/limitacion/verEstadoSolicitud",
                 type: "post",
                 data: {
                     id_solicitud_rc: numSolRC,
