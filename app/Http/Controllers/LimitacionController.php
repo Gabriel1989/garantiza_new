@@ -131,10 +131,41 @@ class LimitacionController extends Controller{
                 $limitacion_rc->save();
                 sleep(4);
                 $limitacion_rc_2 = LimitacionRC::getSolicitud($id);
+
+
+                //Subir documento asociado a la prohibición
+                $validaDocLimi = true;
+                $parametros = [
+                    'consumidor' => 'ACOBRO',
+                    'servicio' => 'INGRESO DOCUMENTOS RVM',
+                    'file' => base64_encode(file_get_contents($request->file('Doc_Lim')->getRealPath())),
+                    'patente' => str_replace(".","",explode("-",$limitacion_rc_2[0]->ppu)[0]),
+                    'nro' => $limitacion_rc_2[0]->numSol,
+                    'tipo_sol' => 'A',
+                    'tipo_doc' => "PDF",
+                    'clasificacion' => 1,
+                    'fecha_ing' => date('d-m-Y'),
+                    'nombre' => $request->file('Doc_Lim')->getClientOriginalName()
+                ];
+                $data = RegistroCivil::subirDocumentos(json_encode($parametros));
+                $salida = json_decode($data, true);
+                //dd($salida);
+                if (isset($salida['OUTPUT'])) {
+                    if ($salida['OUTPUT'] != "OK") {
+                        $validaDocLimi = false;
+                        return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación 1']);
+                    }
+                }
+                else{
+                    $validaDocLimi = false;
+                    return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación 2']);
+                }
+
+                return json_encode(['status'=>'OK','msj'=>'Solicitud de limitación registrada exitosamente']);
                 
             }
             else{
-                return view('general.errorRC', ['glosa' => $salida['glosa']]);
+                return json_encode(['status'=>'ERROR','msj'=>$salida['glosa']]);
             }
         }
 
