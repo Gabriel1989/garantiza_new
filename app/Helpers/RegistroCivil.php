@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Http;
 class RegistroCivil{
     public static function PPUDisponible($parametro){
         //$wsdl = 'SpievAPI/WSDL/PPUDisponible_porTipo_PID.wsdl';
-        $url = 'http://172.16.10.221/RC_API/PPUDisponible.php';
+        $url = 'http://181.212.92.141/RC_API/PPUDisponible.php';
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);
@@ -22,7 +22,8 @@ class RegistroCivil{
 
     public static function creaMoto($parametro){
         //$wsdl = 'SpievAPI/WSDL/CreaSpieMoto_PID.wsdl';
-        $url = 'http://172.16.10.221/RC_API/creaMoto.php';
+        $url = 'http://181.212.92.141/RC_API/creaMoto.php';
+        //http://181.212.92.138/RC_API/LimiPrimera.php
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);
@@ -36,7 +37,7 @@ class RegistroCivil{
 
     public static function creaAuto($parametro){
         //$wsdl = 'SpievAPI/WSDL/CreaSpieNew.wsdl';
-        $url = 'http://172.16.10.221/RC_API/creaAuto.php';
+        $url = 'http://181.212.92.141/RC_API/creaAuto.php';
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);
@@ -50,7 +51,7 @@ class RegistroCivil{
 
     public static function consultaEstadoSolicitud($parametro){
         //$wsdl = 'SpievAPI/WSDL/EstadoSolicitud_PID.wsdl';
-        $url = 'http://172.16.10.221/RC_API/consultaEstadoSolicitud.php';
+        $url = 'http://181.212.92.141/RC_API/consultaEstadoSolicitud.php';
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);
@@ -64,7 +65,7 @@ class RegistroCivil{
 
     public static function consultaSolicitudRVM($parametro){
         //$wsdl = 'SpievAPI/WSDL/PID_ConsultaSolicitudRVMI.wsdl';
-        $url = 'http://172.16.10.221/RC_API/consultaSolicitudRVM.php';
+        $url = 'http://181.212.92.141/RC_API/consultaSolicitudRVM.php';
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);
@@ -78,7 +79,7 @@ class RegistroCivil{
 
     public static function subirDocumentos($parametro){
         //$wsdl = 'SpievAPI/WSDL/Documentos_PID.wsdl';
-        $url = 'http://172.16.10.221/RC_API/cargaDocumentosPID.php';
+        $url = 'http://181.212.92.141/RC_API/cargaDocumentosPID.php';
 
         $curl = curl_init($url);
 
@@ -95,7 +96,7 @@ class RegistroCivil{
 
     public static function consultaLimitacion($parametro){
         //$wsdl = 'SpievAPI/WSDL/ConsultaLimitaConConsumidor_PID.wsdl';
-        $url = 'http://172.16.10.221/RC_API/consultaLimitacion.php';
+        $url = 'http://181.212.92.141/RC_API/consultaLimitacion.php';
         $curl = curl_init($url);
 
         //dd($parametro);
@@ -111,7 +112,7 @@ class RegistroCivil{
 
     public static function creaCarga($parametro){
         //$wsdl = 'SpievAPI/WSDL/CreaSpieCarga_PID.wsdl';
-        $url = 'http://172.16.10.221/RC_API/creaCarga.php';
+        $url = 'http://181.212.92.141/RC_API/creaCarga.php';
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);
@@ -125,7 +126,7 @@ class RegistroCivil{
 
     public static function LimPrimera($parametro){
         //$wsdl = 'SpievAPI/WSDL/PID_LimiSpie.wsdl';
-        $url = 'http://172.16.10.221/RC_API/LimiPrimera.php';
+        $url = 'http://181.212.92.141/RC_API/LimiPrimera.php';
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);

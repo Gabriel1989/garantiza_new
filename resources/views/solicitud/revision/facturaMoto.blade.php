@@ -16,7 +16,11 @@
 </style>
 @endsection
 
+<?php
 
+use App\Models\Reingreso;
+$reingreso = Reingreso::where('solicitud_id',$id)->first();
+?>
 
 @include('includes.form-error-message')
 <form method="post" id="formFacturaMoto" old-action="{{route('solicitud.updateRevisionFacturaMoto', ['id' => $id])}}" role="form" class="form-horizontal form-revision" >
@@ -95,7 +99,7 @@
                                 <div class="row">
                                     <label for="nroSerie" class="col-lg-3 control-label ">N° de Serie:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="nroSerie" id="nroSerie" class="form-control" placeholder="" required>
+                                        <input type="input" value="{{ $header->NroSerie}}" name="nroSerie" id="nroSerie" class="form-control" placeholder="">
                                     </label>
                                 </div>
                                 <div class="row">
@@ -122,6 +126,37 @@
                                         <input type="input" value="{{ $header->TipoVehiculo}}" name="tipoVehiculo" id="tipoVehiculo" class="form-control" placeholder="TRICICLO MOTOR">
                                     </label>
                                 </div>
+                                @if($reingreso != null)
+                                <div class="row">
+                                    <label for="nroResExenta" class="col-lg-3 control-label ">Número resolución exenta:</label>
+                                    <label class="col-lg-9">
+                                        <input type="input" value="" name="nroResExenta" id="nroResExenta" class="form-control" min="1" max="99999999">
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <label for="fechaResExenta" class="col-lg-3 control-label ">Fecha resolución exenta:</label>
+                                    <label class="col-lg-9">
+                                        <input type="input" value="" name="fechaResExenta" id="fechaResExenta" class="form-control fechaRechazos">
+                                    </label>
+                                </div>
+
+                                <div class="row">
+                                    <label for="fechaSolRech" class="col-lg-3 control-label ">Fecha solicitud rechazada:</label>
+                                    <label class="col-lg-9">
+                                        <input type="input" value="" name="fechaSolRech" id="fechaSolRech" class="form-control fechaRechazos">
+                                    </label>
+                                </div>
+
+                                <script>
+                                    $(".fechaRechazos").datepicker({
+                                        language: 'es',
+                                        dateFormat: 'yymmdd',
+                                    });
+                                </script>
+
+
+
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -171,6 +206,26 @@
 
     });
 
+    $.datepicker.regional['es'] = {
+        closeText: 'Cerrar',
+        prevText: '< Ant',
+        nextText: 'Sig >',
+        currentText: 'Hoy',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Juv', 'Vie', 'Sáb'],
+        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+
+    $.datepicker.setDefaults($.datepicker.regional['es']);
+
 
     $(document).on("submit","#formFacturaMoto",function(e){
         e.preventDefault();
@@ -195,6 +250,8 @@
                 $("#pills-contact").removeClass('show');
                 $("#pills-profile").removeClass('show');
                 $("#pills-invoice").removeClass('show');
+                $("#pills-voucher").removeClass('show');
+                $("#pills-pay").removeClass('show');
                 $("#pills-docs-tab").attr("href","#pills-docs");
                 $("#pills-docs-tab").toggleClass('disabled');
                 $("#pills-docs-tab").attr("aria-disabled",false);

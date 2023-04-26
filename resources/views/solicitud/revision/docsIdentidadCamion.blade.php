@@ -169,6 +169,18 @@ $(document).on("submit","#form_subeDocs",function(e){
                     width: '290px',
                     delay: 2000
                 });
+                $("#pills-pay").html(json.html);
+                $("#pills-pay").toggleClass('show');
+                $("#pills-docs").removeClass('show');
+                $("#pills-home").removeClass('show');
+                $("#pills-contact").removeClass('show');
+                $("#pills-profile").removeClass('show');
+                $("#pills-invoice").removeClass('show');
+                $("#pills-voucher").removeClass('show');
+                $("#pills-pay-tab").attr("href","#pills-pay");
+                $("#pills-pay-tab").toggleClass('disabled');
+                $("#pills-pay-tab").attr("aria-disabled",false);
+                $("#pills-pay-tab").click();
                 return true;
             }
 

@@ -11,7 +11,7 @@
                 <div class="form-group">
                     <label for="rut" class="col-lg-2 control-label">Rut :</label>
                     <label class="col-lg-2">
-                        <input type="hidden" name="id_comprapara" id="id_comprapara" value="{{ !is_null($comprapara)? $comprapara->id :  0}}">
+                        <input type="hidden" data-comprapara="{{$comprapara}}" name="id_comprapara" id="id_comprapara" value="{{ !is_null($comprapara)? $comprapara->id :  0}}">
                         <input type="text" name="rut" id="rut_comprapara" class="form-control rut2" placeholder="99.999.999-9" value="{{ !is_null($comprapara)?  $comprapara->rut : $adquirentes[0]->rut}}" >
                     </label>
                     <label class="col-lg-2"></label>
@@ -105,7 +105,7 @@
                 <hr>
         </div>
     <div class="panel-footer">
-        <button type="submit" class="btn btn-system"> <li class="fa fa-save"></li> Grabar y Continuar</button>
+        <button type="submit" class="btn btn-system btnGuardaCompraPara"> <li class="fa fa-save"></li> Grabar y Continuar</button>
         <button type="button" class="btn btn-warning btnContinuaSolicitud"><li class="fa fa-arrow-right"></li> No registrar Compra Para y Continuar </button>
     </div>
 </div>
@@ -167,7 +167,7 @@
     $(document).on("click",".btnContinuaSolicitud",function(e){
         e.preventDefault();
         let formData = new FormData(document.getElementById("form_compraPara"));
-        formData.append('no_guardar',true);
+        formData.append('guardar',"NO");
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -202,7 +202,7 @@
     $(document).on("submit","#form_compraPara",function(e){
         e.preventDefault();
         let formData = new FormData(document.getElementById("form_compraPara"));
-        formData.append('no_guardar',false);
+        formData.append('guardar',"SI");
 
         $.ajaxSetup({
             headers: {

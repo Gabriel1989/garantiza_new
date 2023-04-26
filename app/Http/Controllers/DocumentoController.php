@@ -266,7 +266,8 @@ class DocumentoController extends Controller
             return json_encode(['status'=>'ERROR','msj'=>'Error al subir factura en PDF 2']);
         }
 
+        $html = view('solicitud.pagos', compact('id', 'solicitud_rc'))->render();
 
-        return json_encode(['status'=>'OK','msj'=>'Archivos enviados exitosamente a Registro Civil']);
+        return json_encode(['status'=>'OK','html'=>$html,'msj'=>'Archivos enviados exitosamente a Registro Civil']);
     }
 }

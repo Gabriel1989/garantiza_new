@@ -8,6 +8,17 @@
 @include('includes.mensaje')
 
 <div class="panel panel-info panel-border top">
+
+    @if($reingreso != null)
+    <div class="panel-header">
+        <div class="row">
+            
+            <div class="col-md-6" style="padding-left:30px;">
+                <h4><i class="fa fa-exclamation-triangle" style="color:red;" aria-hidden="true"></i> Solicitud debe ser reingresada</h4>
+            </div>
+        </div>
+    </div>
+    @endif
     <div class="panel-body">
         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
             <li class="nav-item @if($solicita_ppu == false)  active @endif" role="presentation">
@@ -16,18 +27,22 @@
             <li class="nav-item @if($id_solicitud == 0 && $solicita_ppu)  active @endif" role="presentation">
                 <a class="nav-link @if($id_solicitud == 0 && $solicita_ppu == false)  disabled @endif" id="pills-home-tab" data-toggle="pill" @if($solicita_ppu) href="#pills-home" @else href="#" @endif role="tab" aria-controls="pills-home" aria-selected="true" @if($solicita_ppu == false) aria-disabled="true" @endif>Crear Solicitud</a>
             </li>
-            <li class="nav-item @if($id_solicitud != 0 && $id_adquiriente == 0)  active    @endif" role="presentation">
+            <li class="nav-item @if($id_solicitud != 0 && $id_adquiriente == 0 && $id_solicitud_rc == 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_solicitud == 0)  disabled    @endif" id="pills-profile-tab" data-toggle="pill" @if($id_solicitud != 0) href="#pills-profile" @else href="#" @endif role="tab" aria-controls="pills-profile" aria-selected="false" @if($id_solicitud == 0) aria-disabled="true" @endif>Adquirientes</a>
             </li>
-            <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara == 0)  active    @endif" role="presentation">
+
+            <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara == 0 && $id_solicitud_rc == 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_adquiriente == 0)  disabled    @endif" id="pills-contact-tab" data-toggle="pill" @if($id_adquiriente != 0) href="#pills-contact" @else href="#" @endif role="tab" aria-controls="pills-contact" aria-selected="false"@if($id_adquiriente == 0) aria-disabled="true" @endif>Compra Para</a>
             </li>
+
             <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara != 0 && $id_solicitud_rc == 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_comprapara == 0)  disabled    @endif" id="pills-invoice-tab" data-toggle="pill" @if($id_comprapara != 0) href="#pills-invoice" @else href="#" @endif role="tab" aria-controls="pills-invoice" aria-selected="false" @if($id_comprapara == 0) aria-disabled="true" @endif>Factura</a>
             </li>
+
             <li class="nav-item @if($id_solicitud_rc != 0)  active @endif" role="presentation">
                 <a class="nav-link @if($id_solicitud_rc == 0)  disabled    @endif" id="pills-docs-tab" data-toggle="pill" @if($id_solicitud_rc != 0) href="#pills-docs" @else href="#" @endif role="tab" aria-controls="pills-docs" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Documentación</a>
             </li>
+
             <li class="nav-item" role="presentation">
                 <a class="nav-link @if($id_solicitud_rc == 0)  disabled  @endif" id="pills-limitation-tab" data-toggle="pill" @if($id_solicitud_rc != 0) href="#pills-limitation" @else href="#" @endif role="tab" aria-controls="pills-limitation" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Limitación</a>
             </li>
@@ -47,12 +62,12 @@
                     @include('solicitud.createsolicitudnew')
                 @endif
             </div>
-            <div class="tab-pane fade @if($id_solicitud != 0 && $id_adquiriente == 0) show  active in @endif" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+            <div class="tab-pane fade @if($id_solicitud != 0 && $id_adquiriente == 0 && $id_solicitud_rc == 0) show  active in @endif" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
                 @if($id_solicitud != 0)
                     @include('solicitud.adquirientes')
                 @endif
             </div>
-            <div class="tab-pane fade @if($id_adquiriente != 0 && $id_comprapara == 0) show  active in @endif" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+            <div class="tab-pane fade @if($id_adquiriente != 0 && $id_comprapara == 0 && $id_solicitud_rc == 0) show  active in @endif" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
                 @if ($id_adquiriente != 0)
                     @include('solicitud.compraPara')
                 @endif
@@ -85,6 +100,15 @@
                     @include('solicitud.limitacion')
                 @endif
             </div>
+            <div class="tab-pane fade" id="pills-pay" role="tabpanel" aria-labelledby="pills-pay-tab">
+
+
+            </div>
+            <div class="tab-pane fade" id="pills-voucher" role="tabpanel" aria-labelledby="pills-voucher-tab">
+
+
+            </div>
+
 
         </div>
     </div>

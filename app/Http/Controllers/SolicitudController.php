@@ -24,6 +24,7 @@ use App\Models\SolicitudRC;
 use App\Models\NoPara;
 use App\Models\Tipo_Carroceria;
 use App\Models\TipoPotencia;
+use App\Models\Reingreso;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -32,6 +33,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\MessageBag;
+use Illuminate\Support\Facades\Log;
 
 use stdClass;
 
@@ -55,6 +57,7 @@ class SolicitudController extends Controller
         $solicita_ppu = false;
         $sucursales = Sucursal::all();
         $tipo_vehiculos = Tipo_Vehiculo::all();
+        $reingreso = null;
         $solicitud_data = null;
         $ppu = array();
         $comunas = Comuna::allOrder();
@@ -67,7 +70,7 @@ class SolicitudController extends Controller
         $tipo_carroceria = Tipo_Carroceria::all();
         $tipo_potencia = TipoPotencia::all();
 
-        return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
     }
 
     public function continuarSolicitud($id){
@@ -77,6 +80,7 @@ class SolicitudController extends Controller
         $header = new stdClass;
         $factura = Factura::where('id_solicitud',$id_solicitud)->first();
         $solicitud_data = Solicitud::find($id);
+        $reingreso = Reingreso::where('solicitud_id',$id_solicitud)->whereIn('estado_id',[0,2,3])->first();
         $sucursales = Sucursal::all();
         $tipo_vehiculos = Tipo_Vehiculo::all();
         $tipo_potencia = TipoPotencia::all();
@@ -102,6 +106,7 @@ class SolicitudController extends Controller
             $header->NroChasis = (string)$factura->nro_chasis;
             $header->NroMotor = (string)$factura->motor;
             $header->NroVin  = (string)$factura->nro_vin;
+            $header->NroSerie  = (string)$factura->nro_serie;
             $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
             $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
             $header->Asientos = (string) $factura->asientos;
@@ -164,11 +169,11 @@ class SolicitudController extends Controller
                         break;
                 }
             }
-            return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+            return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
             'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
         }
         //Menu adquiriente: solicitud recién creada
-        return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
     }
 
 
@@ -193,6 +198,7 @@ class SolicitudController extends Controller
         $id_comprapara = 0;
         $id_solicitud_rc = 0;
         $solicitud_data = null;
+        $reingreso = null;
         //dd(session('solicitud_id'));
         $id_solicitud = (session('solicitud_id') != null) ? session('solicitud_id') : 0;
         //dd($id_solicitud);
@@ -229,12 +235,13 @@ class SolicitudController extends Controller
                 
                 if($id_solicitud == 0){
                     $header = new stdClass;
-                    return view('solicitud.createsolicitudnew', compact('solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
+                    return view('solicitud.createsolicitudnew', compact('reingreso','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
                 }
                 else{
                     $header = new stdClass;
                     $solicitud_data = Solicitud::find($id_solicitud);
                     $factura = Factura::where('id_solicitud',$id_solicitud)->first();
+                    $reingreso = Reingreso::where('solicitud_id',$id_solicitud)->whereIn('estado_id',[0,2,3])->first();
                     $id = $id_solicitud;
                     if($factura != null){
                         $header->RUTRecep = (string)$factura->rut_receptor;
@@ -299,13 +306,13 @@ class SolicitudController extends Controller
                                     break;
                             }
                         }
-                        return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+                        return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
                         'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
                         //return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
                     }
                     else{
                         //Menu adquiriente: solicitud recién creada
-                        return view('solicitud.create', compact('tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
+                        return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
                     }
                     
                 }
@@ -959,8 +966,10 @@ class SolicitudController extends Controller
     }
 
     public function saveCompraPara(Request $request, $id){
-        $no_guardacomprapara = (bool)$request->input('no_guardar');
-        if (!$no_guardacomprapara) {
+        $guardacomprapara = $request->input('guardar');
+        Log::info('guarda compra para: '.$guardacomprapara);
+        if ($guardacomprapara == "SI") {
+            Log::info('guardamos compra para');
             $errors = new MessageBag();
             if (!is_null($request->rut)) {
                 if (is_null($request->nombre))
@@ -1027,6 +1036,7 @@ class SolicitudController extends Controller
             }
         }
         else{
+            Log::info('NO guardamos compra para');
             $no_para = new NoPara();
             $no_para->solicitud_id = $id;
             $no_para->save();
@@ -1080,6 +1090,7 @@ class SolicitudController extends Controller
                     $header->NroChasis = (string)$factura->nro_chasis;
                     $header->NroMotor = (string)$factura->motor;
                     $header->NroVin  = (string)$factura->nro_vin;
+                    $header->NroSerie  = (string)$factura->nro_serie;
                     $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
                     $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
                     $header->Asientos = (string) $factura->asientos;
@@ -1131,6 +1142,7 @@ class SolicitudController extends Controller
                     $header->NroChasis = (string)$factura->nro_chasis;
                     $header->NroMotor = (string)$factura->motor;
                     $header->NroVin  = (string)$factura->nro_vin;
+                    $header->NroSerie  = (string)$factura->nro_serie;
                     $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
                     $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
                     $header->Asientos = (string) $factura->asientos;
@@ -1182,6 +1194,7 @@ class SolicitudController extends Controller
                     $header->NroChasis = (string)$factura->nro_chasis;
                     $header->NroMotor = (string)$factura->motor;
                     $header->NroVin  = (string)$factura->nro_vin;
+                    $header->NroSerie  = (string)$factura->nro_serie;
                     $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
                     $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
                     $header->Asientos = (string) $factura->asientos;
@@ -1706,34 +1719,18 @@ class SolicitudController extends Controller
         $header = new stdClass;
         $detail = new stdClass;
 
-        //dd($request);
-
-        //$documentos = Solicitud::DocumentosSolicitud($id);
-        //$file = $documentos->where('tipo_documento_id', '1')->first()->name;
-        
-        //if (Storage::exists($file)) {
-            //$contents = Storage::get($file);
-            //$xmlResponse = simplexml_load_string($contents);
-            
-            //if($xmlResponse->Documento->Encabezado){
         $factura = Factura::where('id_solicitud',$id)->first();
         $adquiriente = Adquiriente::where('solicitud_id',$id)->first();
         $compraPara = Para::where('solicitud_id',$id)->first();
         $solicitud = Solicitud::where('id',$id)->first();
+        $reingreso = Reingreso::where('solicitud_id',$id)->whereIn('estado_id',[0,2,3])->first();
         
+        //Log::info(json_encode($reingreso));
 
         if($factura != null){        
 
             $header->Folio = (string)$factura->num_factura;
-            /*
-            $header->FchEmis = (string)$xmlResponse->Documento->Encabezado->IdDoc->FchEmis;
-            $header->RUTEmisor = (string)$xmlResponse->Documento->Encabezado->Emisor->RUTEmisor;
-            $header->RznSoc = (string)$xmlResponse->Documento->Encabezado->Emisor->RznSoc;
-            $header->GiroEmis = (string)$xmlResponse->Documento->Encabezado->Emisor->GiroEmis;
-            $header->Sucursal = (string)$xmlResponse->Documento->Encabezado->Emisor->Sucursal;
-            $header->DirOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->DirOrigen;
-            $header->CmnaOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CmnaOrigen;
-            $header->CiudadOrigen = (string)$xmlResponse->Documento->Encabezado->Emisor->CiudadOrigen;*/
+            
             $header->RUTRecep = (string)$factura->rut_receptor;
             $header->RznSocRecep = (string)$factura->razon_social_recep;
             $header->GiroRecep = (string)$factura->giro;
@@ -1747,21 +1744,8 @@ class SolicitudController extends Controller
             $header->RUTEmisor = (string)$factura->rut_emisor;
             $header->RznSoc = (string)$factura->razon_social_emisor;
             $header->MntTotal = (string)$factura->monto_total_factura;
-            /*
-            $header->MntNeto = (string)$xmlResponse->Documento->Encabezado->Totales->MntNeto;
-            $header->MntExe = (string)$xmlResponse->Documento->Encabezado->Totales->MntExe;
-            $header->TasaIVA = (string)$xmlResponse->Documento->Encabezado->Totales->TasaIVA;
-            $header->IVA = (string)$xmlResponse->Documento->Encabezado->Totales->IVA;
-            $header->MntTotal = (string)$xmlResponse->Documento->Encabezado->Totales->MntTotal;*/
+            
         }
-            //}
-
-            /*if($xmlResponse->Documento->Detalle){
-                $detail->DscItem = (string)$xmlResponse->Documento->Detalle->DscItem;
-                $detail->DscItem = str_replace("\n", "", $detail->DscItem);
-                $detalle = explode('^^', $detail->DscItem);
-            }*/
-        //}
         // Generar Json
         $pbv = $request->get('pbv');
         if($factura->tipo_pbv == "K"){
@@ -1802,6 +1786,29 @@ class SolicitudController extends Controller
                 'cPostal' => '',
                 'rDomicilio' => ''
             );
+        }
+
+
+        $datosReingreso = null;
+        if($reingreso != null){
+            $datosReingreso = array(
+                'fechaResExenta' => $request->get('fechaResExenta'),
+                'fechaSolRech' => $request->get('fechaSolRech'),
+                'nroResExenta' => $request->get('nroResExenta'),
+                'nroSolicitud' => $reingreso->nroSolicitud,
+                'ppu' => $reingreso->ppu
+            );
+            Log::info('adjunta datos de reingreso');
+        }
+        else{
+            $datosReingreso = array(
+                'fechaResExenta' => '',
+                'fechaSolRech' => '',
+                'nroResExenta' => '',
+                'nroSolicitud' => '',
+                'ppu' => ''
+            );
+            Log::info('no adjunta datos de reingreso');
         }
 
         $parametro = [
@@ -1883,6 +1890,7 @@ class SolicitudController extends Controller
             )
         ];
         $parametro['compraParaDTO'] = $datosCompraPara;
+        $parametro['reIngreso'] = $datosReingreso;
         // Llamar RC
         $parametros = array(
             'llave' => array(
@@ -1912,20 +1920,67 @@ class SolicitudController extends Controller
                 $hora = $salida['solicitudDTO']['hora'];
                 $oficina = $salida['solicitudDTO']['oficina'];
                 $tipo_sol = $salida['solicitudDTO']['tipoSol'];
+                @$observaciones = $salida['Observaciones'];
 
-                $solicitud_rc = new SolicitudRC();
-                $solicitud_rc->fecha = $fecha;
-                $solicitud_rc->hora = $hora;
-                $solicitud_rc->numeroSol = $nro_solicitud_rc;
-                $solicitud_rc->oficina = $oficina;
-                $solicitud_rc->ppu = $ppu_rc;
-                $solicitud_rc->tipoSol = $tipo_sol;
-                $solicitud_rc->solicitud_id = $id;
-                $solicitud_rc->save();
+                if($reingreso == null){
+                    $solicitud_rc = new SolicitudRC();
+                    $solicitud_rc->fecha = $fecha;
+                    $solicitud_rc->hora = $hora;
+                    $solicitud_rc->numeroSol = $nro_solicitud_rc;
+                    $solicitud_rc->oficina = $oficina;
+                    $solicitud_rc->ppu = $ppu_rc;
+                    $solicitud_rc->tipoSol = $tipo_sol;
+                    $solicitud_rc->solicitud_id = $id;
+                    $solicitud_rc->save();
+                }
+                else{
+                    $solicitud_rc = SolicitudRC::where('solicitud_id',$id)->first();
+                    $solicitud_rc->fecha = $fecha;
+                    $solicitud_rc->hora = $hora;
+                    $solicitud_rc->numeroSol = $nro_solicitud_rc;
+                    $solicitud_rc->oficina = $oficina;
+                    $solicitud_rc->ppu = $ppu_rc;
+                    $solicitud_rc->tipoSol = $tipo_sol;
+                    $solicitud_rc->solicitud_id = $id;
+                    $solicitud_rc->save();
 
-                $solicitud2 = Solicitud::find($id);
-                $solicitud2->estado_id = 6;
-                $solicitud2->save();
+                }
+
+                if(@sizeof($observaciones)==0){
+                    $solicitud2 = Solicitud::find($id);
+                    $solicitud2->estado_id = 6;
+                    $solicitud2->save();
+
+                    if($reingreso != null){
+                        //$reingreso->observaciones = json_encode($observaciones);
+                        $reingreso->estado_id = 1; //Reingreso aceptado
+                        $reingreso->nroSolicitud = $nro_solicitud_rc;
+                        $reingreso->save();
+                    }
+                }
+                else{
+                    $solicitud2 = Solicitud::find($id);
+                    $solicitud2->estado_id = 12;
+                    $solicitud2->save();
+
+                    if($reingreso != null){
+                        $reingreso->observaciones = json_encode($observaciones);
+                        $reingreso->estado_id = 2; //Reingreso rechazado
+                        $reingreso->nroSolicitud = $nro_solicitud_rc;
+                        $reingreso->save();
+                    }
+                    else{
+                        $new_reingreso = new Reingreso();
+                        $new_reingreso->ppu = explode('-',str_replace('.','',$ppu_rc))[0];
+                        $new_reingreso->nroSolicitud = $nro_solicitud_rc;
+                        $new_reingreso->solicitud_id = $id;
+                        $new_reingreso->estado_id = 0; //Pendiente de reingreso
+                        $new_reingreso->observaciones = json_encode($observaciones);
+                        $new_reingreso->save();
+                    }
+                }
+
+                
 
                 sleep(4);
 
@@ -1953,8 +2008,7 @@ class SolicitudController extends Controller
         $adquiriente = Adquiriente::where('solicitud_id',$id)->first();
         $compraPara = Para::where('solicitud_id',$id)->first();
         $solicitud = Solicitud::where('id',$id)->first();
-
-        //dd($compraPara);
+        $reingreso = Reingreso::where('solicitud_id',$id)->whereIn('estado_id',[0,2,3])->first();
 
         $exige_impuestoverde = false;
         $tipo_vehiculo = trim($request->input('tipoVehiculo'));
@@ -2087,9 +2141,27 @@ class SolicitudController extends Controller
             );
         }
 
-        
-
-        //dd('impuesto verde: '.$exige_impuestoverde);
+        $datosReingreso = null;
+        if($reingreso != null){
+            $datosReingreso = array(
+                'fechaResExenta' => $request->get('fechaResExenta'),
+                'fechaSolRech' => $request->get('fechaSolRech'),
+                'nroResExenta' => $request->get('nroResExenta'),
+                'nroSolicitud' => $reingreso->nroSolicitud,
+                'ppu' => $reingreso->ppu
+            );
+            Log::info('adjunta datos de reingreso');
+        }
+        else{
+            $datosReingreso = array(
+                'fechaResExenta' => '',
+                'fechaSolRech' => '',
+                'nroResExenta' => '',
+                'nroSolicitud' => '',
+                'ppu' => ''
+            );
+            Log::info('no adjunta datos de reingreso');
+        }
 
         // Generar Json
         $parametro = [
@@ -2171,16 +2243,10 @@ class SolicitudController extends Controller
                 'aPaterno' => 'PINTO',
                 'cPostal' => '',
                 'rDomicilio' => ''
-            ),
-            'reIngreso' => array(
-                'fechaResExenta' => '',
-                'fechaSolRech' => '',
-                'nroResExenta' => '',
-                'nroSolicitud' => '',
-                'ppu' => ''
             )
         ];
         $parametro['compraParaDTO'] = $datosCompraPara;
+        $parametro['reIngreso'] = $datosReingreso;
         // Llamar RC
         $parametros = array(
             'llave' => array(
@@ -2210,16 +2276,65 @@ class SolicitudController extends Controller
                 $hora = $salida['solicitudDTO']['hora'];
                 $oficina = $salida['solicitudDTO']['oficina'];
                 $tipo_sol = $salida['solicitudDTO']['tipoSol'];
+                @$observaciones = $salida['Observaciones'];
 
-                $solicitud_rc = new SolicitudRC();
-                $solicitud_rc->fecha = $fecha;
-                $solicitud_rc->hora = $hora;
-                $solicitud_rc->numeroSol = $nro_solicitud_rc;
-                $solicitud_rc->oficina = $oficina;
-                $solicitud_rc->ppu = $ppu_rc;
-                $solicitud_rc->tipoSol = $tipo_sol;
-                $solicitud_rc->solicitud_id = $id;
-                $solicitud_rc->save();
+                if($reingreso == null){
+                    $solicitud_rc = new SolicitudRC();
+                    $solicitud_rc->fecha = $fecha;
+                    $solicitud_rc->hora = $hora;
+                    $solicitud_rc->numeroSol = $nro_solicitud_rc;
+                    $solicitud_rc->oficina = $oficina;
+                    $solicitud_rc->ppu = $ppu_rc;
+                    $solicitud_rc->tipoSol = $tipo_sol;
+                    $solicitud_rc->solicitud_id = $id;
+                    $solicitud_rc->save();
+                }
+                else{
+                    $solicitud_rc = SolicitudRC::where('solicitud_id',$id)->first();
+                    $solicitud_rc->fecha = $fecha;
+                    $solicitud_rc->hora = $hora;
+                    $solicitud_rc->numeroSol = $nro_solicitud_rc;
+                    $solicitud_rc->oficina = $oficina;
+                    $solicitud_rc->ppu = $ppu_rc;
+                    $solicitud_rc->tipoSol = $tipo_sol;
+                    $solicitud_rc->solicitud_id = $id;
+                    $solicitud_rc->save();
+                }
+
+
+                if(@sizeof($observaciones)==0){
+                    $solicitud2 = Solicitud::find($id);
+                    $solicitud2->estado_id = 6;
+                    $solicitud2->save();
+
+                    if($reingreso != null){
+                        //$reingreso->observaciones = json_encode($observaciones);
+                        $reingreso->estado_id = 1; //Reingreso aceptado
+                        $reingreso->nroSolicitud = $nro_solicitud_rc;
+                        $reingreso->save();
+                    }
+                }
+                else{
+                    $solicitud2 = Solicitud::find($id);
+                    $solicitud2->estado_id = 12;
+                    $solicitud2->save();
+
+                    if($reingreso != null){
+                        $reingreso->observaciones = json_encode($observaciones);
+                        $reingreso->nroSolicitud = $nro_solicitud_rc;
+                        $reingreso->estado_id = 2; //Reingreso rechazado
+                        $reingreso->save();
+                    }
+                    else{
+                        $new_reingreso = new Reingreso();
+                        $new_reingreso->ppu = explode('-',str_replace('.','',$ppu_rc))[0];
+                        $new_reingreso->nroSolicitud = $nro_solicitud_rc;
+                        $new_reingreso->solicitud_id = $id;
+                        $new_reingreso->estado_id = 0; //Pendiente de reingreso
+                        $new_reingreso->observaciones = json_encode($observaciones);
+                        $new_reingreso->save();
+                    }
+                }
 
                 sleep(4);
                 $solicitud_rc = SolicitudRC::getSolicitud($id);
@@ -2243,6 +2358,7 @@ class SolicitudController extends Controller
         $compraPara = Para::where('solicitud_id',$id)->first();
         $solicitud = Solicitud::where('id',$id)->first();
         $tipo_vehiculo = trim($request->input('tipoVehiculo'));
+        $reingreso = Reingreso::where('solicitud_id',$id)->whereIn('estado_id',[0,2,3])->first();
 
         if($factura != null){
             $header->Folio = (string)$factura->num_factura;
@@ -2300,6 +2416,28 @@ class SolicitudController extends Controller
                 'cPostal' => '',
                 'rDomicilio' => ''
             );
+        }
+
+        $datosReingreso = null;
+        if($reingreso != null){
+            $datosReingreso = array(
+                'fechaResExenta' => $request->get('fechaResExenta'),
+                'fechaSolRech' => $request->get('fechaSolRech'),
+                'nroResExenta' => $request->get('nroResExenta'),
+                'nroSolicitud' => $reingreso->nroSolicitud,
+                'ppu' => $reingreso->ppu
+            );
+            Log::info('adjunta datos de reingreso');
+        }
+        else{
+            $datosReingreso = array(
+                'fechaResExenta' => '',
+                'fechaSolRech' => '',
+                'nroResExenta' => '',
+                'nroSolicitud' => '',
+                'ppu' => ''
+            );
+            Log::info('no adjunta datos de reingreso');
         }
 
         $parametro = [
@@ -2391,6 +2529,7 @@ class SolicitudController extends Controller
         ];
 
         $parametro['compraParaDTO'] = $datosCompraPara;
+        $parametro['reIngreso'] = $datosReingreso;
 
         $parametros = array(
             'llave' => array(
@@ -2420,16 +2559,66 @@ class SolicitudController extends Controller
                 $hora = $salida['solicitudDTO']['hora'];
                 $oficina = $salida['solicitudDTO']['oficina'];
                 $tipo_sol = $salida['solicitudDTO']['tipoSol'];
+                @$observaciones = $salida['Observaciones'];
 
-                $solicitud_rc = new SolicitudRC();
-                $solicitud_rc->fecha = $fecha;
-                $solicitud_rc->hora = $hora;
-                $solicitud_rc->numeroSol = $nro_solicitud_rc;
-                $solicitud_rc->oficina = $oficina;
-                $solicitud_rc->ppu = $ppu_rc;
-                $solicitud_rc->tipoSol = $tipo_sol;
-                $solicitud_rc->solicitud_id = $id;
-                $solicitud_rc->save();
+                if($reingreso == null){
+
+                    $solicitud_rc = new SolicitudRC();
+                    $solicitud_rc->fecha = $fecha;
+                    $solicitud_rc->hora = $hora;
+                    $solicitud_rc->numeroSol = $nro_solicitud_rc;
+                    $solicitud_rc->oficina = $oficina;
+                    $solicitud_rc->ppu = $ppu_rc;
+                    $solicitud_rc->tipoSol = $tipo_sol;
+                    $solicitud_rc->solicitud_id = $id;
+                    $solicitud_rc->save();
+                }
+                else{
+                    $solicitud_rc = SolicitudRC::where('solicitud_id',$id)->first();
+                    $solicitud_rc->fecha = $fecha;
+                    $solicitud_rc->hora = $hora;
+                    $solicitud_rc->numeroSol = $nro_solicitud_rc;
+                    $solicitud_rc->oficina = $oficina;
+                    $solicitud_rc->ppu = $ppu_rc;
+                    $solicitud_rc->tipoSol = $tipo_sol;
+                    $solicitud_rc->solicitud_id = $id;
+                    $solicitud_rc->save();
+
+                }
+
+                if(@sizeof($observaciones)==0){
+                    $solicitud2 = Solicitud::find($id);
+                    $solicitud2->estado_id = 6;
+                    $solicitud2->save();
+
+                    if($reingreso != null){
+                        //$reingreso->observaciones = json_encode($observaciones);
+                        $reingreso->estado_id = 1; //Reingreso aceptado
+                        $reingreso->nroSolicitud = $nro_solicitud_rc;
+                        $reingreso->save();
+                    }
+                }
+                else{
+                    $solicitud2 = Solicitud::find($id);
+                    $solicitud2->estado_id = 12;
+                    $solicitud2->save();
+
+                    if($reingreso != null){
+                        $reingreso->observaciones = json_encode($observaciones);
+                        $reingreso->nroSolicitud = $nro_solicitud_rc;
+                        $reingreso->estado_id = 2; //Reingreso rechazado
+                        $reingreso->save();
+                    }
+                    else{
+                        $new_reingreso = new Reingreso();
+                        $new_reingreso->ppu = explode('-',str_replace('.','',$ppu_rc))[0];
+                        $new_reingreso->nroSolicitud = $nro_solicitud_rc;
+                        $new_reingreso->solicitud_id = $id;
+                        $new_reingreso->estado_id = 0; //Pendiente de reingreso
+                        $new_reingreso->observaciones = json_encode($observaciones);
+                        $new_reingreso->save();
+                    }
+                }
 
                 sleep(4);
                 $solicitud_rc = SolicitudRC::getSolicitud($id);
@@ -2540,7 +2729,21 @@ class SolicitudController extends Controller
         //dd($salida);
         foreach($salida as $index => $detalle){
             if($index != "Solicitud"){
-                echo '<label>'.$index.': </label> '.$detalle."<br>";
+                if(!is_array($detalle)){
+                    echo '<label>'.$index.': </label> '.$detalle."<br>";
+                }
+                else{
+                    foreach($detalle as $index2 => $detalle_sol){
+                        if($index2 != "Rechazos"){
+                            echo '<label>'.$index2.': </label> '.$detalle_sol."<br>";
+                        }
+                        else{
+                            foreach($detalle_sol as $index3 => $rechazo){
+                                echo '<label>'.$index3.': </label> '.$rechazo."<br>";
+                            }
+                        }
+                    }
+                }
             }
             else{
                 foreach($detalle as $index2 => $detalle_sol){
@@ -2549,7 +2752,14 @@ class SolicitudController extends Controller
                     }
                     else{
                         foreach($detalle_sol as $index3 => $rechazo){
-                            echo '<label>'.$index3.': </label> '.$rechazo."<br>";
+                            if(!is_array($rechazo)){
+                                echo '<label>'.$index3.': </label> '.$rechazo."<br>";
+                            }
+                            else{
+                                foreach($rechazo as $index4 => $rech){
+                                    echo '<label>'.($index4+1).': </label> '.$rech."<br>";
+                                }
+                            }
                         }
                     }
                 }

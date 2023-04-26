@@ -12,7 +12,10 @@
 </style>
 @endsection
 
-
+<?php
+use App\Models\Reingreso;
+$reingreso = Reingreso::where('solicitud_id',$id)->first();
+?>
 
 @include('includes.form-error-message')
 <form method="post" id="formFacturaAuto" old-action="{{route('solicitud.updateRevisionFacturaAuto', ['id' => $id])}}" role="form" class="form-horizontal form-revision" >
@@ -102,13 +105,13 @@
                                 <div class="row">
                                     <label for="nroSerie" class="col-lg-3 control-label ">N° de Serie:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="nroSerie" id="nroSerie" class="form-control" placeholder="" required>
+                                        <input type="input" name="nroSerie" id="nroSerie" class="form-control" placeholder="">
                                     </label>
                                 </div>
                                 <div class="row">
                                     <label for="nroVin" class="col-lg-3 control-label ">N° de VIN:</label>
                                     <label class="col-lg-9">
-                                        <input type="input" name="nroVin" id="nroVin" value="{{ $header->NroVin}}" class="form-control" placeholder="" required>
+                                        <input type="input" name="nroVin" id="nroVin" value="{{ $header->NroVin}}" class="form-control" placeholder="" >
                                     </label>
                                 </div>
                                 <div class="row">
@@ -155,6 +158,37 @@
                                         <input type="input" name="mImpuesto" id="mImpuesto" value="0" class="form-control" placeholder="XXXXXX">
                                     </label>
                                 </div>
+                                @if($reingreso != null)
+                                <div class="row">
+                                    <label for="nroResExenta" class="col-lg-3 control-label ">Número resolución exenta:</label>
+                                    <label class="col-lg-9">
+                                        <input type="input" value="" name="nroResExenta" id="nroResExenta" class="form-control" min="1" max="99999999">
+                                    </label>
+                                </div>
+                                <div class="row">
+                                    <label for="fechaResExenta" class="col-lg-3 control-label ">Fecha resolución exenta:</label>
+                                    <label class="col-lg-9">
+                                        <input type="input" value="" name="fechaResExenta" id="fechaResExenta" class="form-control fechaRechazos">
+                                    </label>
+                                </div>
+
+                                <div class="row">
+                                    <label for="fechaSolRech" class="col-lg-3 control-label ">Fecha solicitud rechazada:</label>
+                                    <label class="col-lg-9">
+                                        <input type="input" value="" name="fechaSolRech" id="fechaSolRech" class="form-control fechaRechazos">
+                                    </label>
+                                </div>
+
+                                <script>
+                                    $(".fechaRechazos").datepicker({
+                                        language: 'es',
+                                        dateFormat: 'yymmdd',
+                                    });
+                                </script>
+
+
+
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -203,6 +237,26 @@
 
 
     });
+
+    $.datepicker.regional['es'] = {
+        closeText: 'Cerrar',
+        prevText: '< Ant',
+        nextText: 'Sig >',
+        currentText: 'Hoy',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Juv', 'Vie', 'Sáb'],
+        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sá'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+
+    $.datepicker.setDefaults($.datepicker.regional['es']);
 
     $(document).on("submit","#formFacturaAuto",function(e){
         e.preventDefault();
