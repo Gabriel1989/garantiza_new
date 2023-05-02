@@ -25,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        view::share('themes', 'admindes');
+        View::share('themes', 'admindes');
     }
 }
