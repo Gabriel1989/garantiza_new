@@ -38,6 +38,27 @@ class LimitacionController extends Controller{
         $limitacion->solicitud_id = $id;
         $limitacion->save();
 
+        $datosReingreso = null;
+
+        if($request->get('fechaResExenta') !== '' || $request->get('fechaSolRech') !== '' || $request->get('nroResExenta') !== ''){
+            $datosReingreso = array(
+                'fechaResExenta' => $request->get('fechaResExenta'),
+                'fechaSolRech' => $request->get('fechaSolRech'),
+                'nroResExenta' => $request->get('nroResExenta'),
+                'nroSolicitud' => $solicitud_rc[0]->numeroSol,
+                'ppu' => isset($solicitud_rc[0]->ppu)? str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]) : ''
+            );
+        }
+        else{
+            $datosReingreso = array(
+                'fechaResExenta' => '',
+                'fechaSolRech' => '',
+                'nroResExenta' => '',
+                'nroSolicitud' => '',
+                'ppu' => ''
+            );
+        }
+
         $parametro = [
             'propietario' => [
                 'calidad' => $adquiriente->tipo,
@@ -103,7 +124,7 @@ class LimitacionController extends Controller{
             ],
 
         ];
-
+        $parametro['reIngreso'] = $datosReingreso;
         $data = RegistroCivil::LimPrimera(json_encode($parametro));
         $salida = json_decode($data, true);
 

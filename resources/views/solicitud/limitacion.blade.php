@@ -138,6 +138,122 @@ use App\Models\LimitacionRC;
             @endforeach
             </ul>
             <button type="button" data-toggle="modal" data-target="#modal_limitacion" data-garantizaSol="{{$id}}" data-numsol="{{ $limitacion_rc[0]->numSol }}" class="btn btn-success btnRevisaLimitacion">Consultar Estado Online</button>
+            <button type="button" class="btn btn-primary btnReingresaLimitacion" onclick="$('.formReingresaLimitacion').slideToggle();">Reingresar limitación</button>
+
+            <div class="formReingresaLimitacion" style="display:none;">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Acreedor</h4></div></div>
+                        <div class="row">
+                            <label for="runAcreedor" class="col-lg-3 control-label ">Seleccione Acreedor:</label>
+                            <label class="col-lg-3">
+                                <select name="runAcreedor" id="runAcreedor" class="form-control" required>
+                                    <option value="0">Seleccione Acreedor</option>
+                                    @foreach($acreedores as $acre)
+                                        <option value="{{$acre->rut}}">{{$acre->nombre}}</option>
+                                    @endforeach
+                                </select>
+        
+        
+                                <input type="hidden" name="nombreRazon" id="nombreRazon" class="form-control" required>
+                            </label>
+                        </div>
+                        <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Vehiculo</h4></div></div>
+                        <div class="row">
+                            <label for="nro_chasis" class="col-lg-3 control-label ">Nro Chasis:</label>
+                            <label class="col-lg-3">
+                                <input type="text" name="nro_chasis" id="nro_chasis" value="{{$factura->nro_chasis}}" class="form-control" required>
+                            </label>
+                        </div>
+                        <div class="row">
+                            <label for="nro_serie" class="col-lg-3 control-label ">Nro Serie:</label>
+                            <label class="col-lg-3">
+                                <input type="text" name="nro_serie" id="nro_serie" value="{{$factura->nro_serie}}" class="form-control" required>
+                            </label>
+                        </div>
+                        <div class="row">
+                            <label for="nro_vin" class="col-lg-3 control-label ">Nro Vin:</label>
+                            <label class="col-lg-3">
+                                <input type="text" name="nro_vin" id="nro_vin" value="{{$factura->nro_vin}}" class="form-control" required>
+                            </label>
+                        </div>
+                        <div class="row">
+                            <label for="nro_motor" class="col-lg-3 control-label ">Nro Motor:</label>
+                            <label class="col-lg-3">
+                                <input type="text" name="nro_motor" id="nro_motor" value="{{$factura->motor}}" class="form-control" required>
+                            </label>
+                        </div>
+                        <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Documento</h4></div></div>
+                        <div class="row">
+                            <label for="folio" class="col-lg-3 control-label ">Folio:</label>
+                            <label class="col-lg-3">
+                                <input type="number" min="1" max="99999999" name="folio" id="folio" value="" class="form-control" required>
+                            </label>
+                        </div>
+                        <div class="row">
+                            <label for="folio" class="col-lg-3 control-label ">Tipo Documento:</label>
+                            <label class="col-lg-3">
+                                <select name="tipoDoc" id="tipoDoc2" class="form-control" required>
+                                    @foreach($tipo_documento as $tipo)
+                                        <option value="{{trim($tipo->name)}}">{{$tipo->name}}</option>
+                                    @endforeach
+        
+                                </select>
+                            </label>
+                        </div>
+                        <div class="row">
+                            <label for="autorizante" class="col-lg-3 control-label ">Autorizante:</label>
+                            <label class="col-lg-3">
+                                <input type="input" name="autorizante" id="autorizante" value="" class="form-control">
+                            </label>
+                        </div>
+                        
+                        <div class="row">
+                            <label for="nroResExenta" class="col-lg-3 control-label ">Número resolución exenta:</label>
+                            <label class="col-lg-3">
+                                <input type="input" name="nroResExenta" id="nroResExenta" value="" class="form-control">
+                            </label>
+                        </div>
+
+                        <div class="row">
+                            <label for="fechaResExenta" class="col-lg-3 control-label ">Fecha resolución exenta:</label>
+                            <label class="col-lg-3">
+                                <input type="input" name="fechaResExenta" id="fechaResExenta" value="" class="form-control fechaRechazos">
+                            </label>
+                        </div>
+
+                        <div class="row">
+                            <label for="fechaSolRech" class="col-lg-3 control-label ">Fecha solicitud rechazada:</label>
+                            <label class="col-lg-3">
+                                <input type="input" name="fechaSolRech" id="fechaSolRech" value="" class="form-control fechaRechazos">
+                            </label>
+                        </div>
+        
+                        <div class="row">
+                            <div class="col-lg-3"></div>
+                            <div class="col-lg-3">
+                                <span class="btn btn-warning fileinput-button col-sm-12" name="DocLim" id="DocLim">
+                                    Seleccionar Documento</span>
+                            </div>
+                            <div class="col-lg-3">
+                                <input id="Doc_Lim" name="Doc_Lim" type="file" style="display:none" accept="application/pdf" />
+                                <label id="lbl_Doc_Lim"></label>
+                            </div>
+                        </div>    
+                    </div>
+        
+        
+                </div>
+        
+        
+                <div class="panel-footer">
+                    <button type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Grabar y Continuar Revisión </button>
+                </div>
+            </div>
+
+
+
+
         @endif
     </div>
 
@@ -320,4 +436,11 @@ use App\Models\LimitacionRC;
     });
 
 
+</script>
+
+<script>
+    $(".fechaRechazos").datepicker({
+        language: 'es',
+        dateFormat: 'yymmdd',
+    });
 </script>

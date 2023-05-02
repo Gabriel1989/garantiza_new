@@ -281,6 +281,8 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
                 $("#pills-contact").removeClass('show');
                 $("#pills-profile").removeClass('show');
                 $("#pills-invoice").removeClass('show');
+                $("#pills-voucher").removeClass('show');
+                $("#pills-pay").removeClass('show');
                 $("#pills-docs-tab").attr("href","#pills-docs");
                 $("#pills-docs-tab").toggleClass('disabled');
                 $("#pills-docs-tab").attr("aria-disabled",false);

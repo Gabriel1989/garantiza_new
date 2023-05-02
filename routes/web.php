@@ -116,7 +116,7 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::put('solicitud/{id}/saveDatosMoto', 'SolicitudController@saveDatosMoto')->name('solicitud.saveDatosMoto');
 
     Route::delete('solicitud/delete/{id}', 'SolicitudController@destroy')->name('solicitud.destroy');
-    Route::get('solicitud/continuar/{id}','SolicitudController@continuarSolicitud')->name('solicitud.continuar');
+    Route::get('solicitud/continuar/{id}/{reingresa?}','SolicitudController@continuarSolicitud')->name('solicitud.continuar');
 
     Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
     Route::post('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');

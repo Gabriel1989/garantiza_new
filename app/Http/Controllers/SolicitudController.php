@@ -73,7 +73,7 @@ class SolicitudController extends Controller
         return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
     }
 
-    public function continuarSolicitud($id){
+    public function continuarSolicitud($id,$reingresa = false){
         $id_solicitud = $id;
         $comunas = Comuna::allOrder();
 
@@ -88,6 +88,22 @@ class SolicitudController extends Controller
         $region = Region::all();
         $tipo_carroceria = Tipo_Carroceria::all();
         $solicita_ppu = true;
+
+        if($reingresa){
+            if($reingreso == null){
+                $solicitud_rc = SolicitudRC::where('solicitud_id',$id)->first();
+                if($solicitud_rc != null){
+                    $new_reingreso = new Reingreso();
+                    $new_reingreso->ppu = explode('-',str_replace('.','',$solicitud_rc->ppu))[0];
+                    $new_reingreso->nroSolicitud = $solicitud_rc->numeroSol;
+                    $new_reingreso->solicitud_id = $id;
+                    $new_reingreso->estado_id = 0; //Pendiente de reingreso
+                    //$new_reingreso->observaciones = json_encode($observaciones);
+                    $new_reingreso->save();
+                }
+            }
+        }
+
         if($factura != null){
             $header->RUTRecep = (string)$factura->rut_receptor;
             $header->RznSocRecep = (string)$factura->razon_social_recep;
@@ -2547,7 +2563,7 @@ class SolicitudController extends Controller
         $data = RegistroCivil::creaCarga(json_encode($parametro));
         $salida = json_decode($data, true);
 
-        dd($salida);
+        //dd($salida);
 
         if(isset($salida['codigoresp'])){
             //dd((int)$salida['codigoresp']);

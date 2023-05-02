@@ -123,6 +123,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
 
+    <!-- Popper.js -->
+    <script src="https://unpkg.com/@popperjs/core@2.9.3/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+
     <!-- Bootstrap -->
     <script type="text/javascript" src="{{ asset("assets/$themes/js/bootstrap/bootstrap.min.js") }}"></script>
 
