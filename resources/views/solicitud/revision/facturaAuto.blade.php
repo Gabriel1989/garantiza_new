@@ -259,6 +259,7 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
     $.datepicker.setDefaults($.datepicker.regional['es']);
 
     $(document).on("submit","#formFacturaAuto",function(e){
+        showOverlay();
         e.preventDefault();
         let formData = new FormData(document.getElementById("formFacturaAuto"));
 
@@ -275,6 +276,7 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
             processData: false,
             contentType: false,
             success: function(data){
+                hideOverlay();
                 $("#pills-docs").html(data);
                 $("#pills-docs").toggleClass('show');
                 $("#pills-home").removeClass('show');

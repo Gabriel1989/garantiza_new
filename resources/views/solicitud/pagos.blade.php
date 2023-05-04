@@ -14,7 +14,7 @@
 
 @include('includes.form-error-message')
 
-<form method="post" id="formLimitacion" role="form" class="form-horizontal form-revision" >
+<form method="post" id="formRevisaPago" role="form" class="form-horizontal form-revision" >
     @csrf
     @method('post')
 
@@ -58,6 +58,7 @@
 <script>
 $(document).on("click",".btnRevisaSolicitud",function(e){
     e.preventDefault();
+    showOverlay();
     let numSolRC = $(this).data('numsol');
     let numSolGarantiza = $(this).data('garantizasol');
     $(".modal-title").text('Estado Solicitud');
@@ -70,7 +71,7 @@ $(document).on("click",".btnRevisaSolicitud",function(e){
             _token: "{{ csrf_token() }}"
         },
         success: function(data){
-
+            hideOverlay();
             $("#modal_solicitud_body").html(data);
         }
     });

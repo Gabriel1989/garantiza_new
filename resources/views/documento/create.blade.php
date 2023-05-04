@@ -138,6 +138,7 @@
 
 
     $(".form-documentos").on('submit', function () {
+        showOverlay();
         if ($('#Factura_XML').val().length==0){
             new PNotify({
                 title: 'Adjuntar Archivo',
@@ -156,6 +157,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -177,6 +179,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -198,6 +201,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -220,6 +224,7 @@
                     width: '290px',
                     delay: 2000
                 });
+                hideOverlay();
                 return false;
             };
         };
@@ -243,6 +248,7 @@
                     width: '290px',
                     delay: 2000
                 });
+                hideOverlay();
                 return false;
             };
         };

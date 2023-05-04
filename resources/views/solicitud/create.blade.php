@@ -39,18 +39,18 @@
                 <a class="nav-link @if($id_comprapara == 0)  disabled    @endif" id="pills-invoice-tab" data-toggle="pill" @if($id_comprapara != 0) href="#pills-invoice" @else href="#" @endif role="tab" aria-controls="pills-invoice" aria-selected="false" @if($id_comprapara == 0) aria-disabled="true" @endif>Factura</a>
             </li>
 
-            <li class="nav-item @if($id_solicitud_rc != 0)  active @endif" role="presentation">
+            <li class="nav-item @if($id_solicitud_rc != 0 && $documento_rc == null)  active @endif" role="presentation">
                 <a class="nav-link @if($id_solicitud_rc == 0)  disabled    @endif" id="pills-docs-tab" data-toggle="pill" @if($id_solicitud_rc != 0) href="#pills-docs" @else href="#" @endif role="tab" aria-controls="pills-docs" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Documentación</a>
             </li>
 
             <li class="nav-item" role="presentation">
                 <a class="nav-link @if($id_solicitud_rc == 0)  disabled  @endif" id="pills-limitation-tab" data-toggle="pill" @if($id_solicitud_rc != 0) href="#pills-limitation" @else href="#" @endif role="tab" aria-controls="pills-limitation" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Limitación</a>
             </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link disabled" id="pills-pay-tab" data-toggle="pill" href="#" role="tab" aria-controls="pills-pay" aria-selected="false" aria-disabled="true">Pago</a>
+            <li class="nav-item @if($id_solicitud_rc != 0 && $documento_rc != null)  active @endif" role="presentation">
+                <a class="nav-link @if($id_solicitud_rc == 0)  disabled  @elseif($id_solicitud_rc != 0 && $documento_rc == null) disabled @elseif($documento_rc != null) active @endif" id="pills-pay-tab" data-toggle="pill" @if($documento_rc != null) href="#pills-pay" @else href="#" @endif role="tab" aria-controls="pills-pay" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Pago</a>
             </li>
             <li class="nav-item" role="presentation">
-                <a class="nav-link disabled" id="pills-voucher-tab" data-toggle="pill" href="#" role="tab" aria-controls="pills-voucher" aria-selected="false" aria-disabled="true">Comprobantes</a>
+                <a class="nav-link @if($id_solicitud_rc == 0)  disabled  @elseif($id_solicitud_rc != 0 && $documento_rc == null) disabled @endif" id="pills-voucher-tab" data-toggle="pill" @if($documento_rc != null) href="#pills-voucher" @else href="#" @endif role="tab" aria-controls="pills-voucher" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Comprobantes</a>
             </li>
         </ul>
         <div class="tab-content" id="pills-tabContent">
@@ -84,7 +84,7 @@
                     @endif
                 @endif
             </div>
-            <div class="tab-pane fade @if($id_solicitud_rc != 0)  active show in @endif" id="pills-docs" role="tabpanel" aria-labelledby="pills-docs-tab">
+            <div class="tab-pane fade @if($id_solicitud_rc != 0 && $documento_rc == null)  active show in @endif" id="pills-docs" role="tabpanel" aria-labelledby="pills-docs-tab">
                 @if($id_solicitud_rc != 0)
                     @if($id_tipo_vehiculo == 1)
                         @include('solicitud.revision.docsIdentidadAuto')
@@ -100,13 +100,15 @@
                     @include('solicitud.limitacion')
                 @endif
             </div>
-            <div class="tab-pane fade" id="pills-pay" role="tabpanel" aria-labelledby="pills-pay-tab">
-
-
+            <div class="tab-pane fade @if($id_solicitud_rc != 0 && $documento_rc != null)  active show in @endif" id="pills-pay" role="tabpanel" aria-labelledby="pills-pay-tab">
+                @if($documento_rc != null)
+                    @include('solicitud.pagos')
+                @endif
             </div>
             <div class="tab-pane fade" id="pills-voucher" role="tabpanel" aria-labelledby="pills-voucher-tab">
-
-
+                @if($documento_rc != null)
+                    @include('solicitud.comprobante')
+                @endif
             </div>
 
 
@@ -132,6 +134,7 @@
 
     $(document).on('submit',"#form-solicitud-create", function(e) {
         e.preventDefault();
+        showOverlay();
         if ($('#sucursal_id').val() == '0') {
             new PNotify({
                 title: 'Crear Solicitud',
@@ -150,6 +153,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -171,6 +175,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -192,6 +197,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -213,6 +219,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -234,6 +241,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -255,6 +263,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -276,6 +285,7 @@
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         };
 
@@ -288,6 +298,7 @@
             contentType: false,
             data: formData,
             success: function(data) {
+                hideOverlay();
                 let jsondata = JSON.parse(data);
                 let solicitud_id = jsondata.solicitud_id;
                 if(parseInt(solicitud_id) != 0){                
@@ -411,6 +422,8 @@
         $("#pills-docs").removeClass('show');
         $("#pills-limitation").removeClass('show');
         $("#pills-ppu").removeClass('show');
+        $("#pills-pay").removeClass('show');
+        $("#pills-voucher").removeClass('show');
 
     });
 
@@ -421,6 +434,8 @@
         $("#pills-docs").removeClass('show');
         $("#pills-limitation").removeClass('show');
         $("#pills-ppu").removeClass('show');
+        $("#pills-pay").removeClass('show');
+        $("#pills-voucher").removeClass('show');
 
     });
 
@@ -431,6 +446,8 @@
         $("#pills-docs").removeClass('show');
         $("#pills-limitation").removeClass('show');
         $("#pills-ppu").removeClass('show');
+        $("#pills-pay").removeClass('show');
+        $("#pills-voucher").removeClass('show');
 
     });
 
@@ -441,6 +458,8 @@
         $("#pills-docs").removeClass('show');
         $("#pills-limitation").removeClass('show');
         $("#pills-ppu").removeClass('show');
+        $("#pills-pay").removeClass('show');
+        $("#pills-voucher").removeClass('show');
 
     });
 
@@ -451,6 +470,8 @@
         $("#pills-docs").removeClass('show');
         $("#pills-invoice").removeClass('show');
         $("#pills-ppu").removeClass('show');
+        $("#pills-pay").removeClass('show');
+        $("#pills-voucher").removeClass('show');
 
     });
 
@@ -461,6 +482,44 @@
         $("#pills-docs").removeClass('show');
         $("#pills-invoice").removeClass('show');
         $("#pills-limitation").removeClass('show');
+        $("#pills-pay").removeClass('show');
+        $("#pills-voucher").removeClass('show');
+
+    });
+
+    $(document).on("click","#pills-docs-tab",function(e){
+        $("#pills-home").removeClass('show');
+        $("#pills-profile").removeClass('show');
+        $("#pills-contact").removeClass('show');
+        $("#pills-ppu").removeClass('show');
+        $("#pills-invoice").removeClass('show');
+        $("#pills-limitation").removeClass('show');
+        $("#pills-pay").removeClass('show');
+        $("#pills-voucher").removeClass('show');
+
+    });
+
+    $(document).on("click","#pills-pay-tab",function(e){
+        $("#pills-home").removeClass('show');
+        $("#pills-profile").removeClass('show');
+        $("#pills-contact").removeClass('show');
+        $("#pills-docs").removeClass('show');
+        $("#pills-invoice").removeClass('show');
+        $("#pills-limitation").removeClass('show');
+        $("#pills-ppu").removeClass('show');
+        $("#pills-voucher").removeClass('show');
+
+    });
+
+    $(document).on("click","#pills-voucher-tab",function(e){
+        $("#pills-home").removeClass('show');
+        $("#pills-profile").removeClass('show');
+        $("#pills-contact").removeClass('show');
+        $("#pills-docs").removeClass('show');
+        $("#pills-invoice").removeClass('show');
+        $("#pills-limitation").removeClass('show');
+        $("#pills-pay").removeClass('show');
+        $("#pills-ppu").removeClass('show');
 
     });
 

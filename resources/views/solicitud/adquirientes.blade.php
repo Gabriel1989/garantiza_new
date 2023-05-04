@@ -320,7 +320,7 @@
 
         $(document).on("click","#btnCancelProcess",function(){
             if(confirm("¿Está seguro de eliminar la solicitud y los datos asociados?")){
-
+                showOverlay();
                 $.ajax({
                     url: "/solicitud/delete/{{$id}}",
                     type: "delete",
@@ -328,6 +328,7 @@
                         _token : "{{ csrf_token() }}"
                     },
                     success: function(){
+
                         window.location.href= "http://"+"{{ $_SERVER['HTTP_HOST'] }}"+ "/solicitud/solicitarPPU";
                     }
                 });
@@ -340,6 +341,7 @@
 
     $(document).on("submit","#form-adquirientes",function(e){
         e.preventDefault();
+        showOverlay();
         let formData = new FormData(document.getElementById('form-adquirientes'));
         
         $.ajaxSetup({
@@ -355,6 +357,7 @@
             processData: false,  // tell jQuery not to process the data
             contentType: false,   // tell jQuery not to set contentType
             success: function(data){
+                hideOverlay();
                 if(parseFloat($("#adquiriente_1").val()) == 0){
                     $("#pills-contact").html(data);
                     $("#pills-profile").toggleClass('show');

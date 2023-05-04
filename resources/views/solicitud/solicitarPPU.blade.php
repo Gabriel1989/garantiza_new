@@ -140,6 +140,7 @@
 
 
     $(document).on("submit","#formSolicitaPPU",function(e){
+        showOverlay();
         e.preventDefault();
 
         let formData = new FormData(document.getElementById("formSolicitaPPU"));
@@ -151,6 +152,7 @@
             type: "post",
             url: "{{route('solicitud.consultaPPU')}}",
             success: function(data){
+                hideOverlay();
                 $("#pills-home").html(data);
                 $("#pills-home").toggleClass('show');
                 $("#pills-ppu").removeClass('show');

@@ -26,6 +26,10 @@
     <!-- Favicon -->
     <link rel="shortcut icon" href="assets/img/favicon.ico">
 
+    <!-- CSS Adicionales-->
+
+    <link rel="stylesheet" type="text/css" href="{{ asset("css/app_garantiza.css")}}">
+
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 
@@ -34,6 +38,10 @@
 </head>
 
 <body class="dashboard-page sb-l-o sb-r-c">
+    <!-- Inicio Overlay -->
+    @include("themes/$themes/overlay")
+    <!-- Fin Overlay -->
+
     <!-- Inicio header -->
     @include("themes/$themes/header")
     <!-- Fin header -->

@@ -7,10 +7,12 @@ use App\Models\Para;
 use App\Models\Solicitud;
 use App\Models\SolicitudRC;
 use App\Models\CompraPara;
+use App\Models\EnvioDocumentoRC;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\MessageBag;
 use App\Helpers\RegistroCivil;
+use Illuminate\Support\Facades\Log;
 
 class DocumentoController extends Controller
 {
@@ -216,8 +218,9 @@ class DocumentoController extends Controller
         }
         sleep(4);
 
+        //Log::info('compra para existe: '.CompraPara::getSolicitud($id));
         //Cédula de compra para
-        if (!is_null(CompraPara::getSolicitud($id))) {
+        if (sizeof(CompraPara::getSolicitud($id)) > 0) {
             $parametros2 = array(
                 'consumidor' => 'ACOBRO',
                 'servicio' => 'INGRESO DOCUMENTOS RVM',
@@ -266,8 +269,16 @@ class DocumentoController extends Controller
             return json_encode(['status'=>'ERROR','msj'=>'Error al subir factura en PDF 2']);
         }
 
+        $new_documento_rc = new EnvioDocumentoRC();
+        $new_documento_rc->solicitud_id = $id;
+        $new_documento_rc->ppu = str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]);
+        $new_documento_rc->numeroSol = $solicitud_rc[0]->numeroSol;
+        $new_documento_rc->save();
+
         $html = view('solicitud.pagos', compact('id', 'solicitud_rc'))->render();
 
-        return json_encode(['status'=>'OK','html'=>$html,'msj'=>'Archivos enviados exitosamente a Registro Civil']);
+        $html2 = view('solicitud.comprobante',compact('id','solicitud_rc'))->render();
+
+        return json_encode(['status'=>'OK','html2'=>$html2,'html'=>$html,'msj'=>'Archivos enviados exitosamente a Registro Civil']);
     }
 }

@@ -113,6 +113,7 @@ $(document).ready(function(){
 
 
 $(document).on("submit","#form_subeDocs",function(e){
+    showOverlay();
     e.preventDefault();
 
     let formData = new FormData(document.getElementById("form_subeDocs"));
@@ -130,6 +131,7 @@ $(document).on("submit","#form_subeDocs",function(e){
         contentType: false,
         data: formData,
         success: function(data){
+            hideOverlay();
             let json = JSON.parse(data);
             if(json.status == "ERROR"){
                 new PNotify({
@@ -171,6 +173,7 @@ $(document).on("submit","#form_subeDocs",function(e){
                 });
 
                 $("#pills-pay").html(json.html);
+                $("#pills-voucher").html(json.html2);
                 $("#pills-pay").toggleClass('show');
                 $("#pills-docs").removeClass('show');
                 $("#pills-home").removeClass('show');
@@ -178,6 +181,11 @@ $(document).on("submit","#form_subeDocs",function(e){
                 $("#pills-profile").removeClass('show');
                 $("#pills-invoice").removeClass('show');
                 $("#pills-voucher").removeClass('show');
+
+                $("#pills-voucher-tab").attr("href","#pills-voucher");
+                $("#pills-voucher-tab").toggleClass('disabled');
+                $("#pills-voucher-tab").attr("aria-disabled",false);
+
                 $("#pills-pay-tab").attr("href","#pills-pay");
                 $("#pills-pay-tab").toggleClass('disabled');
                 $("#pills-pay-tab").attr("aria-disabled",false);

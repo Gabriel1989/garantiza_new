@@ -166,6 +166,7 @@
 
     $(document).on("click",".btnContinuaSolicitud",function(e){
         e.preventDefault();
+        showOverlay();
         let formData = new FormData(document.getElementById("form_compraPara"));
         formData.append('guardar',"NO");
         $.ajaxSetup({
@@ -181,7 +182,7 @@
             contentType: false,
             type: "POST",
             success: function(data){
-                
+                hideOverlay();
                 $("#pills-invoice").html(data);
                 $("#pills-invoice").toggleClass('show');
                 $("#pills-home").removeClass('show');
@@ -201,6 +202,7 @@
 
     $(document).on("submit","#form_compraPara",function(e){
         e.preventDefault();
+        showOverlay();
         let formData = new FormData(document.getElementById("form_compraPara"));
         formData.append('guardar',"SI");
 
@@ -217,6 +219,7 @@
             contentType: false,
             type: "POST",
             success: function(data){
+                hideOverlay();
                 if(parseFloat($("#id_comprapara").val()) == 0){
                     $("#pills-invoice").html(data);
                     $("#pills-invoice").toggleClass('show');

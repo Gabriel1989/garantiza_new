@@ -120,6 +120,7 @@
 
 
         $(document).on("click",".btnRevisaSolicitud",function(e){
+            showOverlay();
             e.preventDefault();
             let numSolRC = $(this).data('numsol');
             let numSolGarantiza = $(this).data('garantizasol');
@@ -133,7 +134,7 @@
                     _token: "{{ csrf_token() }}"
                 },
                 success: function(data){
-        
+                    hideOverlay();
                     $("#modal_solicitud_body").html(data);
                 }
             })
@@ -141,6 +142,7 @@
         })
 
         $(document).on("click",".btnRevisaLimitacion",function(e){
+            showOverlay();
             e.preventDefault();
             let numSolRC = $(this).data('numsol');
             let numSolGarantiza = $(this).data('garantizasol');
@@ -154,7 +156,7 @@
                     _token: "{{ csrf_token() }}"
                 },
                 success: function(data){
-        
+                    hideOverlay();
                     $("#modal_solicitud_body").html(data);
                 }
             })
@@ -210,7 +212,9 @@
                 const separador = document.createElement('hr');
                 contenedor.appendChild(separador);
             });
+            
             $(".modal-title").text('Estado de Reingreso');
+            
         });
 
         function formatearFecha(fecha) {

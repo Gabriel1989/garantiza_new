@@ -363,6 +363,7 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
 
     $(document).on("submit", "#formFacturaCamion", function(e) {
         e.preventDefault();
+        showOverlay();
         let formData = new FormData(document.getElementById("formFacturaCamion"));
 
         $.ajaxSetup({
@@ -378,6 +379,7 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
             processData: false,
             contentType: false,
             success: function(data) {
+                hideOverlay();
                 $("#pills-docs").html(data);
                 $("#pills-docs").toggleClass('show');
                 $("#pills-home").removeClass('show');

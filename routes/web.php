@@ -134,6 +134,8 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::get('solicitud/verSolicitudes', 'SolicitudController@verSolicitudes')->name('solicitud.verSolicitudes');
     Route::post('solicitud/{id}/verEstadoSolicitud','SolicitudController@verEstado')->name('solicitud.estadoSolicitud');
 
+    Route::post('solicitud/{id}/descargaComprobanteRVM','SolicitudController@descargaComprobanteRVM')->name('solicitud.descargaComprobanteRVM');
+
     // Documentos
     Route::get('documento/{id}/create', 'DocumentoController@create')->name('documento.create');
     Route::post('documento', 'DocumentoController@store')->name('documento.store');

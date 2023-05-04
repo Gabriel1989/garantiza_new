@@ -306,6 +306,7 @@ use App\Models\LimitacionRC;
 
     $(document).on("click",".btnRevisaLimitacion",function(e){
         e.preventDefault();
+        showOverlay();
         let numSolRC = $(this).data('numsol');
         let numSolGarantiza = $(this).data('garantizasol');
 
@@ -317,7 +318,7 @@ use App\Models\LimitacionRC;
                 _token: "{{ csrf_token() }}"
             },
             success: function(data){
-    
+                hideOverlay();
                 $("#modal_limitacion_body").html(data);
             }
         })
@@ -326,6 +327,7 @@ use App\Models\LimitacionRC;
 
 
     $(document).on("submit","#formLimitacion",function(e){
+        showOverlay();
         e.preventDefault();
         let formData = new FormData(document.getElementById("formLimitacion"));
              
@@ -349,6 +351,7 @@ use App\Models\LimitacionRC;
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
         }
 
@@ -370,6 +373,7 @@ use App\Models\LimitacionRC;
                 width: '290px',
                 delay: 2000
             });
+            hideOverlay();
             return false;
 
         }
@@ -390,6 +394,7 @@ use App\Models\LimitacionRC;
             processData: false,
             contentType: false,
             success: function(data){
+                hideOverlay();
                 let json = JSON.parse(data);
                 if(json.status == "ERROR"){
                     new PNotify({

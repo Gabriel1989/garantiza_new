@@ -25,6 +25,7 @@ use App\Models\NoPara;
 use App\Models\Tipo_Carroceria;
 use App\Models\TipoPotencia;
 use App\Models\Reingreso;
+use App\Models\EnvioDocumentoRC;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -58,6 +59,7 @@ class SolicitudController extends Controller
         $sucursales = Sucursal::all();
         $tipo_vehiculos = Tipo_Vehiculo::all();
         $reingreso = null;
+        $documento_rc = null;
         $solicitud_data = null;
         $ppu = array();
         $comunas = Comuna::allOrder();
@@ -70,7 +72,7 @@ class SolicitudController extends Controller
         $tipo_carroceria = Tipo_Carroceria::all();
         $tipo_potencia = TipoPotencia::all();
 
-        return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
     }
 
     public function continuarSolicitud($id,$reingresa = false){
@@ -81,6 +83,7 @@ class SolicitudController extends Controller
         $factura = Factura::where('id_solicitud',$id_solicitud)->first();
         $solicitud_data = Solicitud::find($id);
         $reingreso = Reingreso::where('solicitud_id',$id_solicitud)->whereIn('estado_id',[0,2,3])->first();
+        $documento_rc = EnvioDocumentoRC::where('solicitud_id',$id_solicitud)->first();
         $sucursales = Sucursal::all();
         $tipo_vehiculos = Tipo_Vehiculo::all();
         $tipo_potencia = TipoPotencia::all();
@@ -171,6 +174,7 @@ class SolicitudController extends Controller
                     $id_comprapara = 0;
                 }
             }
+            Log::info('tipo vehiculo: '.$tipo_vehiculo);
             if ($tipo_vehiculo != null) {
                 switch ($tipo_vehiculo[0]->tipo) {
                     case 1:
@@ -185,11 +189,11 @@ class SolicitudController extends Controller
                         break;
                 }
             }
-            return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+            return view('solicitud.create', compact('documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
             'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
         }
         //Menu adquiriente: solicitud recién creada
-        return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
     }
 
 
@@ -215,6 +219,7 @@ class SolicitudController extends Controller
         $id_solicitud_rc = 0;
         $solicitud_data = null;
         $reingreso = null;
+        $documento_rc = null;
         //dd(session('solicitud_id'));
         $id_solicitud = (session('solicitud_id') != null) ? session('solicitud_id') : 0;
         //dd($id_solicitud);
@@ -251,13 +256,14 @@ class SolicitudController extends Controller
                 
                 if($id_solicitud == 0){
                     $header = new stdClass;
-                    return view('solicitud.createsolicitudnew', compact('reingreso','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
+                    return view('solicitud.createsolicitudnew', compact('documento_rc','reingreso','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
                 }
                 else{
                     $header = new stdClass;
                     $solicitud_data = Solicitud::find($id_solicitud);
                     $factura = Factura::where('id_solicitud',$id_solicitud)->first();
                     $reingreso = Reingreso::where('solicitud_id',$id_solicitud)->whereIn('estado_id',[0,2,3])->first();
+                    $documento_rc = EnvioDocumentoRC::where('solicitud_id',$id_solicitud)->first();
                     $id = $id_solicitud;
                     if($factura != null){
                         $header->RUTRecep = (string)$factura->rut_receptor;
@@ -322,13 +328,13 @@ class SolicitudController extends Controller
                                     break;
                             }
                         }
-                        return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+                        return view('solicitud.create', compact('documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
                         'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
                         //return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
                     }
                     else{
                         //Menu adquiriente: solicitud recién creada
-                        return view('solicitud.create', compact('reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
+                        return view('solicitud.create', compact('documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
                     }
                     
                 }
@@ -2809,6 +2815,58 @@ class SolicitudController extends Controller
             }
         }
         die;
+    }
+
+    public function descargaComprobanteRVM(Request $request, $id){
+        $solicitud_rc = SolicitudRC::where('solicitud_id',$id)->first();
+        $parametro = [
+            'consumidor' => 'ACOBRO',
+            'servicio' => 'CONSULTA SOLICITUD RVM',
+            'ppu' => str_replace(".","",explode("-",$solicitud_rc->ppu)[0]),
+            'nroSolicitud' => $request->get('id_solicitud_rc'),
+            'anho' => substr($solicitud_rc->fecha,0,4)
+        ];
+
+        //dd($parametro);
+
+
+        $data = RegistroCivil::consultaSolicitudRVM($parametro);
+
+        $salida = json_decode($data, true);
+        $docdata = '';
+
+        foreach($salida as $index => $detalle){
+            if($index == "documento"){
+                $docdata = $detalle;
+                break;
+            }
+        }
+        if($docdata != ''){
+            // Decodificar la cadena en base64 a bytes
+            $data = base64_decode($docdata);
+
+            // Definir el nombre del archivo de salida
+            $filename = 'comprobante_garantiza.pdf';
+
+            // Enviar encabezados al navegador para forzar la descarga
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . strlen($data));
+
+            // Enviar el contenido del archivo PDF al navegador
+            echo $data;
+            exit;
+        }
+        else{
+            // Enviar un mensaje de error en formato JSON
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'El comprobante de la inscripción no se encuentra disponible aún']);
+            exit;
+        }
     }
 
     public function aprobacion($id)

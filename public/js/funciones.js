@@ -1,6 +1,6 @@
-var Garantiza = function () {
+var Garantiza = function() {
     return {
-        notificaciones: function (mensaje, titulo, tipo) {
+        notificaciones: function(mensaje, titulo, tipo) {
             new PNotify({
                 title: titulo,
                 text: mensaje,
@@ -19,9 +19,16 @@ var Garantiza = function () {
                 delay: 2000
             })
         },
-        alerta: function(){
+        alerta: function() {
             alert('alerta');
         }
     }
 }();
 
+function showOverlay() {
+    $('.overlay').css('display', 'flex');
+}
+
+function hideOverlay() {
+    $('.overlay').css('display', 'none');
+}
