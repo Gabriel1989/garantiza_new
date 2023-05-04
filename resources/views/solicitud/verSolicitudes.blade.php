@@ -161,7 +161,56 @@
                 }
             })
 
-        })
+        });
+
+        $(document).on("click", ".btnDescargaComprobante", function(e) {
+            showOverlay();
+            e.preventDefault();
+            let numSolRC = $(this).data('numsol');
+            let numSolGarantiza = $(this).data('garantizasol');
+
+            fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteRVM", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    id_solicitud_rc: numSolRC
+                })
+            })
+            .then(function(response) {
+                hideOverlay();
+                if (response.ok) {
+                    if (response.headers.get('Content-Type') === 'application/pdf') {
+                        return response.blob();
+                    } else {
+                        return response.json();
+                    }
+                } else {
+                    throw new Error('Error en la petición');
+                }
+            })
+            .then(function(data) {
+                if (data instanceof Blob) {
+                    var blob = new Blob([data], {
+                        type: 'application/pdf'
+                    });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'voucher.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    showErrorNotification(data.error);
+                }
+            })
+            .catch(function(error) {
+                hideOverlay();
+                showErrorNotification(error.message);
+            });
+        });
 
 
 
@@ -227,6 +276,26 @@
             const segundo = String(date.getSeconds()).padStart(2, '0');
 
             return `${dia}-${mes}-${año} ${hora}:${minuto}:${segundo}`;
+        }
+
+        function showErrorNotification(message) {
+            new PNotify({
+                title: 'Error',
+                text: message,
+                shadow: true,
+                opacity: '1',
+                addclass: 'stack_top_right',
+                type: 'danger',
+                stack: {
+                    "dir1": "down",
+                    "dir2": "left",
+                    "push": "top",
+                    "spacing1": 10,
+                    "spacing2": 10
+                },
+                width: '290px',
+                delay: 2000
+            });
         }
     </script>
 @endsection

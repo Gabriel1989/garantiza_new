@@ -58,44 +58,7 @@
             delay: 2000
         });
     }
-
-    /*$(document).on("click",".btnRevisaComprobante",function(e){
-        showOverlay();
-        e.preventDefault();
-        let numSolRC = $(this).data('numsol');
-        let numSolGarantiza = $(this).data('garantizasol');
-        //$(".modal-title").text('Estado Solicitud');
     
-        $.ajax({
-            url: "/solicitud/"+numSolGarantiza+"/descargaComprobanteRVM",
-            type: "post",
-            data: {
-                id_solicitud_rc: numSolRC,
-                _token: "{{ csrf_token() }}"
-            },
-            xhrFields: {
-                responseType: 'blob'
-            },
-            success: function (data, textStatus, xhr) {
-                hideOverlay();
-                if (xhr.getResponseHeader('Content-Type') === 'application/pdf') {
-                    var blob = new Blob([data], { type: 'application/pdf' });
-                    var link = document.createElement('a');
-                    link.href = window.URL.createObjectURL(blob);
-                    link.download = 'voucher.pdf';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                } else if (xhr.getResponseHeader('Content-Type') === 'application/json') {
-                    data.text().then(function(text) {
-                        var jsonResponse = JSON.parse(text);
-                        showErrorNotification(jsonResponse.error);
-                    });
-                }
-            }
-        });
-    });*/
-
     $(document).on("click", ".btnRevisaComprobante", function(e) {
         showOverlay();
         e.preventDefault();

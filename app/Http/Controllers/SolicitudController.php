@@ -2807,13 +2807,16 @@ class SolicitudController extends Controller
         $codigoresp = null;
 
         foreach($salida as $index => $detalle){
-            if($index == "codigoresp"){
-                $codigoresp = $detalle;
-            }
-            if($codigoresp != null){
-                echo "<label>".$index.': </label> '.$detalle.'<br>';
+            if($index != "documento"){
+                if($index == "codigoresp"){
+                    $codigoresp = $detalle;
+                }
+                if($codigoresp != null){
+                    echo "<label>".$index.': </label> '.$detalle.'<br>';
+                }
             }
         }
+        echo '<button type="button" data-garantizaSol="'.$id.'" data-numsol="'.$solicitud_rc->numeroSol.'" class="btn btn-success btn-sm btnDescargaComprobante"><i class="fa fa-download"></i>  Descarga Comprobante</button>';
         die;
     }
 
