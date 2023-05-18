@@ -17,4 +17,8 @@ class User extends Model
             ->select('users.*', 'roles.name as rol')
             ->get();
     }
+
+    public function concesionaria(){
+        return $this->belongsTo('App\Models\Concesionaria','concesionaria_id','id');
+    }
 }

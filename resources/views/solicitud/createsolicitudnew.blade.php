@@ -12,7 +12,7 @@
                 <label class="col-lg-5">
                     <p class="form-control-static text-muted">{{Auth::user()->name}}</p>
                 </label>
-
+                <?php use App\User; $user = User::with('concesionaria')->find(Auth::id());  ?>
 
                 <label for="sucursal_id" class="col-lg-1 control-label">Sucursal: </label>
                 <div class="col-lg-5">
@@ -77,12 +77,12 @@
 
                         <div class="col-lg-3">
                             <label>Nombre o Razón Social Emisor</label>
-                            <input class="form-control" name="razon_soc_emisor" id="razon_soc_emisor" maxlength="35" value="{{ !@is_null($header->RznSoc)? $header->RznSoc : ''}}">
+                            <input class="form-control" name="razon_soc_emisor" id="razon_soc_emisor" maxlength="35" value="{{ !@is_null($header->RznSoc)? $header->RznSoc : $user->concesionaria->razon_social}}">
                         </div>
 
                         <div class="col-lg-3">
                             <label>Rut emisor</label>
-                            <input type="number" min="1" max="99999999" class="form-control" name="rut_emisor" id="rut_emisor" value="{{!@is_null($header->RUTEmisor)? $header->RUTEmisor : ''}}">
+                            <input type="number" min="1" max="99999999" class="form-control" name="rut_emisor" id="rut_emisor" value="{{!@is_null($header->RUTEmisor)? $header->RUTEmisor : $user->concesionaria->rut}}">
                         </div>
 
                         <div class="col-lg-3">

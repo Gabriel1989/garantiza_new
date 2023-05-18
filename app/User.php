@@ -38,5 +38,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-   
+    public function concesionaria(){
+        return $this->belongsTo('App\Models\Concesionaria','concesionaria_id','id');
+    }
 }
