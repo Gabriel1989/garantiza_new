@@ -6,9 +6,17 @@ use Illuminate\Support\Facades\Http;
 use Gufy\PdfToHtml\Pdf;
 use PHPHtmlParser\Dom;
 use DateTime;
+use Smalot\PdfParser\Parser;
 
 class PdftoXML
 {
+
+    public function initSmalot($request){
+        $parser = new Parser();    
+        $pdf = $parser->parseFile($request->file('Factura_XML'));
+        $texto = $pdf->getText();
+        echo $texto;
+    }
 
     public function init($request)
     {
