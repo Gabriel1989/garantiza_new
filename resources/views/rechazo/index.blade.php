@@ -4,9 +4,9 @@
 @include('includes.mensaje')
 <div class="panel panel-info panel-border top">
     <div class="panel-heading">
-        <span class="panel-title">Solicitudes para Revisión</span>
+        <span class="panel-title">Listado de Rechazos</span>
         <div class="widget-menu pull-right">
-            {{-- <a href="{{route('sucursal.create')}}" class="btn btn-info btn-sm"><li class="fa fa-plus"></li> Agregar Sucursal</a> --}}
+            <a href="{{route('rechazo.create')}}" class="btn btn-info btn-sm"><li class="fa fa-plus"></li> Agregar Rechazo</a>
         </div>
     </div>
     <div class="panel-body">
@@ -16,27 +16,24 @@
                     <table id="tabla-data" class="table table-bordered">
                         <thead>
                         <tr>
-                            <th scope="col">Solicitud N°</th>
-                            <th scope="col">Fecha</th>
-                            <th scope="col">Concesionaria</th>
-                            <th scope="col">Cliente</th>
-                            <th scope="col">Trámites</th>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre</th>
                             <th scope="col" style="width:250px">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($solicitudes as $item)
+                        @foreach ($rechazos as $item)
                             <tr>
                                 <td scope="row">{{$item->id}}</td>
-                                <td>{{date('d-m-Y h:i A', strtotime($item->created_at))}}</td>
-                                <td>{{$item->concesionaria}}</td>
+                                <td>{{$item->motivo}}</td>
                                 <td>
-                                    {{$item->nombreCliente->razon_social_recep}}
-                                </td>
-                                <td>{{$item->tramites}}</td>
-                                <td>
-                                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
-                                        <li class="fa fa-pencil"></li> Revisar</button>
+                                    <form action="{{route('rechazo.destroy', ['id' => $item->id])}}" class="form-eliminar" method="post">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-system btn-sm" onclick="location.href='{{route('rechazo.edit', ['id' => $item->id])}}'">
+                                            <li class="fa fa-pencil"></li> Editar</button>
+                                        <button type="submit" class="btn btn-danger btn-sm"><li class="fa fa-trash-o"></li> Eliminar</button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach
@@ -56,6 +53,8 @@
 @endsection
 
 @section('scripts')
+    <!-- Datatables Editor addon - READ LICENSING NOT MIT  -->
+    {{-- <script type="text/javascript" src="{{asset("assets/$themes/vendor/plugins/datatables/extensions/Editor/js/dataTables.editor.js")}}"></script> --}}
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
     <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap5.min.js"></script>

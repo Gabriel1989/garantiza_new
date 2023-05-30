@@ -358,8 +358,10 @@
             contentType: false,   // tell jQuery not to set contentType
             success: function(data){
                 hideOverlay();
+                var jsonString = JSON.stringify(data);
+                let json = JSON.parse(jsonString);
                 if(parseFloat($("#adquiriente_1").val()) == 0){
-                    $("#pills-contact").html(data);
+                    $("#pills-contact").html(json.html);
                     $("#pills-profile").toggleClass('show');
                     $("#pills-home").removeClass('show');
                     $("#pills-contact").removeClass('show');
@@ -367,6 +369,7 @@
                     $("#pills-contact-tab").toggleClass('disabled');
                     $("#pills-contact-tab").attr("aria-disabled",false);
                     $("#pills-contact-tab").click();
+                    $("#adquiriente_1").val(json.id_adquiriente);
                 }
                 else{
                     new PNotify({

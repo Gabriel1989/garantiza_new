@@ -1,6 +1,8 @@
 <form enctype="multipart/form-data" id="form-solicitud-create" class="form-documentos form-horizontal form-solicitud" old-action="{{route('solicitud.store')}}" method="POST">
     @csrf
     @method('POST')
+    <input type="hidden" name="region_selected" id="region_selected" value="{{ isset($region_selected)? $region_selected : $solicitud_data->region_id}}">
+    <input type="hidden" name="id_tipo_placa_patente" id="id_tipo_placa_patente" value="{{ isset($id_tipo_placa)? $id_tipo_placa : $solicitud_data->id_tipo_placa_patente}}">
     <input type="hidden" name="solicitud_id" id="solicitud_id" value="{{ isset($id_solicitud)? $id_solicitud :  0}}">
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
@@ -12,7 +14,10 @@
                 <label class="col-lg-5">
                     <p class="form-control-static text-muted">{{Auth::user()->name}}</p>
                 </label>
-                <?php use App\User; $user = User::with('concesionaria')->find(Auth::id());  ?>
+                @php 
+                    use App\User;
+                    $user = User::with('concesionaria')->find(Auth::id());
+                @endphp
 
                 <label for="sucursal_id" class="col-lg-1 control-label">Sucursal: </label>
                 <div class="col-lg-5">
@@ -36,7 +41,7 @@
                 </div>
 
                 {{-- </div>
-        <div class="form-group"> --}}
+                <div class="form-group"> --}}
                 <div class="col-sm-6 col-lg-6 mb5">
                     <div class="col-lg-5">
                         <span class="btn btn-warning fileinput-button col-sm-12" name="pic" id="FacturaXML">
@@ -47,6 +52,7 @@
                         <label id="lbl_Factura_XML"></label>
                     </div>
                 </div>
+                
             </div>
             <div class="form-group">
                 <label for="ppu_terminacion" class="col-lg-1 control-label">PPU Disponibles:</label>
@@ -62,10 +68,34 @@
                         @endif
                     </select>
                 </label>
-
-
             </div>
 
+            <div class="form-group">
+                <div class="col-sm-12 col-lg-12 mb5">
+                    @if(!empty($solicitud_data))
+                        @php
+                            $documentos_solicitud = $solicitud_data->documentos;
+                            if(!empty($documentos_solicitud)){
+                                echo '<table id="tableDocs" class="table table-bordered"><thead>
+                                        <tr>
+                                            <th>Nombre Archivo</th>
+                                            <th>Tipo</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                    </thead><tbody id="tableDocsBody">';
+                                foreach($documentos_solicitud as $docs){
+                                    echo '<tr id="'.$docs->name.'"><td>';
+                                    //if($docs->description== "Factura en PDF"){
+                                        echo '<a target="_blank" href="'.url(str_replace("public/","storage/",$docs->name)).'">'.url(str_replace("public/","storage/",$docs->name)).'</a>';
+                                    //}
+                                    echo '</td><td>'.$docs->description.'</td><td><button class="btn btn-danger eliminarArchivoDoc" data-solicitudid="'.$solicitud_data->id.'" data-docname="'.$docs->name.'"><i class="fa fa-trash"></i></button></td></tr>';
+                                }
+                                echo '</tbody></table>';
+                            }
+                        @endphp
+                    @endif
+                </div>
+            </div>
             <div class="panel panel-info panel-border top">
                 <div class="panel-heading" role="button">
                     <span class="panel-title" style="cursor:pointer;">Ingresar datos factura</span>
@@ -146,6 +176,40 @@ $(document).ready(function() {
 
     $('#Factura_XML').on('change', function() {
         $('#lbl_Factura_XML').text($('#Factura_XML').val());
+    });
+
+    $(document).on("click",".eliminarArchivoDoc",function(e){
+        e.preventDefault();
+        var doc_name = $(this).data('docname');
+        var solicitud_id = $(this).data('solicitudid');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });      
+        console.log("#".doc_name);  
+        $.ajax({
+            url: "{{route('documento.destroy')}}",
+            data: {
+                solicitud_id : $(this).data('solicitudid'),
+                doc_name : doc_name,
+                _token: "{{ csrf_token() }}"
+            },
+            type: "POST",
+            success: function(data){
+                $.ajax({
+                        url: "/documento/"+solicitud_id+"/get",
+                        type: "get",
+                        success: function(data2) {
+                            let jsondata = JSON.parse(data2);
+                            let html = jsondata.data;
+                            $("#tableDocsBody").html(html);
+                        }
+
+                    });
+            }
+        });
+
     });
 
 });

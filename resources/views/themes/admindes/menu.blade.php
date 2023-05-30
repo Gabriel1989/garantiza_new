@@ -42,7 +42,9 @@
                             Route::is('estado.*')||
                             Route::is('tipo_vehiculo.*')||
                             Route::is('tipo_tramite.*')||
-                            Route::is('tipo_documento.*')) {
+                            Route::is('tipo_documento.*') ||
+                            Route::is('acreedor.*') ||
+                            Route::is('rechazo.*')) {
                             echo 'menu-open';
                         }   
                     @endphp
@@ -81,6 +83,10 @@
                         <a href="{{route('acreedor.index')}}">
                             <span class="glyphicon glyphicon-briefcase"></span> Acreedores </a>
                     </li>
+                    <li  class="{{!Route::is('rechazo.*') ?: 'active'}}">
+                        <a href="{{route('rechazo.index')}}">
+                            <span class="glyphicon glyphicon-minus-sign"></span> Estado Rechazos </a>
+                    </li>
                 </ul>
             </li>
             <li>
@@ -97,7 +103,7 @@
                 </a>
                 <ul class="nav sub-nav">
                     <li>
-                        <a href="admin_forms-elements.html">
+                        <a href="{{route('rol.index')}}">
                             <span class="glyphicons glyphicons-adjust_alt"></span> Roles </a>
                     </li>
                     <li class="{{!Route::is('usuario.*') ?: 'active'}}">
@@ -119,17 +125,17 @@
                     </span>
                 </a>
             </li>
-            <li>
+            <!--<li>
                 <a href="email_templates.html">
                     <span class="glyphicons glyphicons-cogwheels"></span>
                     <span class="sidebar-title">Procesamiento</span>
                 </a>
-            </li>
+            </li>-->
             @endif
 
 
             <!-- sidebar progress bars -->
-            <li class="sidebar-label pt25 pb10">Mediciones del Mes</li>
+            <!--<li class="sidebar-label pt25 pb10">Mediciones del Mes</li>
             <li class="sidebar-stat mb10">
                 <a href="#" class="fs11">
                     <span class="fa fa-inbox text-warning"></span>
@@ -141,7 +147,7 @@
                         </div>
                     </div>
                 </a>
-            </li>
+            </li>-->
             {{-- <li class="sidebar-stat mb10">
                 <a href="#projectOne" class="fs11">
                     <span class="fa fa-dropbox text-warning"></span>

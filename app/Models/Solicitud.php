@@ -14,6 +14,14 @@ class Solicitud extends Model
         return $this->hasOne(Para::class);
     }
 
+    public function sucursal(){
+        return $this->belongsTo(Sucursal::class,'sucursal_id','id');
+    }
+
+    public function documentos(){
+        return $this->hasMany(Documento::class,'solicitud_id','id');
+    }
+
     public static function Tramites($id){
         return DB::table('tipo_tramites_solicitudes')
             ->join('tipo_tramites', 'tipo_tramites.id', '=', 'tipo_tramites_solicitudes.tipoTramite_id')
@@ -42,7 +50,7 @@ class Solicitud extends Model
         return DB::table('solicitudes')
             ->join('users', 'users.id', '=', 'solicitudes.user_id')
             ->join('concesionarias', 'concesionarias.id', '=', 'users.concesionaria_id')
-            ->where('solicitudes.estado_id', '=', 2)
+            ->where('solicitudes.estado_id', '<=', 7)
             ->select('solicitudes.*', 'concesionarias.name as concesionaria')
             ->get();
     }

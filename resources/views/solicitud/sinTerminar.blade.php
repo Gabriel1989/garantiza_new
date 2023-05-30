@@ -31,9 +31,9 @@
                                 <td>{{$item->sucursales}}</td>
                                 <td>{{@$item->cliente->razon_social_recep}}</td>
                                 <td>
-                                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('solicitud.continuar', ['id' => $item->id])}} '" data-old-onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
+                                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('solicitud.continuarSolicitud', ['id' => $item->id,'reingresa'=> 0,'acceso'=>'ingreso'])}} '" data-old-onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
                                         <li class="fa fa-pencil"></li> Continuar Ingreso</button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Reingresar solicitud" onclick="location.href='{{route('solicitud.continuar', ['id' => $item->id,'reingresa'=> true])}} '" class="btn btn-success"><i class="fa fa-refresh"></i></button>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Reingresar solicitud" onclick="location.href='{{route('solicitud.continuarSolicitud', ['id' => $item->id,'reingresa'=> true,'acceso'=>'ingreso'])}} '" class="btn btn-success"><i class="fa fa-refresh"></i></button>
                                 </td>
                             </tr>
                         @endforeach

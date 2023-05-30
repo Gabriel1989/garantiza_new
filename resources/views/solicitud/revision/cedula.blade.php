@@ -8,15 +8,29 @@
     @method('PUT')
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
-            <span class="panel-title">Revisión de Solicitud N° {{$id}} - Datos Cédula de Cliente</span>
+            <span class="panel-title">Revisión de Solicitud N° {{$id}} - Datos Solicitud del Cliente</span>
         </div>
         <div class="panel-body">
+            <iframe width="1400" height="800" src="{{route('solicitud.continuar', ['id' => $id,'reingresa'=> 0,'acceso' => 'revision'])}}"></iframe>
             <div class="form-group">
-                <div class="col-lg-4">
-                    @if($cedula_cliente != null)
-                    <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $cedula_cliente->name)}}" frameborder="0"></iframe>
-                    @endif
+                <div class="row">
+                    <div class="col-lg-4">
+                        @if($cedula_cliente != null)
+                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $cedula_cliente->name)}}" frameborder="0"></iframe>
+                        @endif
+                    </div>
+                    <div class="col-lg-4">
+                        @if($cedula_compra_para != null)
+                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $cedula_compra_para->name)}}" frameborder="0"></iframe>
+                        @endif
+                    </div>
+                    <div class="col-lg-4">
+                        @if($factura_cliente != null)
+                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $factura_cliente->name)}}" frameborder="0"></iframe>
+                        @endif
+                    </div>
                 </div>
+                <div class="col-lg-4"></div>
                 <div class="col-lg-8">
                     <div class="row">
                         <label for="name" class="col-lg-2 control-label ">RUT:</label>
@@ -44,8 +58,11 @@
                         <div class="col-lg-10">
                             <select name="motivo_rechazo" id="motivo_rechazo">
                                 <option value="0" selected>Seleccione un Motivo de Rechazo ...</option>
-                                <option value="4" >Rut No corresponde a la Cédula</option>
-                                <option value="5" >Nombre No corresponde a la Cédula</option>
+                                @foreach($rechazos as $r)
+
+                                    <option value="{{$r->id}}">{{$r->motivo}}</option>
+
+                                @endforeach
                             </select>
                         </div>
                     </div>

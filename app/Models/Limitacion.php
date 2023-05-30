@@ -22,4 +22,12 @@ class Limitacion extends Model
             ->select('limitaciones_rc.*')
             ->get();
     }
+
+    public function acreedor(){
+        return $this->belongsTo(Acreedor::class, 'acreedor_id','id');
+    }
+
+    public function tipodocumento(){
+        return $this->belongsTo(Tipo_Documento::class, 'tipo_documento_id','id');
+    }
 }

@@ -11,7 +11,13 @@ use App\Models\Limitacion;
 use App\Models\LimitacionRC;
 use App\Models\SolicitudRC;
 use App\Models\Adquiriente;
-
+use App\Models\Acreedor;
+use App\Models\Tipo_Documento;
+use App\Models\Solicitud;
+use App\Models\Documento;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\MessageBag;
 class LimitacionController extends Controller{
 
 
@@ -30,164 +36,232 @@ class LimitacionController extends Controller{
     public function ingresaLimitacion(Request $request, $id){
 
         $adquiriente = Adquiriente::where('solicitud_id',$id)->first();
-        //dd($adquiriente);
         $solicitud_rc = SolicitudRC::getSolicitud($id);
-        //$factura = Factura::where('id_solicitud',$id)->first();
-
-        $limitacion = new Limitacion();
-        $limitacion->solicitud_id = $id;
-        $limitacion->save();
-
-        $datosReingreso = null;
-
-        if($request->get('fechaResExenta') !== '' || $request->get('fechaSolRech') !== '' || $request->get('nroResExenta') !== ''){
-            $datosReingreso = array(
-                'fechaResExenta' => $request->get('fechaResExenta'),
-                'fechaSolRech' => $request->get('fechaSolRech'),
-                'nroResExenta' => $request->get('nroResExenta'),
-                'nroSolicitud' => $solicitud_rc[0]->numeroSol,
-                'ppu' => isset($solicitud_rc[0]->ppu)? str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]) : ''
-            );
+        $get_limitacion_rc_rechazada = LimitacionRC::where('solicitud_id',$id)->first();
+        $get_limitacion = Limitacion::where('solicitud_id',$id)->first();
+        $solicitud = Solicitud::where('id',$id)->first();
+        if($get_limitacion == null){
+            $limitacion = new Limitacion();
+            $limitacion->solicitud_id = $id;
+            $limitacion->acreedor_id = Acreedor::select('id')->where('rut',$request->get('runAcreedor'))->first()->id;
+            $limitacion->folio = trim($request->get('folio'));
+            $limitacion->autorizante = trim($request->get('autorizante'));
+            $limitacion->tipo_documento_id = Tipo_Documento::select('id')->where('name',trim($request->get('tipoDoc')))->first()->id;
+            $limitacion->nro_vin = is_null($request->get('nro_vin')) ? '' : trim($request->get('nro_vin'));
+            $limitacion->nro_motor = trim($request->get('nro_motor'));
+            $limitacion->nro_serie = is_null($request->get('nro_serie')) ? '' : trim($request->get('nro_serie'));
+            $limitacion->nro_chasis = trim($request->get('nro_chasis'));
+            $limitacion->save();
         }
         else{
-            $datosReingreso = array(
-                'fechaResExenta' => '',
-                'fechaSolRech' => '',
-                'nroResExenta' => '',
-                'nroSolicitud' => '',
-                'ppu' => ''
-            );
+            $get_limitacion->acreedor_id = Acreedor::select('id')->where('rut',$request->get('runAcreedor'))->first()->id;
+            $get_limitacion->folio = trim($request->get('folio'));
+            $get_limitacion->autorizante = trim($request->get('autorizante'));
+            $get_limitacion->tipo_documento_id = Tipo_Documento::select('id')->where('name',trim($request->get('tipoDoc')))->first()->id;
+            $get_limitacion->nro_vin = is_null($request->get('nro_vin')) ? '' : trim($request->get('nro_vin'));
+            $get_limitacion->nro_motor = trim($request->get('nro_motor'));
+            $get_limitacion->nro_serie = is_null($request->get('nro_serie')) ? '' : trim($request->get('nro_serie'));
+            $get_limitacion->nro_chasis = trim($request->get('nro_chasis'));
+            $get_limitacion->save();
         }
 
-        $parametro = [
-            'propietario' => [
-                'calidad' => $adquiriente->tipo,
-                'email' => is_null($adquiriente->email) ? 'info@acobro.cl' : $adquiriente->email,
-                'nombresRazon' => $adquiriente->nombre,
-                'runRut' => str_replace('.', '', str_replace('-', '', substr($adquiriente->rut, 0, -1))),
-                'aMaterno' => $adquiriente->aMaterno,
-                'aPaterno' => $adquiriente->aPaterno,
-                'domicilio' => [
-                    'calle' => $adquiriente->calle,
-                    'comuna' => $adquiriente->comuna,
-                    'telefono' => is_null($adquiriente->telefono) ? '123456789' : $adquiriente->telefono,
-                    'nroDomicilio' => $adquiriente->numero,
-                    'ltrDomicilio' => '',
-                    'rDomicilio' => $adquiriente->rDomicilio,
-                    'cPostal' => '',
-                ],
-            ],
-            'comunidad' => [
-                'cantidad' => '0',
-                'esComunidad' => 'NO'
-            ],
-            'operador' => array(
-                'region' => '13',
-                'runUsuario' => '10796553',
-                'rEmpresa' => '77880510'
-            ),
-            'solicitante' => array(
-                'calidad' => 'N',
-                'email' => 'rodbay07@gmail.com',
-                'nombresRazon' => 'ROMAN ALEXIS',
-                'runRut' => '10796553',
-                'aMaterno' => 'RAVEST',
-                'aPaterno' => 'PINTO',
-                'domicilio' => array(
-                    'calle' => 'LAS TINAJAS',
-                    'ltrDomicilio' => '',
-                    'nroDomicilio' => '1886',
-                    'rDomicilio' => '',
-                    'telefono' => '979761113',
-                    'comuna' => '106',
-                    'cPostal' => '',
-                )
-            ),
-            'observaciones' => '',
-            'vehiculo' => array(
-                'patente' => isset($solicitud_rc[0]->ppu)? str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]) : '',
-                'nroChasis' => $request->get('nro_chasis'),
-                'nroMotor' => $request->get('nro_motor'),
-                'nroSerie' => is_null($request->get('nro_serie')) ? '' : $request->get('nro_serie'),
-                'nroVin' => is_null($request->get('nro_vin')) ? '' : $request->get('nro_vin'),
-            ),
-            'acreedor'=> array(
-                'runRut' => $request->get('runAcreedor'),
-                'nombreRazon' => $request->get('nombreRazon')
-            ),
-            'documento' => [
-                'fecha' => date('Ymd'),
-                'lugar' => '94', //Nro Comuna Sucursal -> Maipu
-                'numero' => $request->get('folio'),
-                'tipoDoc' => trim($request->get('tipoDoc')),
-                'autorizante' => trim($request->get('autorizante'))
-            ],
-
-        ];
-        $parametro['reIngreso'] = $datosReingreso;
-        $data = RegistroCivil::LimPrimera(json_encode($parametro));
-        $salida = json_decode($data, true);
-
-        //dd($salida);
-
-        if(isset($salida['codigoresp'])){
-            //dd((int)$salida['codigoresp']);
-            $cod_salida_resp = $salida['codigoresp'];
-            if(trim($cod_salida_resp)=="OK"){
-                $nro_limitacion_rc = $salida['solicitud']['numeroSol'];
-                $ppu_rc = $salida['solicitud']['ppu'];
-                $fecha = $salida['solicitud']['fecha'];
-                $hora = $salida['solicitud']['hora'];
-                $oficina = $salida['solicitud']['oficina'];
-                $tipo_sol = $salida['solicitud']['tipoSol'];
-
-                $limitacion_rc = new LimitacionRC();
-                $limitacion_rc->fecha = $fecha;
-                $limitacion_rc->hora = $hora;
-                $limitacion_rc->numSol = $nro_limitacion_rc;
-                $limitacion_rc->oficina = $oficina;
-                $limitacion_rc->ppu = $ppu_rc;
-                $limitacion_rc->tipoSol = $tipo_sol;
-                $limitacion_rc->solicitud_id = $id;
-                $limitacion_rc->save();
-                sleep(4);
-                $limitacion_rc_2 = LimitacionRC::getSolicitud($id);
-
-
-                //Subir documento asociado a la prohibición
-                $validaDocLimi = true;
-                $parametros = [
-                    'consumidor' => 'ACOBRO',
-                    'servicio' => 'INGRESO DOCUMENTOS RVM',
-                    'file' => base64_encode(file_get_contents($request->file('Doc_Lim')->getRealPath())),
-                    'patente' => str_replace(".","",explode("-",$limitacion_rc_2[0]->ppu)[0]),
-                    'nro' => $limitacion_rc_2[0]->numSol,
-                    'tipo_sol' => 'A',
-                    'tipo_doc' => "PDF",
-                    'clasificacion' => 1,
-                    'fecha_ing' => date('d-m-Y'),
-                    'nombre' => $request->file('Doc_Lim')->getClientOriginalName()
-                ];
-                $data = RegistroCivil::subirDocumentos(json_encode($parametros));
-                $salida = json_decode($data, true);
-                //dd($salida);
-                if (isset($salida['OUTPUT'])) {
-                    if ($salida['OUTPUT'] != "OK") {
-                        $validaDocLimi = false;
-                        return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación 1']);
-                    }
+        if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3){
+            $datosReingreso = null;
+            if($request->get('fechaResExenta') !== '' || $request->get('fechaSolRech') !== '' || $request->get('nroResExenta') !== ''){
+                if($get_limitacion_rc_rechazada != null){
+                    $datosReingreso = array(
+                        'fechaResExenta' => $request->get('fechaResExenta'),
+                        'fechaSolRech' => $request->get('fechaSolRech'),
+                        'nroResExenta' => $request->get('nroResExenta'),
+                        'nroSolicitud' => $get_limitacion_rc_rechazada->numeroSol,
+                        'ppu' => isset($solicitud_rc[0]->ppu)? str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]) : ''
+                    );
                 }
                 else{
-                    $validaDocLimi = false;
-                    return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación 2']);
+                    $datosReingreso = array(
+                        'fechaResExenta' => '',
+                        'fechaSolRech' => '',
+                        'nroResExenta' => '',
+                        'nroSolicitud' => '',
+                        'ppu' => ''
+                    );
                 }
-
-                return json_encode(['status'=>'OK','msj'=>'Solicitud de limitación registrada exitosamente']);
-                
             }
             else{
-                return json_encode(['status'=>'ERROR','msj'=>$salida['glosa']]);
+                $datosReingreso = array(
+                    'fechaResExenta' => '',
+                    'fechaSolRech' => '',
+                    'nroResExenta' => '',
+                    'nroSolicitud' => '',
+                    'ppu' => ''
+                );
             }
+
+            $parametro = [
+                'propietario' => [
+                    'calidad' => $adquiriente->tipo,
+                    'email' => is_null($adquiriente->email) ? 'info@acobro.cl' : $adquiriente->email,
+                    'nombresRazon' => $adquiriente->nombre,
+                    'runRut' => str_replace('.', '', str_replace('-', '', substr($adquiriente->rut, 0, -1))),
+                    'aMaterno' => $adquiriente->aMaterno,
+                    'aPaterno' => $adquiriente->aPaterno,
+                    'domicilio' => [
+                        'calle' => $adquiriente->calle,
+                        'comuna' => $adquiriente->comuna,
+                        'telefono' => is_null($adquiriente->telefono) ? '123456789' : $adquiriente->telefono,
+                        'nroDomicilio' => $adquiriente->numero,
+                        'ltrDomicilio' => '',
+                        'rDomicilio' => $adquiriente->rDomicilio,
+                        'cPostal' => '',
+                    ],
+                ],
+                'comunidad' => [
+                    'cantidad' => '0',
+                    'esComunidad' => 'NO'
+                ],
+                'operador' => array(
+                    'region' => '13',
+                    'runUsuario' => '10796553',
+                    'rEmpresa' => '77880510'
+                ),
+                'solicitante' => array(
+                    'calidad' => 'N',
+                    'email' => 'rodbay07@gmail.com',
+                    'nombresRazon' => 'ROMAN ALEXIS',
+                    'runRut' => '10796553',
+                    'aMaterno' => 'RAVEST',
+                    'aPaterno' => 'PINTO',
+                    'domicilio' => array(
+                        'calle' => 'LAS TINAJAS',
+                        'ltrDomicilio' => '',
+                        'nroDomicilio' => '1886',
+                        'rDomicilio' => '',
+                        'telefono' => '979761113',
+                        'comuna' => '106',
+                        'cPostal' => '',
+                    )
+                ),
+                'observaciones' => '',
+                'vehiculo' => array(
+                    'patente' => isset($solicitud_rc[0]->ppu)? str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]) : '',
+                    'nroChasis' => trim($request->get('nro_chasis')),
+                    'nroMotor' => trim($request->get('nro_motor')),
+                    'nroSerie' => is_null($request->get('nro_serie')) ? '' : trim($request->get('nro_serie')),
+                    'nroVin' => is_null($request->get('nro_vin')) ? '' : trim($request->get('nro_vin')),
+                ),
+                'acreedor'=> array(
+                    'runRut' => $request->get('runAcreedor'),
+                    'nombreRazon' => $request->get('nombreRazon')
+                ),
+                'documento' => [
+                    'fecha' => date('Ymd'),
+                    'lugar' => $solicitud->sucursal->comuna, //Nro Comuna Sucursal -> Maipu
+                    'numero' => $request->get('folio'),
+                    'tipoDoc' => trim($request->get('tipoDoc')),
+                    'autorizante' => trim($request->get('autorizante'))
+                ],
+
+            ];
+            $parametro['reIngreso'] = $datosReingreso;
+            $data = RegistroCivil::LimPrimera(json_encode($parametro));
+            $salida = json_decode($data, true);
+
+            //dd($salida);
+
+            if(isset($salida['codigoresp'])){
+                //dd((int)$salida['codigoresp']);
+                $cod_salida_resp = $salida['codigoresp'];
+                if(trim($cod_salida_resp)=="OK"){
+                    $nro_limitacion_rc = $salida['solicitud']['numeroSol'];
+                    $ppu_rc = $salida['solicitud']['ppu'];
+                    $fecha = $salida['solicitud']['fecha'];
+                    $hora = $salida['solicitud']['hora'];
+                    $oficina = $salida['solicitud']['oficina'];
+                    $tipo_sol = $salida['solicitud']['tipoSol'];
+
+                    $get_limitacion_rc = LimitacionRC::where('solicitud_id',$id)->first();
+                    if($get_limitacion_rc == null){
+                        $limitacion_rc = new LimitacionRC();
+                        $limitacion_rc->fecha = $fecha;
+                        $limitacion_rc->hora = $hora;
+                        $limitacion_rc->numSol = $nro_limitacion_rc;
+                        $limitacion_rc->oficina = $oficina;
+                        $limitacion_rc->ppu = $ppu_rc;
+                        $limitacion_rc->tipoSol = $tipo_sol;
+                        $limitacion_rc->solicitud_id = $id;
+                        $limitacion_rc->save();
+                    }
+                    else{
+                        $get_limitacion_rc->fecha = $fecha;
+                        $get_limitacion_rc->hora = $hora;
+                        $get_limitacion_rc->numSol = $nro_limitacion_rc;
+                        $get_limitacion_rc->oficina = $oficina;
+                        $get_limitacion_rc->ppu = $ppu_rc;
+                        $get_limitacion_rc->tipoSol = $tipo_sol;
+                        $get_limitacion_rc->save();
+                    }
+                    sleep(4);
+                    $limitacion_rc_2 = LimitacionRC::getSolicitud($id);
+
+
+                    //Subir documento asociado a la prohibición
+                    $validaDocLimi = true;
+                    $parametros = [
+                        'consumidor' => 'ACOBRO',
+                        'servicio' => 'INGRESO DOCUMENTOS RVM',
+                        'file' => base64_encode(file_get_contents($request->file('Doc_Lim')->getRealPath())),
+                        'patente' => str_replace(".","",explode("-",$limitacion_rc_2[0]->ppu)[0]),
+                        'nro' => $limitacion_rc_2[0]->numSol,
+                        'tipo_sol' => 'A',
+                        'tipo_doc' => "PDF",
+                        'clasificacion' => 1,
+                        'fecha_ing' => date('d-m-Y'),
+                        'nombre' => $request->file('Doc_Lim')->getClientOriginalName()
+                    ];
+                    $data = RegistroCivil::subirDocumentos(json_encode($parametros));
+                    $salida = json_decode($data, true);
+                    //dd($salida);
+                    if (isset($salida['OUTPUT'])) {
+                        if ($salida['OUTPUT'] != "OK") {
+                            $validaDocLimi = false;
+                            return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación 1']);
+                        }
+                    }
+                    else{
+                        $validaDocLimi = false;
+                        return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación 2']);
+                    }
+
+                    return json_encode(['status'=>'OK','msj'=>'Solicitud de limitación registrada exitosamente']);
+                    
+                }
+                else{
+                    return json_encode(['status'=>'ERROR','msj'=>$salida['glosa']]);
+                }
+            }
+        }
+        else{
+
+            if($request->hasFile('Doc_Lim')){
+                $file = $request->file('Doc_Lim');
+                $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+                $doc = new Documento();
+                $doc->name = 'public/'.$path;
+                $doc->type = 'pdf';
+                $doc->description = trim($request->get('tipoDoc'));
+                $doc->solicitud_id = $id;
+                $doc->tipo_documento_id = Tipo_Documento::select('id')->where('name',trim($request->get('tipoDoc')))->first()->id;
+                $doc->added_at = Carbon::now()->toDateTimeString();
+                $doc->save();
+            }else{
+                $errors = new MessageBag();
+                $errors->add('Documentos', 'Debe adjuntar documento fundante de limitación');
+                return json_encode(['status'=>'ERROR','esRevision'=>false,'msj'=>'Error al subir cédula de adquiriente']);
+            }
+
+
+
+            return json_encode(['status'=>'OK','msj'=>'Solicitud de limitación registrada exitosamente. Espere mientras un ejecutivo de Garantiza revise su solicitud']);
         }
 
     }

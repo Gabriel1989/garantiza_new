@@ -12,42 +12,42 @@
                     <label for="rut" class="col-lg-2 control-label">Rut :</label>
                     <label class="col-lg-2">
                         <input type="hidden" data-comprapara="{{$comprapara}}" name="id_comprapara" id="id_comprapara" value="{{ !is_null($comprapara)? $comprapara->id :  0}}">
-                        <input type="text" name="rut" id="rut_comprapara" class="form-control rut2" placeholder="99.999.999-9" value="{{ !is_null($comprapara)?  $comprapara->rut : $adquirentes[0]->rut}}" >
+                        <input type="text" name="rut" id="rut_comprapara" class="form-control rut2" placeholder="99.999.999-9" value="{{ !is_null($comprapara)?  $comprapara->rut : ''}}" >
                     </label>
                     <label class="col-lg-2"></label>
                     
                     <label for="nombre" class="col-lg-2 control-label">Nombre :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="nombre" id="nombre_comprapara" class="form-control" placeholder="Nombre del Adquiriente" value="{{!is_null($comprapara)?  $comprapara->nombre :$adquirentes[0]->nombre}}" >
+                        <input type="text" name="nombre" id="nombre_comprapara" class="form-control" placeholder="Nombre del Adquiriente" value="{{!is_null($comprapara)?  $comprapara->nombre : ''}}" >
                     </label>
                 </div>
                 <div class="form-group">
                     <label for="aPaterno" class="col-lg-2 control-label">Apellido Paterno :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="aPaterno" id="aPaterno_comprapara" class="form-control" placeholder="Apellido Paterno" value="{{!is_null($comprapara)?  $comprapara->aPaterno : $adquirentes[0]->aPaterno}}">
+                        <input type="text" name="aPaterno" id="aPaterno_comprapara" class="form-control" placeholder="Apellido Paterno" value="{{!is_null($comprapara)?  $comprapara->aPaterno : ''}}">
                     </label>
                     
                     <label for="aMaterno" class="col-lg-2 control-label">Apellido Materno :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="aMaterno" id="aMaterno_comprapara" class="form-control" placeholder="Apellido Materno" value="{{!is_null($comprapara)?  $comprapara->aMaterno :$adquirentes[0]->aMaterno}}">
+                        <input type="text" name="aMaterno" id="aMaterno_comprapara" class="form-control" placeholder="Apellido Materno" value="{{!is_null($comprapara)?  $comprapara->aMaterno :''}}">
                     </label>
                 </div>
                 <div class="form-group">
                     <label for="calle" class="col-lg-2 control-label">Dirección (calle) :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="calle" id="calle_comprapara" class="form-control" placeholder="Calle de la dirección" value="{{!is_null($comprapara)?  $comprapara->calle : $adquirentes[0]->calle}}" >
+                        <input type="text" name="calle" id="calle_comprapara" class="form-control" placeholder="Calle de la dirección" value="{{!is_null($comprapara)?  $comprapara->calle : ''}}" >
                     </label>
                     
                     <label for="numero" class="col-lg-2 control-label">Número :</label>
                     <label class="col-lg-2">
-                        <input type="text" name="numero" id="numero_comprapara" class="form-control" placeholder="Número de la dirección" value="{{!is_null($comprapara)?  $comprapara->numero :$adquirentes[0]->numero}}" >
+                        <input type="text" name="numero" id="numero_comprapara" class="form-control" placeholder="Número de la dirección" value="{{!is_null($comprapara)?  $comprapara->numero :''}}" >
                     </label>
                     <label class="col-lg-2"></label>
                 </div>
                 <div class="form-group">
                     <label for="rDireccion" class="col-lg-2 control-label">Complemento de dirección :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="rDireccion" id="rDireccion_comprapara" class="form-control" placeholder="Complemento de la dirección" value="{{!is_null($comprapara)?  $comprapara->rDomicilio : $adquirentes[0]->rDomicilio}}">
+                        <input type="text" name="rDireccion" id="rDireccion_comprapara" class="form-control" placeholder="Complemento de la dirección" value="{{!is_null($comprapara)?  $comprapara->rDomicilio : ''}}">
                     </label>
                     
                     <label for="comuna" class="col-lg-2 control-label">Comuna :</label>
@@ -75,12 +75,12 @@
                 <div class="form-group">
                     <label for="email" class="col-lg-2 control-label">Email :</label>
                     <label class="col-lg-4">
-                        <input type="email" name="email" id="email_comprapara" class="form-control" placeholder="Email" value="{{!is_null($comprapara)?  $comprapara->email :$adquirentes[0]->email}}" >
+                        <input type="email" name="email" id="email_comprapara" class="form-control" placeholder="Email" value="{{!is_null($comprapara)?  $comprapara->email :''}}" >
                     </label>
                     
                     <label for="telefono" class="col-lg-2 control-label">Teléfono :</label>
                     <label class="col-lg-2">
-                        <input type="text" name="telefono" id="telefono_comprapara" class="form-control" placeholder="Ej. 978653214" value="{{!is_null($comprapara)?  $comprapara->telefono :$adquirentes[0]->telefono}}" >
+                        <input type="text" name="telefono" id="telefono_comprapara" class="form-control" placeholder="Ej. 978653214" value="{{!is_null($comprapara)?  $comprapara->telefono :''}}" >
                     </label>
                     <label class="col-lg-2"></label>
                 </div>

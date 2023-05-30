@@ -18,6 +18,7 @@ use App\Models\Factura;
 use App\Models\Tipo_Documento;
 use App\Models\Acreedor;
 use App\Models\LimitacionRC;
+use App\Models\Limitacion;
 
 ?>
 
@@ -36,7 +37,7 @@ use App\Models\LimitacionRC;
             $tipo_documento = Tipo_Documento::whereIn('id',[6,7])->get();
             $acreedores = Acreedor::all();
             $limitacion_rc = LimitacionRC::getSolicitud($id);
-
+            $limitacion = Limitacion::where('solicitud_id',$id)->first();
         ?>
         @if(count($limitacion_rc) == 0)
         <div class="panel-body">
@@ -48,7 +49,7 @@ use App\Models\LimitacionRC;
                         <select name="runAcreedor" id="runAcreedor" class="form-control" required>
                             <option value="0">Seleccione Acreedor</option>
                             @foreach($acreedores as $acre)
-                                <option value="{{$acre->rut}}">{{$acre->nombre}}</option>
+                                <option value="{{$acre->rut}}" @if($limitacion != null) @if($limitacion->acreedor->rut == $acre->rut) selected  @endif @endif>{{$acre->nombre}}</option>
                             @endforeach
                         </select>
 
@@ -60,32 +61,32 @@ use App\Models\LimitacionRC;
                 <div class="row">
                     <label for="nro_chasis" class="col-lg-3 control-label ">Nro Chasis:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_chasis" id="nro_chasis" value="{{$factura->nro_chasis}}" class="form-control" required>
+                        <input type="text" name="nro_chasis" id="nro_chasis" value="{{ ($limitacion == null)?  $factura->nro_chasis : $limitacion->nro_chasis}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row">
                     <label for="nro_serie" class="col-lg-3 control-label ">Nro Serie:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_serie" id="nro_serie" value="{{$factura->nro_serie}}" class="form-control" required>
+                        <input type="text" name="nro_serie" id="nro_serie" value="{{ ($limitacion == null)?  $factura->nro_serie : $limitacion->nro_serie}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row">
                     <label for="nro_vin" class="col-lg-3 control-label ">Nro Vin:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_vin" id="nro_vin" value="{{$factura->nro_vin}}" class="form-control" required>
+                        <input type="text" name="nro_vin" id="nro_vin" value="{{ ($limitacion == null)? $factura->nro_vin : $limitacion->nro_vin}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row">
                     <label for="nro_motor" class="col-lg-3 control-label ">Nro Motor:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_motor" id="nro_motor" value="{{$factura->motor}}" class="form-control" required>
+                        <input type="text" name="nro_motor" id="nro_motor" value="{{ ($limitacion == null)? $factura->motor : $limitacion->nro_motor}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Documento</h4></div></div>
                 <div class="row">
                     <label for="folio" class="col-lg-3 control-label ">Folio:</label>
                     <label class="col-lg-3">
-                        <input type="number" min="1" max="99999999" name="folio" id="folio" value="" class="form-control" required>
+                        <input type="number" min="1" max="99999999" name="folio" id="folio" value="{{ ($limitacion != null)? $limitacion->folio : '' }}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row">
@@ -93,7 +94,7 @@ use App\Models\LimitacionRC;
                     <label class="col-lg-3">
                         <select name="tipoDoc" id="tipoDoc2" class="form-control" required>
                             @foreach($tipo_documento as $tipo)
-                                <option value="{{trim($tipo->name)}}">{{$tipo->name}}</option>
+                                <option value="{{trim($tipo->name)}}" @if($limitacion != null)  @if($limitacion->tipodocumento->name == $tipo->name) selected  @endif  @endif>{{$tipo->name}}</option>
                             @endforeach
 
                         </select>
@@ -102,7 +103,7 @@ use App\Models\LimitacionRC;
                 <div class="row">
                     <label for="autorizante" class="col-lg-3 control-label ">Autorizante:</label>
                     <label class="col-lg-3">
-                        <input type="input" name="autorizante" id="autorizante" value="" class="form-control">
+                        <input type="input" name="autorizante" id="autorizante" value="{{ ($limitacion != null)? $limitacion->autorizante : '' }}" class="form-control">
                     </label>
                 </div>
                 
@@ -411,8 +412,7 @@ use App\Models\LimitacionRC;
                             "spacing1": 10,
                             "spacing2": 10
                         },
-                        width: '290px',
-                        delay: 2000
+                        width: '290px'
                     });
                     return false;
                 }
@@ -431,8 +431,7 @@ use App\Models\LimitacionRC;
                             "spacing1": 10,
                             "spacing2": 10
                         },
-                        width: '290px',
-                        delay: 2000
+                        width: '290px'
                     });
                     return true;
                 }

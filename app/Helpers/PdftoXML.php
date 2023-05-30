@@ -7,6 +7,8 @@ use Gufy\PdfToHtml\Pdf;
 use PHPHtmlParser\Dom;
 use DateTime;
 use Smalot\PdfParser\Parser;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 
 class PdftoXML
 {
@@ -20,11 +22,24 @@ class PdftoXML
 
     public function init($request)
     {
-        
-        $pdf = new Pdf($request->file('Factura_XML'));
+        if ($request instanceof Request){
+            if($request->hasFile('Factura_XML')){
+                $pdf = new Pdf($request->file('Factura_XML'));
+            }
+        }
+        else{
+            // Actualiza esto con tu ruta de archivo real
+            $filePath = storage_path('app/'.$request); 
+            //dd($filePath);
+            $fileName = basename($request);
+            //dd($fileName);
+            $file = new UploadedFile($filePath, $fileName);
+            //dd($file);
+            $pdf = new Pdf($file->getRealPath());
+        }
         $html = $pdf->html();
         $dom = new Dom;
-        $total_pages = $pdf->getPages();
+        //$total_pages = $pdf->getPages();
 
         $html->goToPage(1);
         $dom->load($html);

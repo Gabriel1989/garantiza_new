@@ -13,4 +13,8 @@ class Sucursal extends Model
     public function concesionaria(){
         return $this->belongsTo(Concesionaria::class);
     }
+
+    public function solicitudes(){
+        return $this->hasMany(Solicitud::class,'sucursal_id','id');
+    }
 }

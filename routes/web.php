@@ -82,7 +82,24 @@ Route::group(['prefix' => 'administrador', 'middleware' => ['auth', 'admin']], f
     Route::put('acreedor/{id}', 'AcreedorController@update')->name('acreedor.update');
     Route::delete('acreedor/{id}', 'AcreedorController@destroy')->name('acreedor.destroy');
 
+    //Roles
 
+    Route::get('rol/index', 'RolController@index')->name('rol.index');
+    Route::get('rol/create', 'RolController@create')->name('rol.create');
+    Route::post('rol', 'RolController@store')->name('rol.store');
+    Route::get('rol/{id}/edit', 'RolController@edit')->name('rol.edit');
+    Route::put('rol/{id}', 'RolController@update')->name('rol.update');
+    Route::delete('rol/{id}', 'RolController@destroy')->name('rol.destroy');
+
+
+    //Rechazos
+
+    Route::get('rechazo/index', 'RechazoController@index')->name('rechazo.index');
+    Route::get('rechazo/create', 'RechazoController@create')->name('rechazo.create');
+    Route::post('rechazo', 'RechazoController@store')->name('rechazo.store');
+    Route::get('rechazo/{id}/edit', 'RechazoController@edit')->name('rechazo.edit');
+    Route::put('rechazo/{id}', 'RechazoController@update')->name('rechazo.update');
+    Route::delete('rechazo/{id}', 'RechazoController@destroy')->name('rechazo.destroy');
 
     // Usuarios
     Route::get('usuario/index', 'UserController@index')->name('usuario.index');
@@ -92,6 +109,33 @@ Route::group(['prefix' => 'administrador', 'middleware' => ['auth', 'admin']], f
     Route::get('usuario/{id}/edit', 'UserController@edit')->name('usuario.edit');
     Route::put('usuario/{id}', 'UserController@update')->name('usuario.update');
     Route::delete('usuario/{id}', 'UserController@destroy')->name('usuario.destroy');
+
+    //Revisión
+    Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
+    Route::put('solicitud/{id}/updateRevisionCedula', 'SolicitudController@updateRevisionCedula')->name('solicitud.updateRevisionCedula');
+    Route::get('solicitud/continuar/{id}/{reingresa?}/{acceso?}','SolicitudController@continuarSolicitud')->name('solicitud.continuar');
+
+    Route::post('solicitud', 'SolicitudController@store')->name('solicitud.store');
+    Route::get('solicitud/{id}/adquirientes', 'SolicitudController@adquirientes')->name('solicitud.adquirientes');
+    Route::post('solicitud/{id}/saveAdquirientes', 'SolicitudController@saveAdquirientes')->name('solicitud.saveAdquirientes');
+    Route::get('solicitud/{id}/compraPara', 'SolicitudController@compraPara')->name('solicitud.compraPara');
+    Route::post('solicitud/{id}/saveCompraPara', 'SolicitudController@saveCompraPara')->name('solicitud.saveCompraPara');
+    Route::get('solicitud/{id}/datosMoto', 'SolicitudController@datosMoto')->name('solicitud.datosMoto');
+    Route::get('solicitud/{id}/datosAuto', 'SolicitudController@datosAuto')->name('solicitud.datosAuto');
+    Route::get('solicitud/{id}/datosCamion', 'SolicitudController@datosCamion')->name('solicitud.datosCamion');
+    Route::put('solicitud/{id}/saveDatosMoto', 'SolicitudController@saveDatosMoto')->name('solicitud.saveDatosMoto');
+    Route::post('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
+    Route::post('solicitud/{id}/updateRevisionFacturaAuto', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
+    Route::post('solicitud/{id}/updateRevisionFacturaCamion','SolicitudController@updateRevisionFacturaCamion')->name('solicitud.updateRevisionFacturaCamion');
+
+    //Crear limitación o prohibición para vehículo
+
+    Route::post('solicitud/{id}/limitacion/form','LimitacionController@ingresarLimitacionForm')->name('solicitud.limitacion.form');
+    Route::post('solicitud/{id}/limitacion/new','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
+    Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
+    //Generar comprobante RVM
+    Route::post('solicitud/{id}/descargaComprobanteRVM','SolicitudController@descargaComprobanteRVM')->name('solicitud.descargaComprobanteRVM');
+
 });
 
 
@@ -116,9 +160,9 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::put('solicitud/{id}/saveDatosMoto', 'SolicitudController@saveDatosMoto')->name('solicitud.saveDatosMoto');
 
     Route::delete('solicitud/delete/{id}', 'SolicitudController@destroy')->name('solicitud.destroy');
-    Route::get('solicitud/continuar/{id}/{reingresa?}','SolicitudController@continuarSolicitud')->name('solicitud.continuar');
+    Route::get('solicitud/continuarSolicitud/{id}/{reingresa?}/{acceso?}','SolicitudController@continuarSolicitud')->name('solicitud.continuarSolicitud');
 
-    Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
+    //Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
     Route::post('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
     Route::post('solicitud/{id}/updateRevisionFacturaAuto', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
     Route::post('solicitud/{id}/updateRevisionFacturaCamion','SolicitudController@updateRevisionFacturaCamion')->name('solicitud.updateRevisionFacturaCamion');
@@ -139,6 +183,8 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     // Documentos
     Route::get('documento/{id}/create', 'DocumentoController@create')->name('documento.create');
     Route::post('documento', 'DocumentoController@store')->name('documento.store');
+    Route::post('documento/destroy', 'DocumentoController@destroy')->name('documento.destroy');
+    Route::get('documento/{id}/get', 'DocumentoController@get')->name('documento.get');
 
     Route::post('documento/{id}/cargadocs', 'DocumentoController@CargaDocumentos')->name('documento.cargadocs.rc');
 });
@@ -149,7 +195,7 @@ Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {
     Route::get('solicitud/revision', 'SolicitudController@revision')->name('solicitud.revision');
 
     // Revisión de Solicitudes
-    //Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
+    Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
     Route::put('solicitud/{id}/updateRevisionCedula', 'SolicitudController@updateRevisionCedula')->name('solicitud.updateRevisionCedula');
 
     Route::get('solicitud/{id}/revision/rol', 'SolicitudController@RevisionRol')->name('solicitud.revision.rol');
@@ -166,12 +212,35 @@ Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {
 
     Route::get('solicitud/{id}/{PPU}/revision/facturaMoto', 'SolicitudController@RevisionFacturaMoto')->name('solicitud.revision.facturaMoto');
     //Route::put('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
+    Route::get('solicitud/continuar/{id}/{reingresa?}/{acceso?}','SolicitudController@continuarSolicitud')->name('solicitud.continuar');
 
     Route::get('solicitud/{id}/ver', 'SolicitudController@ver')->name('solicitud.ver');
     Route::get('solicitud/{id}/aprobacion', 'SolicitudController@aprobacion')->name('solicitud.aprobacion');
     Route::get('solicitud/{id}/edit', 'SolicitudController@edit')->name('solicitud.edit');
     Route::put('solicitud/{id}', 'SolicitudController@update')->name('solicitud.update');
     Route::delete('solicitud/{id}', 'SolicitudController@destroy')->name('solicitud.destroy');
+
+    Route::post('solicitud', 'SolicitudController@store')->name('solicitud.store');
+    Route::get('solicitud/{id}/adquirientes', 'SolicitudController@adquirientes')->name('solicitud.adquirientes');
+    Route::post('solicitud/{id}/saveAdquirientes', 'SolicitudController@saveAdquirientes')->name('solicitud.saveAdquirientes');
+    Route::get('solicitud/{id}/compraPara', 'SolicitudController@compraPara')->name('solicitud.compraPara');
+    Route::post('solicitud/{id}/saveCompraPara', 'SolicitudController@saveCompraPara')->name('solicitud.saveCompraPara');
+    Route::get('solicitud/{id}/datosMoto', 'SolicitudController@datosMoto')->name('solicitud.datosMoto');
+    Route::get('solicitud/{id}/datosAuto', 'SolicitudController@datosAuto')->name('solicitud.datosAuto');
+    Route::get('solicitud/{id}/datosCamion', 'SolicitudController@datosCamion')->name('solicitud.datosCamion');
+    Route::put('solicitud/{id}/saveDatosMoto', 'SolicitudController@saveDatosMoto')->name('solicitud.saveDatosMoto');
+    Route::post('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
+    Route::post('solicitud/{id}/updateRevisionFacturaAuto', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
+    Route::post('solicitud/{id}/updateRevisionFacturaCamion','SolicitudController@updateRevisionFacturaCamion')->name('solicitud.updateRevisionFacturaCamion');
+
+    //Crear limitación o prohibición para vehículo
+
+    Route::post('solicitud/{id}/limitacion/form','LimitacionController@ingresarLimitacionForm')->name('solicitud.limitacion.form');
+    Route::post('solicitud/{id}/limitacion/new','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
+    Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
+
+    //Generar comprobante RVM
+    Route::post('solicitud/{id}/descargaComprobanteRVM','SolicitudController@descargaComprobanteRVM')->name('solicitud.descargaComprobanteRVM');
 });
 
 

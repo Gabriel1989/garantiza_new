@@ -9,6 +9,18 @@
 
 <div class="panel panel-info panel-border top">
 
+    @php
+        use App\Models\Solicitud;
+        if($id_solicitud != 0){
+            $estadoSolicitud = Solicitud::select('estado_id')->where('id',$id_solicitud)->first();
+            $estadoSolicitud = $estadoSolicitud->estado_id;
+        }
+        else{
+            $estadoSolicitud = '';
+        }
+    @endphp
+
+
     @if($reingreso != null)
     <div class="panel-header">
         <div class="row">
@@ -35,23 +47,95 @@
                 <a class="nav-link @if($id_adquiriente == 0)  disabled    @endif" id="pills-contact-tab" data-toggle="pill" @if($id_adquiriente != 0) href="#pills-contact" @else href="#" @endif role="tab" aria-controls="pills-contact" aria-selected="false"@if($id_adquiriente == 0) aria-disabled="true" @endif>Compra Para</a>
             </li>
 
-            <li class="nav-item @if($id_adquiriente != 0 && $id_comprapara != 0 && $id_solicitud_rc == 0)  active    @endif" role="presentation">
-                <a class="nav-link @if($id_comprapara == 0)  disabled    @endif" id="pills-invoice-tab" data-toggle="pill" @if($id_comprapara != 0) href="#pills-invoice" @else href="#" @endif role="tab" aria-controls="pills-invoice" aria-selected="false" @if($id_comprapara == 0) aria-disabled="true" @endif>Factura</a>
+            <li class="nav-item 
+                    @if($acceso == "revision")
+                        @if($id_adquiriente != 0 && $id_comprapara != 0 && $id_solicitud_rc == 0)  
+                            active    
+                        @endif
+                    @elseif($acceso == "ingreso")
+                        @if($estadoSolicitud != '' && $estadoSolicitud == 3)   
+                            active
+                        @endif   
+                    @endif
+                    " role="presentation">
+                <a class="nav-link 
+                        @if($acceso == "revision")
+                            @if($id_comprapara == 0)  
+                                disabled    
+                            @endif
+                        @elseif($acceso == "ingreso")
+                            @if($estadoSolicitud != 3)
+                                disabled
+                            @endif
+
+                        @endif
+                        " id="pills-invoice-tab" data-toggle="pill" @if($id_comprapara != 0) href="#pills-invoice" @else href="#" @endif role="tab" aria-controls="pills-invoice" aria-selected="false" @if($id_comprapara == 0) aria-disabled="true" @endif>Factura</a>
             </li>
 
-            <li class="nav-item @if($id_solicitud_rc != 0 && $documento_rc == null)  active @endif" role="presentation">
-                <a class="nav-link @if($id_solicitud_rc == 0)  disabled    @endif" id="pills-docs-tab" data-toggle="pill" @if($id_solicitud_rc != 0) href="#pills-docs" @else href="#" @endif role="tab" aria-controls="pills-docs" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Documentación</a>
+            
+            <li class="nav-item @if($acceso == "revision") 
+                                    @if($id_solicitud_rc != 0 && $documento_rc == null)  
+                                        active 
+                                    @endif 
+                                @elseif($acceso == "ingreso") 
+                                    @if($estadoSolicitud != '' && $estadoSolicitud == 6)   
+                                        active
+                                    @endif   
+                                @endif" role="presentation">
+                <a class="nav-link @if($acceso == "revision") 
+                @if($id_solicitud_rc != 0 && $documento_rc == null)  
+                    disabled 
+                @endif 
+            @elseif($acceso == "ingreso") 
+                @if($estadoSolicitud != '' && $estadoSolicitud != 6)   
+                    disabled
+                @endif   
+            @endif" id="pills-docs-tab" data-toggle="pill"  
+                                                        @if($acceso == "revision")
+                                                            @if($id_solicitud_rc != 0) 
+                                                                href="#pills-docs" 
+                                                            @else href="#" 
+                                                            
+                                                            @endif 
+                                                        @elseif($acceso == "ingreso")
+                                                            @if($estadoSolicitud != '' && $estadoSolicitud == 6)
+                                                                href="#pills-docs"
+                                                            @else href="#"
+
+                                                            @endif
+                                                        @endif
+                                                            role="tab" aria-controls="pills-docs" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Documentación</a>
             </li>
 
+            
             <li class="nav-item" role="presentation">
-                <a class="nav-link @if($id_solicitud_rc == 0)  disabled  @endif" id="pills-limitation-tab" data-toggle="pill" @if($id_solicitud_rc != 0) href="#pills-limitation" @else href="#" @endif role="tab" aria-controls="pills-limitation" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Limitación</a>
+                <a class="nav-link 
+                @if($acceso == "revision")
+                    @if($id_solicitud_rc == 0)  
+                        disabled  
+                    @endif
+                @endif
+                " 
+                id="pills-limitation-tab" data-toggle="pill" 
+                    @if($acceso == "revision")
+                        @if($id_solicitud_rc != 0) 
+                            href="#pills-limitation" 
+                        @else 
+                            href="#" 
+                        @endif 
+                    @elseif($acceso == "ingreso")
+                        href="#pills-limitation"
+                    @endif
+                    role="tab" aria-controls="pills-limitation" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Limitación</a>
             </li>
+            @if($acceso == "revision")
             <li class="nav-item @if($id_solicitud_rc != 0 && $documento_rc != null)  active @endif" role="presentation">
                 <a class="nav-link @if($id_solicitud_rc == 0)  disabled  @elseif($id_solicitud_rc != 0 && $documento_rc == null) disabled @elseif($documento_rc != null) active @endif" id="pills-pay-tab" data-toggle="pill" @if($documento_rc != null) href="#pills-pay" @else href="#" @endif role="tab" aria-controls="pills-pay" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Pago</a>
             </li>
             <li class="nav-item" role="presentation">
                 <a class="nav-link @if($id_solicitud_rc == 0)  disabled  @elseif($id_solicitud_rc != 0 && $documento_rc == null) disabled @endif" id="pills-voucher-tab" data-toggle="pill" @if($documento_rc != null) href="#pills-voucher" @else href="#" @endif role="tab" aria-controls="pills-voucher" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Comprobantes</a>
             </li>
+            @endif
         </ul>
         <div class="tab-content" id="pills-tabContent">
             <div class="tab-pane fade @if($solicita_ppu == false)  active show in @endif" id="pills-ppu" role="tabpanel" aria-labelledby="pills-ppu-tab">
@@ -73,7 +157,17 @@
                 @endif
 
             </div>
-            <div class="tab-pane fade @if($id_comprapara != 0 && $id_solicitud_rc == 0)  show active in @endif" id="pills-invoice" role="tabpanel" aria-labelledby="pills-invoice-tab">
+            <div class="tab-pane fade @if($acceso == "revision")
+                                        @if($id_comprapara != 0 && $id_solicitud_rc == 0)  
+                                                show active in 
+                                        @endif
+                                      @elseif($acceso == "ingreso")
+                                        @if($estadoSolicitud == 3)
+                                                show active in
+                                        @endif
+                                      @endif
+                                        
+                                        " id="pills-invoice" role="tabpanel" aria-labelledby="pills-invoice-tab">
                 @if ($id_comprapara != 0)
                     @if($id_tipo_vehiculo == 1)
                         @include('solicitud.revision.facturaAuto')
@@ -84,22 +178,51 @@
                     @endif
                 @endif
             </div>
-            <div class="tab-pane fade @if($id_solicitud_rc != 0 && $documento_rc == null)  active show in @endif" id="pills-docs" role="tabpanel" aria-labelledby="pills-docs-tab">
-                @if($id_solicitud_rc != 0)
-                    @if($id_tipo_vehiculo == 1)
-                        @include('solicitud.revision.docsIdentidadAuto')
-                    @elseif ($id_tipo_vehiculo == 2)
-                        @include('solicitud.revision.docsIdentidadMoto')
-                    @else
-                        @include('solicitud.revision.docsIdentidadCamion')
+            
+            <div class="tab-pane fade
+                @if($acceso == "revision") 
+                    @if($id_solicitud_rc != 0 && $documento_rc == null)  
+                        active show in 
+                    @endif
+                @elseif($acceso == "ingreso")
+                    @if($estadoSolicitud == 6)
+                        show active in
+                    @endif
+                @endif
+                " id="pills-docs" role="tabpanel" aria-labelledby="pills-docs-tab">
+                @if($acceso == "revision")
+                    @if($id_solicitud_rc != 0)
+                        @if($id_tipo_vehiculo == 1)
+                            @include('solicitud.revision.docsIdentidadAuto')
+                        @elseif ($id_tipo_vehiculo == 2)
+                            @include('solicitud.revision.docsIdentidadMoto')
+                        @else
+                            @include('solicitud.revision.docsIdentidadCamion')
+                        @endif
+                    @endif
+                @elseif($acceso == "ingreso")
+                    @if($estadoSolicitud == 6)
+                        @if($id_tipo_vehiculo == 1)
+                            @include('solicitud.revision.docsIdentidadAuto')
+                        @elseif ($id_tipo_vehiculo == 2)
+                            @include('solicitud.revision.docsIdentidadMoto')
+                        @else
+                            @include('solicitud.revision.docsIdentidadCamion')
+                        @endif
                     @endif
                 @endif
             </div>
+            
             <div class="tab-pane fade" id="pills-limitation" role="tabpanel" aria-labelledby="pills-limitation-tab">
-                @if($id_solicitud_rc != 0)
+                @if($acceso == "revision")   
+                    @if($id_solicitud_rc != 0)
+                        @include('solicitud.limitacion')
+                    @endif
+                @elseif($acceso == "ingreso")
                     @include('solicitud.limitacion')
                 @endif
             </div>
+            @if($acceso == "revision")
             <div class="tab-pane fade @if($id_solicitud_rc != 0 && $documento_rc != null)  active show in @endif" id="pills-pay" role="tabpanel" aria-labelledby="pills-pay-tab">
                 @if($documento_rc != null)
                     @include('solicitud.pagos')
@@ -110,7 +233,7 @@
                     @include('solicitud.comprobante')
                 @endif
             </div>
-
+            @endif
 
         </div>
     </div>
@@ -301,6 +424,7 @@
                 hideOverlay();
                 let jsondata = JSON.parse(data);
                 let solicitud_id = jsondata.solicitud_id;
+                let solicitud_id2 = jsondata.solicitud_id2;
                 if(parseInt(solicitud_id) != 0){                
                     $("#pills-profile").html(jsondata.html);
                     $("#pills-profile").toggleClass('show');
@@ -309,6 +433,18 @@
                     $("#pills-profile-tab").toggleClass('disabled');
                     $("#pills-profile-tab").attr("aria-disabled",false);
                     $("#pills-profile-tab").click();
+                }
+                else{
+                    $.ajax({
+                        url: "/documento/"+solicitud_id2+"/get",
+                        type: "get",
+                        success: function(data2) {
+                            let jsondata = JSON.parse(data2);
+                            let html = jsondata.data;
+                            $("#tableDocsBody").html(html);
+                        }
+
+                    });
                 }
 
                 $('.comuna').multiselect({
@@ -376,7 +512,7 @@
                 });
 
                 if(parseInt(solicitud_id) != 0){
-                    window.location.href= "http://"+"{{$_SERVER['HTTP_HOST']}}"+ "/solicitud/continuar/"+ solicitud_id;
+                    window.location.href= "http://"+"{{$_SERVER['HTTP_HOST']}}"+ "/solicitud/continuarSolicitud/"+ solicitud_id;
                 }
                 else{
                     new PNotify({

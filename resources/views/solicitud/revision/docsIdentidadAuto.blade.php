@@ -1,7 +1,8 @@
 <?php 
 
 use App\Models\CompraPara;
-
+use App\Models\Solicitud;
+$solicitud = Solicitud::find($id);
 
 ?>
 
@@ -30,9 +31,9 @@ use App\Models\CompraPara;
             </div>
 
             <div class="form-group">
-                <div class="col-sm-4 col-lg-4 mb5">
+                <div class="col-sm-6 col-lg-6 mb5">
                     <div class="col-lg-6">
-                        <span class="btn btn-warning fileinput-button col-sm-12" name="CedulaPDF" id="CedulaPDF">
+                        <span style="white-space:normal;" class="btn btn-warning fileinput-button col-sm-12" name="CedulaPDF" id="CedulaPDF">
                             Seleccionar Cédula PDF</span>
                     </div>
                     <div class="col-lg-6">
@@ -42,9 +43,9 @@ use App\Models\CompraPara;
                 </div>
 
                 @if(count(CompraPara::getSolicitud($id)) > 0)
-                <div class="col-sm-4 col-lg-4 mb5">
+                <div class="col-sm-6 col-lg-6 mb5">
                     <div class="col-lg-6">
-                        <span class="btn btn-warning fileinput-button col-sm-12" name="CedulaParaPDF" id="CedulaParaPDF" style="white-space: normal;">
+                        <span style="white-space:normal;" class="btn btn-warning fileinput-button col-sm-12" name="CedulaParaPDF" id="CedulaParaPDF" style="white-space: normal;">
                             Seleccionar Cédula Para PDF</span>
                     </div>
                     <div class="col-lg-6">
@@ -54,6 +55,21 @@ use App\Models\CompraPara;
                 </div>
                 @endif
 
+                @if ($solicitud->empresa==1)
+                <div class="form-group">
+                    <div class="col-sm-12 col-lg-12 mb5">
+                        <div class="col-lg-2">
+                            <span class="btn btn-warning fileinput-button col-sm-12" name="pic" id="RolPDF">
+                                Seleccionar Rol de Cliente PDF</span>
+                        </div>
+                        <div class="col-lg-3">
+                            <input id="Rol_PDF" name="Rol_PDF" type="file" style="display:none" accept="application/pdf"/>
+                            <label id="lbl_Rol_PDF"></label>
+                        </div>
+                    </div>
+                </div>
+                @endif
+                <!--
                 <div class="col-sm-4 col-lg-4 mb5">
                     <div class="col-lg-6">
                         <span class="btn btn-warning fileinput-button col-sm-12" name="FacturaPDFRC" id="FacturaPDFRC">
@@ -63,7 +79,7 @@ use App\Models\CompraPara;
                         <input id="Factura_PDF_RC" name="Factura_PDF_RC" type="file" style="display:none" accept="application/pdf" />
                         <label id="lbl_Factura_PDF_RC"></label>
                     </div>
-                </div>
+                </div>-->
 
 
             </div>
@@ -101,12 +117,21 @@ $(document).ready(function(){
         $('#lbl_Cedula_Para_PDF').text($('#Cedula_Para_PDF').val());
     });
 
+    /*
     $('#FacturaPDFRC').on('click', function() {
             $('#Factura_PDF_RC').trigger('click');
     });
 
     $('#Factura_PDF_RC').on('change', function() {
         $('#lbl_Factura_PDF_RC').text($('#Factura_PDF_RC').val());
+    });*/
+
+    $('#RolPDF').on('click', function() {
+        $('#Rol_PDF').trigger('click');
+    });
+
+    $('#Rol_PDF').on('change', function(){
+        $('#lbl_Rol_PDF').text($('#Rol_PDF').val());
     });
 
 });

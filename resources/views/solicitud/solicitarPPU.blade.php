@@ -6,6 +6,10 @@
 
 @include('includes.form-error-message')
 @include('includes.mensaje')
+@php
+use App\Models\TipoPlacaPatente;
+$tipo_placa_patente = TipoPlacaPatente::all();
+@endphp
 <form enctype="multipart/form-data" id="formSolicitaPPU" class="form-documentos form-horizontal form-solicitud" old-action="{{route('solicitud.consultaPPU')}}" method="POST">
     @csrf
     @method('POST')
@@ -20,7 +24,7 @@
                     <select name="region" id="region">
                         <option value="0" selected>Seleccione Región ...</option>
                         @foreach ($region as $item)
-                        <option value="{{$item->id}}">{{$item->nombre}}</option>    
+                        <option value="{{$item->id}}"@if(!empty($solicitud_data)) @if($item->id==$solicitud_data->region_id) selected  @endif @endif>{{$item->nombre}}</option>    
                         @endforeach
                     </select>
                 </label>
@@ -30,9 +34,9 @@
                 <div class="col-lg-5">
                     <select name="placa_patente_id" id="placa_patente_id">
                         <option value="0" selected>Seleccione Tipo Placa ...</option>
-                        <option value="A">Vehículos livianos, medianos y pesados.</option>
-                        <option value="M">Motos</option>
-                        <option value="R">Remolques / Semi Remolque.</option>
+                        @foreach ($tipo_placa_patente as $item)
+                            <option value="{{$item->codigo}}" @if(!empty($solicitud_data)) @if($item->id==$solicitud_data->id_tipo_placa_patente) selected @endif @endif>{{$item->name}}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
