@@ -132,12 +132,15 @@ Route::group(['prefix' => 'administrador', 'middleware' => ['auth', 'admin']], f
 
     Route::post('solicitud/{id}/limitacion/form','LimitacionController@ingresarLimitacionForm')->name('solicitud.limitacion.form');
     Route::post('solicitud/{id}/limitacion/new/revision','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
-    Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
+    //Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
     //Generar comprobante RVM
     //Route::post('solicitud/{id}/descargaComprobanteRVM','SolicitudController@descargaComprobanteRVM')->name('solicitud.descargaComprobanteRVM');
 
     //Documentos
     Route::post('documento/destroy/revision', 'DocumentoController@destroy')->name('documento.destroy.revision');
+
+    //Registrar Pago
+    Route::post('/documento/{id}/cargapago', 'SolicitudController@registrarPago')->name('pago.registrar.revision');
 });
 
 
@@ -175,7 +178,7 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::post('solicitud/{id}/limitacion/form','LimitacionController@ingresarLimitacionForm')->name('solicitud.limitacion.form');
     Route::post('solicitud/{id}/limitacion/new','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
     Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
-
+    Route::post('solicitud/{id}/descargaComprobanteLimi','LimitacionController@descargaComprobanteLimi')->name('solicitud.descargaComprobanteLimi');
 
     Route::get('solicitud/{id}/show', 'SolicitudController@show')->name('solicitud.show');
     Route::get('solicitud/verSolicitudes', 'SolicitudController@verSolicitudes')->name('solicitud.verSolicitudes');
@@ -240,13 +243,15 @@ Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {
 
     Route::post('solicitud/{id}/limitacion/form','LimitacionController@ingresarLimitacionForm')->name('solicitud.limitacion.form');
     Route::post('solicitud/{id}/limitacion/new/revision','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
-    Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
+    //Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
 
     //Generar comprobante RVM
     //Route::post('solicitud/{id}/descargaComprobanteRVM','SolicitudController@descargaComprobanteRVM')->name('solicitud.descargaComprobanteRVM');
 
     //Documentos
     Route::post('documento/destroy/revision', 'DocumentoController@destroy')->name('documento.destroy.revision');
+    //Registrar Pago
+    Route::post('/documento/{id}/cargapago', 'SolicitudController@registrarPago')->name('pago.registrar.revision');
 });
 
 

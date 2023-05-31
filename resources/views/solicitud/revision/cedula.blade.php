@@ -33,6 +33,22 @@
                         @endif
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-lg-4">
+                        @if($rol_empresa != null)
+                        <label>Rol de empresa</label>
+                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $rol_empresa->name)}}" frameborder="0"></iframe>
+                        @endif
+                    </div>
+                    <div class="col-lg-4">
+                    </div>
+                    <div class="col-lg-3">
+                        @if($doc_limitacion != null)
+                        <label>Documento limitación/prohibición</label>
+                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $doc_limitacion->name)}}" frameborder="0"></iframe>
+                        @endif
+                    </div>
+                </div>
                 <div class="col-lg-4"></div>
                 <div class="col-lg-8">
                     <div class="row">

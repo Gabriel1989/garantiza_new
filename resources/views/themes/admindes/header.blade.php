@@ -1,6 +1,6 @@
 <header class="navbar navbar-fixed-top bg-light">
     <div class="navbar-branding">
-        <a class="navbar-brand" href="dashboard.html"> <img src="/img/LogoGarantiza.jpeg" width="150" height="70">
+        <a class="navbar-brand" href="/"> <img src="/img/LogoGarantiza.jpeg" width="150" height="70">
         </a>
         <span id="toggle_sidemenu_l" class="glyphicons glyphicons-show_lines"></span>
         <ul class="nav navbar-nav pull-right hidden">
@@ -61,7 +61,7 @@
         </div>
     </form> --}}
     <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown dropdown-item-slide">
+        <!--<li class="dropdown dropdown-item-slide">
             {{-- <a class="dropdown-toggle pl10 pr10" data-toggle="dropdown" href="#">
                 <span class="fa fa-bell fs16"></span>
             </a> --}}
@@ -111,7 +111,7 @@
                     </div>
                 </li>
             </ul>
-        </li>
+        </li>-->
         {{-- <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">
                 <span class="flag-xs flag-us"></span>
@@ -175,10 +175,10 @@
                         <span class="pull-right lh20 h-20 label label-warning label-sm">6</span>
                     </a>
                 </li> --}}
-                <li class="br-t of-h">
+                <!--<li class="br-t of-h">
                     <a href="#" class="fw600 p12 animated animated-short fadeInDown">
                         <span class="fa fa-gear pr5"></span> Configurar Cuenta </a>
-                </li>
+                </li>-->
                 <li class="br-t of-h">
                     <a href="#" class="fw600 p12 animated animated-short fadeInDown" onclick="event.preventDefault();
                     document.getElementById('logout-form').submit();">

@@ -303,15 +303,70 @@ class LimitacionController extends Controller{
         $codigoresp = null;
 
         foreach($salida as $index => $detalle){
-            if($index == "codigoresp"){
-                $codigoresp = $detalle;
-            }
-            if($codigoresp != null){
-                echo "<label>".$index.': </label> '.$detalle.'<br>';
+            if($index != "documento"){
+                if($index == "codigoresp"){
+                    $codigoresp = $detalle;
+                }
+                if($codigoresp != null){
+                    echo "<label>".$index.': </label> '.$detalle.'<br>';
+                }
             }
         }
+        echo '<button type="button" data-garantizaSol="'.$id.'" data-numsol="'.$solicitud_rc->numSol.'" class="btn btn-success btn-sm btnDescargaComprobanteLimi"><i class="fa fa-download"></i>  Descarga Comprobante</button>';
         die;
 
+    }
+
+    public function descargaComprobanteLimi(Request $request, $id){
+        $solicitud_rc = LimitacionRC::where('solicitud_id',$id)->first();
+        $parametro = [
+            'consumidor' => 'ACOBRO',
+            'servicio' => 'CONSULTA LIMITACION',
+            'ppu' => str_replace(".","",explode("-",$solicitud_rc->ppu)[0]),
+            'nroSolicitud' => $request->get('id_solicitud_rc'),
+            'anho' => substr($solicitud_rc->fecha,0,4)
+        ];
+
+        //dd($parametro);
+
+
+        $data = RegistroCivil::consultaLimitacion($parametro);
+
+        $salida = json_decode($data, true);
+        $docdata = '';
+
+        foreach($salida as $index => $detalle){
+            if($index == "documento"){
+                $docdata = $detalle;
+                break;
+            }
+        }
+        if($docdata != ''){
+            // Decodificar la cadena en base64 a bytes
+            $data = base64_decode($docdata);
+
+            // Definir el nombre del archivo de salida
+            $filename = 'comprobante_limitacion_garantiza.pdf';
+
+            // Enviar encabezados al navegador para forzar la descarga
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate');
+            header('Pragma: public');
+            header('Content-Length: ' . strlen($data));
+
+            // Enviar el contenido del archivo PDF al navegador
+            echo $data;
+            exit;
+        }
+        else{
+            // Enviar un mensaje de error en formato JSON
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'El comprobante de la limitación no se encuentra disponible aún']);
+            exit;
+        }
     }
 
     public function getFileAsBase64($filePath)

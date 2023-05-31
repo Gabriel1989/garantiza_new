@@ -1679,6 +1679,8 @@ class SolicitudController extends Controller
         $cedula_cliente = $documentos->where('tipo_documento_id', '3')->where('solicitud_id',$id)->first();
         $cedula_compra_para = $documentos->where('tipo_documento_id', '5')->where('solicitud_id',$id)->first();
         $factura_cliente = $documentos->where('tipo_documento_id', '2')->where('solicitud_id',$id)->first();
+        $rol_empresa = $documentos->where('tipo_documento_id', '4')->where('solicitud_id',$id)->first();
+        $doc_limitacion = $documentos->whereIn('tipo_documento_id', [6,7])->where('solicitud_id',$id)->first();
         if (Storage::exists($file)) {
             //Obtenemos los datos de la factura guardada en la BD
             $factura_data = Factura::where('id_solicitud',$id)->first();
@@ -1686,7 +1688,7 @@ class SolicitudController extends Controller
             $header->RznSocRecep = (string)$factura_data->razon_social_recep;
         }
        
-        return view('solicitud.revision.cedula', compact('data_solicitud','rechazos','header', 'cedula_cliente','factura_cliente','cedula_compra_para', 'id'));
+        return view('solicitud.revision.cedula', compact('data_solicitud','rechazos','header','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para', 'id'));
     }
 
     public function updateRevisionCedula(Request $request, $id)
@@ -1707,7 +1709,14 @@ class SolicitudController extends Controller
             return redirect()->route('solicitud.revision');
         }
 
-        return redirect()->route(Funciones::FlujoRevision(1, $id), ['id' => $id]);
+        if($request->has('aprobado')){
+            $solicitud = Solicitud::findOrFail($id);
+            $solicitud->estado_id = 8;
+            $solicitud->save();
+            return redirect()->route('solicitud.revision');
+        }
+
+        //return redirect()->route(Funciones::FlujoRevision(1, $id), ['id' => $id]);
     }
 
     public function RevisionPPU($id){
@@ -3145,6 +3154,37 @@ class SolicitudController extends Controller
         $solicitudes = collect($SolicitudItem);
         
         return view('solicitud.revision', compact('solicitudes'));
+    }
+
+    public function registrarPago(Request $request, $id){
+        $solicitud = Solicitud::find($id);
+
+        if(trim($request->get('monto_pago_form')) == "" || trim($request->get('monto_pago_form')) == 0){
+            return json_encode(["status"=> "ERROR","msj" => "El monto a pagar no puede estar vacio o cero"]);
+        }
+
+        if($request->hasFile('Comprobante_PDF')){
+            $file = $request->file('Comprobante_PDF');
+            $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+            $doc = new Documento();
+            $doc->name = 'public/'.$path;
+            $doc->type = 'pdf';
+            $doc->description = 'Comprobante de inscripción RVM';
+            $doc->solicitud_id = $solicitud->id;
+            $doc->tipo_documento_id = 8;
+            $doc->added_at = Carbon::now()->toDateTimeString();
+            $doc->save();
+            $solicitud->pagada = 1;
+            $solicitud->monto_inscripcion = $request->get('monto_pago_form');
+            $solicitud->save();
+
+            return json_encode(["status"=> "OK","msj" => "Registro de pago realizado exitosamente"]);
+
+        }
+        else{
+            return json_encode(["status"=> "ERROR","msj" => "No hay archivo adjunto"]);
+        }
+        
     }
 
     /**

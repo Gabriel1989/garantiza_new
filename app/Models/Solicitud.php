@@ -50,7 +50,7 @@ class Solicitud extends Model
         return DB::table('solicitudes')
             ->join('users', 'users.id', '=', 'solicitudes.user_id')
             ->join('concesionarias', 'concesionarias.id', '=', 'users.concesionaria_id')
-            ->where('solicitudes.estado_id', '<=', 7)
+            ->whereIn('solicitudes.estado_id', [1,2,3,4,5,6,7,11,12])
             ->select('solicitudes.*', 'concesionarias.name as concesionaria')
             ->get();
     }
@@ -81,7 +81,7 @@ class Solicitud extends Model
     public static function getCountFromUnterminated($user){
         return DB::table('solicitudes')
             ->where('solicitudes.user_id', '=', $user)
-            ->whereIn('solicitudes.estado_id', [1,2,3,4,5,6,11,12])
+            ->whereIn('solicitudes.estado_id', [1,2,3,4,5,6,7,11,12])
             ->select(DB::raw('COUNT(*) as cantidad'))
             ->get();
     }
@@ -89,7 +89,7 @@ class Solicitud extends Model
     public static function sinTerminar($user){
         return DB::table('solicitudes')
             ->join('sucursales', 'sucursales.id', '=', 'solicitudes.sucursal_id')
-            ->whereIn('solicitudes.estado_id', [1,2,3,4,5,6,11,12])
+            ->whereIn('solicitudes.estado_id', [1,2,3,4,5,6,7,11,12])
             ->where('solicitudes.user_id', '=', $user)
             ->select('solicitudes.id', 
                      'solicitudes.created_at', 
