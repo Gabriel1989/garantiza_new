@@ -420,71 +420,72 @@ class SolicitudController extends Controller
                 $trae_doc->save();
             }
 
-            $this->escanearDatosFactura($request);
+            
+            $data_factura = $this->escanearDatosFactura($request);
 
             $revisa_factura = Factura::where('id_solicitud',$solicitud->id)->first();
             if($revisa_factura == null){
                 $fac = new Factura();
                 $fac->id_solicitud = $solicitud->id;
-                $fac->nro_chasis = trim($chasis);
-                $fac->nro_vin = trim($nro_vin);
-                $fac->motor = trim($motor);
-                $fac->marca = trim($marca);
-                $fac->modelo = trim($modelo);
-                $fac->peso_bruto_vehicular = trim($peso_bruto_vehicular);
-                $fac->tipo_vehiculo = trim($tipo_vehiculo2);
-                $fac->tipo_combustible = trim($combustible);
-                $fac->agno_fabricacion = trim($anno);
-                $fac->color = trim($color);
-                $fac->tipo_carga = trim($tipo_carga2);
-                $fac->tipo_pbv = trim($tipo_pbv);
-                $fac->num_factura = trim($num_factura);
-                $fac->giro = trim($giro);
-                $fac->direccion = trim($direccion);
-                $fac->comuna = trim($comuna);
-                $fac->ciudad = trim($ciudad);
-                $fac->contacto = trim($contacto);
-                $fac->rut_receptor = trim($rut_recep);
-                $fac->razon_social_recep = trim($razon_social);
+                $fac->nro_chasis = trim($data_factura['chasis']);
+                $fac->nro_vin = trim($data_factura['nro_vin']);
+                $fac->motor = trim($data_factura['motor']);
+                $fac->marca = trim($data_factura['marca']);
+                $fac->modelo = trim($data_factura['modelo']);
+                $fac->peso_bruto_vehicular = trim($data_factura['peso_bruto_vehicular']);
+                $fac->tipo_vehiculo = trim($data_factura['tipo_vehiculo']);
+                $fac->tipo_combustible = trim($data_factura['combustible']);
+                $fac->agno_fabricacion = trim($data_factura['anno']);
+                $fac->color = trim($data_factura['color']);
+                $fac->tipo_carga = trim($data_factura['tipo_carga']);
+                $fac->tipo_pbv = trim($data_factura['tipo_pbv']);
+                $fac->num_factura = trim($data_factura['num_factura']);
+                $fac->giro = trim($data_factura['giro']);
+                $fac->direccion = trim($data_factura['direccion']);
+                $fac->comuna = trim($data_factura['comuna']);
+                $fac->ciudad = trim($data_factura['ciudad']);
+                $fac->contacto = trim($data_factura['contacto']);
+                $fac->rut_receptor = trim($data_factura['rut_recep']);
+                $fac->razon_social_recep = trim($data_factura['razon_social']);
                 $fac->razon_social_emisor = trim($request->get('razon_soc_emisor'));
                 $fac->rut_emisor = trim($request->get('rut_emisor'));
                 $fac->fecha_emision = trim($request->get('fecha_emision_fac'));
                 $fac->monto_total_factura = trim($request->get('monto_factura'));
-                $fac->puertas = trim($puertas);
-                $fac->asientos = trim($asientos2);
-                $fac->codigo_cit = trim($codigo_cit);
-                $fac->codigo_cid = trim($codigo_cid);
+                $fac->puertas = trim($data_factura['puertas']);
+                $fac->asientos = trim($data_factura['asientos']);
+                $fac->codigo_cit = trim($data_factura['codigo_cit']);
+                $fac->codigo_cid = trim($data_factura['codigo_cid']);
                 $fac->save();
             }
             else{
-                $revisa_factura->nro_chasis = trim($chasis);
-                $revisa_factura->nro_vin = trim($nro_vin);
-                $revisa_factura->motor = trim($motor);
-                $revisa_factura->marca = trim($marca);
-                $revisa_factura->modelo = trim($modelo);
-                $revisa_factura->peso_bruto_vehicular = trim($peso_bruto_vehicular);
-                $revisa_factura->tipo_vehiculo = trim($tipo_vehiculo2);
-                $revisa_factura->tipo_combustible = trim($combustible);
-                $revisa_factura->agno_fabricacion = trim($anno);
-                $revisa_factura->color = trim($color);
-                $revisa_factura->tipo_carga = trim($tipo_carga2);
-                $revisa_factura->tipo_pbv = trim($tipo_pbv);
-                $revisa_factura->num_factura = trim($num_factura);
-                $revisa_factura->giro = trim($giro);
-                $revisa_factura->direccion = trim($direccion);
-                $revisa_factura->comuna = trim($comuna);
-                $revisa_factura->ciudad = trim($ciudad);
-                $revisa_factura->contacto = trim($contacto);
-                $revisa_factura->rut_receptor = trim($rut_recep);
-                $revisa_factura->razon_social_recep = trim($razon_social);
+                $revisa_factura->nro_chasis = trim($data_factura['chasis']);
+                $revisa_factura->nro_vin = trim($data_factura['nro_vin']);
+                $revisa_factura->motor = trim($data_factura['motor']);
+                $revisa_factura->marca = trim($data_factura['marca']);
+                $revisa_factura->modelo = trim($data_factura['modelo']);
+                $revisa_factura->peso_bruto_vehicular = trim($data_factura['peso_bruto_vehicular']);
+                $revisa_factura->tipo_vehiculo = trim($data_factura['tipo_vehiculo']);
+                $revisa_factura->tipo_combustible = trim($data_factura['combustible']);
+                $revisa_factura->agno_fabricacion = trim($data_factura['anno']);
+                $revisa_factura->color = trim($data_factura['color']);
+                $revisa_factura->tipo_carga = trim($data_factura['tipo_carga']);
+                $revisa_factura->tipo_pbv = trim($data_factura['tipo_pbv']);
+                $revisa_factura->num_factura = trim($data_factura['num_factura']);
+                $revisa_factura->giro = trim($data_factura['giro']);
+                $revisa_factura->direccion = trim($data_factura['direccion']);
+                $revisa_factura->comuna = trim($data_factura['comuna']);
+                $revisa_factura->ciudad = trim($data_factura['ciudad']);
+                $revisa_factura->contacto = trim($data_factura['contacto']);
+                $revisa_factura->rut_receptor = trim($data_factura['rut_recep']);
+                $revisa_factura->razon_social_recep = trim($data_factura['razon_social']);
                 $revisa_factura->razon_social_emisor = trim($request->get('razon_soc_emisor'));
                 $revisa_factura->rut_emisor = trim($request->get('rut_emisor'));
                 $revisa_factura->fecha_emision = trim($request->get('fecha_emision_fac'));
                 $revisa_factura->monto_total_factura = trim($request->get('monto_factura'));
-                $revisa_factura->puertas = trim($puertas);
-                $revisa_factura->asientos = trim($asientos2);
-                $revisa_factura->codigo_cit = trim($codigo_cit);
-                $revisa_factura->codigo_cid = trim($codigo_cid);
+                $revisa_factura->puertas = trim($data_factura['puertas']);
+                $revisa_factura->asientos = trim($data_factura['asientos']);
+                $revisa_factura->codigo_cit = trim($data_factura['codigo_cit']);
+                $revisa_factura->codigo_cid = trim($data_factura['codigo_cid']);
                 $revisa_factura->save();
             }
             //echo $datos;
@@ -559,71 +560,71 @@ class SolicitudController extends Controller
 
                 $contents = $trae_doc->name;
 
-                $this->escanearDatosFactura($contents);
+                $data_factura = $this->escanearDatosFactura($contents);
 
                 $revisa_factura = Factura::where('id_solicitud',$solicitud->id)->first();
                 if($revisa_factura == null){
                     $fac = new Factura();
                     $fac->id_solicitud = $solicitud->id;
-                    $fac->nro_chasis = trim($chasis);
-                    $fac->nro_vin = trim($nro_vin);
-                    $fac->motor = trim($motor);
-                    $fac->marca = trim($marca);
-                    $fac->modelo = trim($modelo);
-                    $fac->peso_bruto_vehicular = trim($peso_bruto_vehicular);
-                    $fac->tipo_vehiculo = trim($tipo_vehiculo2);
-                    $fac->tipo_combustible = trim($combustible);
-                    $fac->agno_fabricacion = trim($anno);
-                    $fac->color = trim($color);
-                    $fac->tipo_carga = trim($tipo_carga2);
-                    $fac->tipo_pbv = trim($tipo_pbv);
-                    $fac->num_factura = trim($num_factura);
-                    $fac->giro = trim($giro);
-                    $fac->direccion = trim($direccion);
-                    $fac->comuna = trim($comuna);
-                    $fac->ciudad = trim($ciudad);
-                    $fac->contacto = trim($contacto);
-                    $fac->rut_receptor = trim($rut_recep);
-                    $fac->razon_social_recep = trim($razon_social);
+                    $fac->nro_chasis = trim($data_factura['chasis']);
+                    $fac->nro_vin = trim($data_factura['nro_vin']);
+                    $fac->motor = trim($data_factura['motor']);
+                    $fac->marca = trim($data_factura['marca']);
+                    $fac->modelo = trim($data_factura['modelo']);
+                    $fac->peso_bruto_vehicular = trim($data_factura['peso_bruto_vehicular']);
+                    $fac->tipo_vehiculo = trim($data_factura['tipo_vehiculo']);
+                    $fac->tipo_combustible = trim($data_factura['combustible']);
+                    $fac->agno_fabricacion = trim($data_factura['anno']);
+                    $fac->color = trim($data_factura['color']);
+                    $fac->tipo_carga = trim($data_factura['tipo_carga']);
+                    $fac->tipo_pbv = trim($data_factura['tipo_pbv']);
+                    $fac->num_factura = trim($data_factura['num_factura']);
+                    $fac->giro = trim($data_factura['giro']);
+                    $fac->direccion = trim($data_factura['direccion']);
+                    $fac->comuna = trim($data_factura['comuna']);
+                    $fac->ciudad = trim($data_factura['ciudad']);
+                    $fac->contacto = trim($data_factura['contacto']);
+                    $fac->rut_receptor = trim($data_factura['rut_recep']);
+                    $fac->razon_social_recep = trim($data_factura['razon_social']);
                     $fac->razon_social_emisor = trim($request->get('razon_soc_emisor'));
                     $fac->rut_emisor = trim($request->get('rut_emisor'));
                     $fac->fecha_emision = trim($request->get('fecha_emision_fac'));
                     $fac->monto_total_factura = trim($request->get('monto_factura'));
-                    $fac->puertas = trim($puertas);
-                    $fac->asientos = trim($asientos2);
-                    $fac->codigo_cit = trim($codigo_cit);
-                    $fac->codigo_cid = trim($codigo_cid);
+                    $fac->puertas = trim($data_factura['puertas']);
+                    $fac->asientos = trim($data_factura['asientos']);
+                    $fac->codigo_cit = trim($data_factura['codigo_cit']);
+                    $fac->codigo_cid = trim($data_factura['codigo_cid']);
                     $fac->save();
                 }
                 else{
-                    $revisa_factura->nro_chasis = trim($chasis);
-                    $revisa_factura->nro_vin = trim($nro_vin);
-                    $revisa_factura->motor = trim($motor);
-                    $revisa_factura->marca = trim($marca);
-                    $revisa_factura->modelo = trim($modelo);
-                    $revisa_factura->peso_bruto_vehicular = trim($peso_bruto_vehicular);
-                    $revisa_factura->tipo_vehiculo = trim($tipo_vehiculo2);
-                    $revisa_factura->tipo_combustible = trim($combustible);
-                    $revisa_factura->agno_fabricacion = trim($anno);
-                    $revisa_factura->color = trim($color);
-                    $revisa_factura->tipo_carga = trim($tipo_carga2);
-                    $revisa_factura->tipo_pbv = trim($tipo_pbv);
-                    $revisa_factura->num_factura = trim($num_factura);
-                    $revisa_factura->giro = trim($giro);
-                    $revisa_factura->direccion = trim($direccion);
-                    $revisa_factura->comuna = trim($comuna);
-                    $revisa_factura->ciudad = trim($ciudad);
-                    $revisa_factura->contacto = trim($contacto);
-                    $revisa_factura->rut_receptor = trim($rut_recep);
-                    $revisa_factura->razon_social_recep = trim($razon_social);
+                    $revisa_factura->nro_chasis = trim($data_factura['chasis']);
+                    $revisa_factura->nro_vin = trim($data_factura['nro_vin']);
+                    $revisa_factura->motor = trim($data_factura['motor']);
+                    $revisa_factura->marca = trim($data_factura['marca']);
+                    $revisa_factura->modelo = trim($data_factura['modelo']);
+                    $revisa_factura->peso_bruto_vehicular = trim($data_factura['peso_bruto_vehicular']);
+                    $revisa_factura->tipo_vehiculo = trim($data_factura['tipo_vehiculo']);
+                    $revisa_factura->tipo_combustible = trim($data_factura['combustible']);
+                    $revisa_factura->agno_fabricacion = trim($data_factura['anno']);
+                    $revisa_factura->color = trim($data_factura['color']);
+                    $revisa_factura->tipo_carga = trim($data_factura['tipo_carga']);
+                    $revisa_factura->tipo_pbv = trim($data_factura['tipo_pbv']);
+                    $revisa_factura->num_factura = trim($data_factura['num_factura']);
+                    $revisa_factura->giro = trim($data_factura['giro']);
+                    $revisa_factura->direccion = trim($data_factura['direccion']);
+                    $revisa_factura->comuna = trim($data_factura['comuna']);
+                    $revisa_factura->ciudad = trim($data_factura['ciudad']);
+                    $revisa_factura->contacto = trim($data_factura['contacto']);
+                    $revisa_factura->rut_receptor = trim($data_factura['rut_recep']);
+                    $revisa_factura->razon_social_recep = trim($data_factura['razon_social']);
                     $revisa_factura->razon_social_emisor = trim($request->get('razon_soc_emisor'));
                     $revisa_factura->rut_emisor = trim($request->get('rut_emisor'));
                     $revisa_factura->fecha_emision = trim($request->get('fecha_emision_fac'));
                     $revisa_factura->monto_total_factura = trim($request->get('monto_factura'));
-                    $revisa_factura->puertas = trim($puertas);
-                    $revisa_factura->asientos = trim($asientos2);
-                    $revisa_factura->codigo_cit = trim($codigo_cit);
-                    $revisa_factura->codigo_cid = trim($codigo_cid);
+                    $revisa_factura->puertas = trim($data_factura['puertas']);
+                    $revisa_factura->asientos = trim($data_factura['asientos']);
+                    $revisa_factura->codigo_cit = trim($data_factura['codigo_cit']);
+                    $revisa_factura->codigo_cid = trim($data_factura['codigo_cid']);
                     $revisa_factura->save();
                 }
             }
@@ -668,30 +669,30 @@ class SolicitudController extends Controller
         $datos = str_replace("Ñ",'NN',$datos);
         //echo $datos; 
         //echo "<br>";
-        global $chasis;
-        global $nro_vin;
-        global $motor;
-        global $marca;
-        global $modelo;
-        global $peso_bruto_vehicular;
-        global $tipo_pbv;
-        global $tipo_vehiculo2;
-        global $combustible;
-        global $anno;
-        global $color;
-        global $tipo_carga2;
-        global $num_factura;
-        global $giro;
-        global $direccion;
-        global $comuna;
-        global $ciudad;
-        global $contacto;
-        global $rut_recep;
-        global $razon_social;
-        global $codigo_cit;
-        global $codigo_cid;
-        global $puertas;
-        global $asientos2;
+        $chasis = '';
+        $nro_vin = '';
+        $motor = '';
+        $marca = '';
+        $modelo = '';
+        $peso_bruto_vehicular = '';
+        $tipo_pbv = '';
+        $tipo_vehiculo2 = '';
+        $combustible = '';
+        $anno = '';
+        $color = '';
+        $tipo_carga2 = '';
+        $num_factura = '';
+        $giro = '';
+        $direccion = '';
+        $comuna = '';
+        $ciudad = '';
+        $contacto = '';
+        $rut_recep = '';
+        $razon_social = '';
+        $codigo_cit = '';
+        $codigo_cid = '';
+        $puertas = 0;
+        $asientos2 = 0;
 
 
 
@@ -950,6 +951,31 @@ class SolicitudController extends Controller
         else{
             $asientos2 = 0;
         }
+
+        return array("chasis"=> $chasis,
+                    "nro_vin" => $nro_vin,
+                    "motor" => $motor,
+                    "marca" => $marca,
+                    "modelo" => $modelo,
+                    "peso_bruto_vehicular" => $peso_bruto_vehicular,
+                    "tipo_pbv" => $tipo_pbv,
+                    "tipo_vehiculo" => $tipo_vehiculo2,
+                    "combustible" => $combustible,
+                    "anno" => $anno,
+                    "color" => $color,
+                    "tipo_carga" => $tipo_carga2,
+                    "num_factura" => $num_factura,
+                    "giro" => $giro,
+                    "direccion" => $direccion,
+                    "comuna" => $comuna,
+                    "ciudad" => $ciudad,
+                    "contacto" => $contacto,
+                    "rut_recep" => $rut_recep,
+                    "razon_social" => $razon_social,
+                    "codigo_cit" => $codigo_cit,
+                    "codigo_cid" => $codigo_cid,
+                    "puertas" => $puertas,
+                    "asientos" => $asientos2);
     }
 
     public function adquirientes($id){

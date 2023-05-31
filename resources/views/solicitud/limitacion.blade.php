@@ -333,6 +333,7 @@ use App\Models\Limitacion;
         let formData = new FormData(document.getElementById("formLimitacion"));
              
         // Obtener el elemento de entrada de archivos y verificar si se seleccionó un archivo
+        /*
         var inputFile = $("#Doc_Lim")[0];
         if (inputFile.files.length === 0) {
             new PNotify({
@@ -354,7 +355,7 @@ use App\Models\Limitacion;
             });
             hideOverlay();
             return false;
-        }
+        }*/
 
         if(parseFloat($("#runAcreedor").val()) == 0){
             new PNotify({
@@ -379,9 +380,6 @@ use App\Models\Limitacion;
 
         }
 
-
-
-
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -389,7 +387,12 @@ use App\Models\Limitacion;
         });
 
         $.ajax({
-            url: "/solicitud/{{$id}}/limitacion/new",
+            url: "@php  if($acceso == 'ingreso'){ 
+                            echo '/solicitud/'.$id.'/limitacion/new';
+                        }elseif($acceso == 'revision'){ 
+                            echo '/solicitud/'.$id.'/limitacion/new/revision';
+                        }
+                  @endphp",
             type: "post",
             data: formData,
             processData: false,

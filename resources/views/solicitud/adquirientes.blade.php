@@ -352,7 +352,7 @@
 
         $.ajax({
             data: formData,
-            url: "/solicitud/{{ $id }}/saveAdquirientes",
+            url: "{{ (Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3) ? '/solicitud/'.$id.'/saveAdquirientes': '/solicitud/'.$id.'/saveAdquirientesConces'}}",
             type: "POST",
             processData: false,  // tell jQuery not to process the data
             contentType: false,   // tell jQuery not to set contentType
@@ -362,7 +362,7 @@
                 let json = JSON.parse(jsonString);
                 if(parseFloat($("#adquiriente_1").val()) == 0){
                     $("#pills-contact").html(json.html);
-                    $("#pills-profile").toggleClass('show');
+                    $("#pills-profile").removeClass('show');
                     $("#pills-home").removeClass('show');
                     $("#pills-contact").removeClass('show');
                     $("#pills-contact-tab").attr("href","#pills-contact");

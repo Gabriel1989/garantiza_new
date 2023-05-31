@@ -176,7 +176,7 @@
         });
 
         $.ajax({
-            url: "/solicitud/{{$id}}/saveCompraPara",
+            url: "{{ (Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3) ? '/solicitud/'.$id.'/saveCompraPara': '/solicitud/'.$id.'/saveCompraParaConces'}}",
             data: formData,
             processData: false,
             contentType: false,
@@ -213,7 +213,7 @@
         });
 
         $.ajax({
-            url: "/solicitud/{{$id}}/saveCompraPara",
+            url: "{{ (Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3) ? '/solicitud/'.$id.'/saveCompraPara': '/solicitud/'.$id.'/saveCompraParaConces'}}",
             data: formData,
             processData: false,
             contentType: false,

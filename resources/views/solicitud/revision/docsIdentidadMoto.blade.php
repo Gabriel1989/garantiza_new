@@ -57,7 +57,7 @@ $solicitud = Solicitud::find($id);
                 @endif
 
                 @if ($solicitud->empresa==1)
-                <div class="form-group">
+                
                     <div class="col-sm-6 col-lg-6 mb5">
                         <div class="col-lg-6">
                             <span style="white-space:normal;" class="btn btn-warning fileinput-button col-sm-12" name="pic" id="RolPDF">
@@ -68,7 +68,7 @@ $solicitud = Solicitud::find($id);
                             <label id="lbl_Rol_PDF"></label>
                         </div>
                     </div>
-                </div>
+                
                 @endif
                 <!--
                 <div class="col-sm-4 col-lg-4 mb5">
@@ -173,7 +173,12 @@ $(document).on("click",".eliminarArchivoDoc2",function(e){
         }
     });      
     $.ajax({
-        url: "{{route('documento.destroy')}}",
+        url: "@php  if(Auth::user()->rol_id >= 4){ 
+                            echo route('documento.destroy');
+                        }elseif(Auth::user()->rol_id <= 3){ 
+                            echo  route('documento.destroy.revision');
+                        }
+                  @endphp",
         data: {
             solicitud_id : $(this).data('solicitudid'),
             doc_name : doc_name,

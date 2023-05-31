@@ -15,8 +15,16 @@ class EjecutConces
      */
     public function handle($request, Closure $next)
     {
+        /*
         if(auth()->user()->rol_id >= 4)
             return $next($request);
+        redirect('/');
+        */
+
+        $allowedRoles = [1, 3, 4, 5, 6]; // roles permitidos
+        if(in_array(auth()->user()->rol_id, $allowedRoles)) {
+            return $next($request);
+        }
         redirect('/');
     }
 }

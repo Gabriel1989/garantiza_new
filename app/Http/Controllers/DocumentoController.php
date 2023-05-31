@@ -217,23 +217,48 @@ class DocumentoController extends Controller
 
 
     public function CargaDocumentos(Request $request, $id){
+        $solicitud = Solicitud::find($id);
         //Obtenemos factura guardada en bd y en storage para convertir el archivo a base64
         $documentos = Documento::where('solicitud_id', $id)->where('tipo_documento_id',2)->first();
         $base64_factura = $this->getFileAsBase64($documentos->name);
+
+        $cedula_cliente = Documento::where('solicitud_id', $id)->where('tipo_documento_id',3)->first();
+        $base64_cedula_cliente = '';
+        if($cedula_cliente != null){
+            $base64_cedula_cliente = $this->getFileAsBase64($cedula_cliente->name);
+        }
+
+        $base64_cedula_para = '';
+        if (sizeof(CompraPara::getSolicitud($id)) > 0) {
+            $cedula_para = Documento::where('solicitud_id', $id)->where('tipo_documento_id',5)->first();
+            if($cedula_para != null){
+                $base64_cedula_para = $this->getFileAsBase64($cedula_para->name);
+            }
+        }
+
+        $base64_rol_empresa = '';
+        if($solicitud->empresa==1){
+            $rol_empresa = Documento::where('solicitud_id', $id)->where('tipo_documento_id',4)->first();
+            if($rol_empresa != null){
+                $base64_rol_empresa = $this->getFileAsBase64($rol_empresa->name);
+            }
+        }
+        
+
         if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3){
             //Cédula de propietario
             $solicitud_rc = SolicitudRC::getSolicitud($id);
             $parametros = [
                 'consumidor' => 'ACOBRO',
                 'servicio' => 'INGRESO DOCUMENTOS RVM',
-                'file' => base64_encode(file_get_contents($request->file('Cedula_PDF')->getRealPath())),
+                'file' => ($base64_cedula_cliente == '')? base64_encode(file_get_contents($request->file('Cedula_PDF')->getRealPath())) : $base64_cedula_cliente,
                 'patente' => str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]),
                 'nro' => $solicitud_rc[0]->numeroSol,
                 'tipo_sol' => 'P',
                 'tipo_doc' => "PDF",
                 'clasificacion' => 1,
                 'fecha_ing' => date('d-m-Y'),
-                'nombre' => $request->file('Cedula_PDF')->getClientOriginalName()
+                'nombre' => ($base64_cedula_cliente == '')? $request->file('Cedula_PDF')->getClientOriginalName() : str_replace('public/','',$cedula_cliente->name)
             ];
             $data = RegistroCivil::subirDocumentos(json_encode($parametros));
             $salida = json_decode($data, true);
@@ -254,14 +279,14 @@ class DocumentoController extends Controller
                 $parametros2 = array(
                     'consumidor' => 'ACOBRO',
                     'servicio' => 'INGRESO DOCUMENTOS RVM',
-                    'file' => base64_encode(file_get_contents($request->file('Cedula_Para_PDF')->getRealPath())),
+                    'file' => ($base64_cedula_para == '')? base64_encode(file_get_contents($request->file('Cedula_Para_PDF')->getRealPath())) : $base64_cedula_para,
                     'patente' => str_replace(".", "", explode("-", $solicitud_rc[0]->ppu)[0]),
                     'nro' => $solicitud_rc[0]->numeroSol,
                     'tipo_sol' => 'P',
                     'tipo_doc' => "PDF",
                     'clasificacion' => 1,
                     'fecha_ing' => date('d-m-Y'),
-                    'nombre' => $request->file('Cedula_Para_PDF')->getClientOriginalName()
+                    'nombre' => ($base64_cedula_para == '')? $request->file('Cedula_Para_PDF')->getClientOriginalName() : str_replace('public/','',$cedula_para->name)
                 );
                 $data = RegistroCivil::subirDocumentos(json_encode($parametros2));
                 $salida = json_decode($data, true);
@@ -299,6 +324,31 @@ class DocumentoController extends Controller
                 return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir factura en PDF 2']);
             }
 
+
+            //Rol de empresa
+            $parametros4 = [
+                'consumidor' => 'ACOBRO',
+                'servicio' => 'INGRESO DOCUMENTOS RVM',
+                'file' => ($base64_rol_empresa == '')? base64_encode(file_get_contents($request->file('Rol_PDF')->getRealPath())) : $base64_rol_empresa,
+                'patente' => str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]),
+                'nro' => $solicitud_rc[0]->numeroSol,
+                'tipo_sol' => 'P',
+                'tipo_doc' => "PDF",
+                'clasificacion' => 1,
+                'fecha_ing' => date('d-m-Y'),
+                'nombre' => ($base64_rol_empresa == '')? $request->file('Rol_PDF')->getClientOriginalName() : str_replace('public/','',$rol_empresa->name)
+            ];
+            $data = RegistroCivil::subirDocumentos(json_encode($parametros4));
+            $salida = json_decode($data, true);
+            if (isset($salida['OUTPUT'])) {
+                if ($salida['OUTPUT'] != "OK") {
+                    return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF 1']);
+                }
+            }
+            else{
+                return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF 2']);
+            }
+
             $new_documento_rc = new EnvioDocumentoRC();
             $new_documento_rc->solicitud_id = $id;
             $new_documento_rc->ppu = str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]);
@@ -324,14 +374,14 @@ class DocumentoController extends Controller
                 $doc->added_at = Carbon::now()->toDateTimeString();
                 $doc->save();
             }else{
-                $errors = new MessageBag();
-                $errors->add('Documentos', 'Debe adjuntar Cédula del Cliente.');
-                $solicitud = Solicitud::findOrFail($id);
-                $para = Para::Where('solicitud_id', $id)->get();
-                return json_encode(['status'=>'ERROR','esRevision'=>false,'msj'=>'Error al subir cédula de adquiriente']);
+                if($base64_cedula_cliente == ''){
+                    $errors = new MessageBag();
+                    $errors->add('Documentos', 'Debe adjuntar Cédula del Cliente.');
+                    return json_encode(['status'=>'ERROR','esRevision'=>false,'msj'=>'Error al subir cédula de adquiriente']);
+                }
             }
 
-            if(Para::find($id)){
+            if (sizeof(CompraPara::getSolicitud($id)) > 0) {
                 if($request->hasFile('Cedula_Para_PDF')){
                     $file = $request->file('Cedula_Para_PDF');
                     $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
@@ -344,13 +394,36 @@ class DocumentoController extends Controller
                     $doc->added_at = Carbon::now()->toDateTimeString();
                     $doc->save();
                 }else{
-                    $errors = new MessageBag();
-                    $errors->add('Documentos', 'Debe adjuntar Cédula Compra/Para.');
-                    $solicitud = Solicitud::findOrFail($id);
-                    $para = Para::Where('solicitud_id', $id)->get();
-                    return json_encode(['status'=>'ERROR','esRevision'=>false,'msj'=>'Error al subir cédula de estipulante o compra para']);
+                    if($base64_cedula_para == ''){
+                        $errors = new MessageBag();
+                        $errors->add('Documentos', 'Debe adjuntar Cédula Compra/Para.');                    
+                        return json_encode(['status'=>'ERROR','esRevision'=>false,'msj'=>'Error al subir cédula de estipulante o compra para']);
+                    }
                 }  
             }
+
+            
+            if($solicitud->empresa==1){
+                if($request->hasFile('Rol_PDF')){
+                    $file = $request->file('Rol_PDF');
+                    $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+                    $doc = new Documento();
+                    $doc->name = 'public/'.$path;
+                    $doc->type = 'pdf';
+                    $doc->description = 'Rol de Empresa';
+                    $doc->solicitud_id = $id;
+                    $doc->tipo_documento_id = 4;
+                    $doc->added_at = Carbon::now()->toDateTimeString();
+                    $doc->save();
+                }else{
+                    if($base64_rol_empresa == ''){
+                        $errors = new MessageBag();
+                        $errors->add('Documentos', 'Debe adjuntar Rol de la Empresa.');
+                        return json_encode(['status'=>'ERROR','esRevision'=>false,'msj'=>'Error al subir rol de empresa']);
+                    }
+                }
+            }
+
 
             return json_encode(['status'=>'OK','msj'=>'Archivos guardados exitosamente','esRevision'=>false]);
         }

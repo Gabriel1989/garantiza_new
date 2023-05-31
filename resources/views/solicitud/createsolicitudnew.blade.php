@@ -189,7 +189,12 @@ $(document).ready(function() {
         });      
         console.log("#".doc_name);  
         $.ajax({
-            url: "{{route('documento.destroy')}}",
+            url: "@php  if(Auth::user()->rol_id >= 4){ 
+                            echo route('documento.destroy');
+                        }elseif(Auth::user()->rol_id <= 3){ 
+                            echo  route('documento.destroy.revision');
+                        }
+                  @endphp",
             data: {
                 solicitud_id : $(this).data('solicitudid'),
                 doc_name : doc_name,

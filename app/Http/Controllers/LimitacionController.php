@@ -65,6 +65,20 @@ class LimitacionController extends Controller{
             $get_limitacion->save();
         }
 
+        //Si no hay archivo adjunto en request, verifica si ya hay un archivo del mismo tipo guardado en bd y servidor
+        if(!$request->hasFile('Doc_Lim')){
+            $base64_doc_limitacion = '';
+            $doc_limitacion = Documento::where('solicitud_id', $id)->whereIn('tipo_documento_id',[6,7])->first();
+            if($doc_limitacion != null){
+                //Si hay archivo guardado en la bd, obtenemos el binario desde el servidor
+                $base64_doc_limitacion = $this->getFileAsBase64($doc_limitacion->name);
+            }
+            //Si no obtiene base64, manda mensaje de error
+            if($base64_doc_limitacion == ''){
+                return json_encode(['status'=>'ERROR','msj'=>'Error al crear prohibición, no se adjuntó ni guardó el documento fundante de la prohibición']);
+            }
+        }
+
         if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3){
             $datosReingreso = null;
             if($request->get('fechaResExenta') !== '' || $request->get('fechaSolRech') !== '' || $request->get('nroResExenta') !== ''){
@@ -204,19 +218,18 @@ class LimitacionController extends Controller{
                     $limitacion_rc_2 = LimitacionRC::getSolicitud($id);
 
 
-                    //Subir documento asociado a la prohibición
                     $validaDocLimi = true;
                     $parametros = [
                         'consumidor' => 'ACOBRO',
                         'servicio' => 'INGRESO DOCUMENTOS RVM',
-                        'file' => base64_encode(file_get_contents($request->file('Doc_Lim')->getRealPath())),
+                        'file' => ($base64_doc_limitacion == '')? base64_encode(file_get_contents($request->file('Doc_Lim')->getRealPath())) : $base64_doc_limitacion,
                         'patente' => str_replace(".","",explode("-",$limitacion_rc_2[0]->ppu)[0]),
                         'nro' => $limitacion_rc_2[0]->numSol,
                         'tipo_sol' => 'A',
                         'tipo_doc' => "PDF",
                         'clasificacion' => 1,
                         'fecha_ing' => date('d-m-Y'),
-                        'nombre' => $request->file('Doc_Lim')->getClientOriginalName()
+                        'nombre' => ($base64_doc_limitacion == '')? $request->file('Doc_Lim')->getClientOriginalName() : str_replace('public/','',$doc_limitacion->name)
                     ];
                     $data = RegistroCivil::subirDocumentos(json_encode($parametros));
                     $salida = json_decode($data, true);
@@ -254,9 +267,11 @@ class LimitacionController extends Controller{
                 $doc->added_at = Carbon::now()->toDateTimeString();
                 $doc->save();
             }else{
-                $errors = new MessageBag();
-                $errors->add('Documentos', 'Debe adjuntar documento fundante de limitación');
-                return json_encode(['status'=>'ERROR','esRevision'=>false,'msj'=>'Error al subir cédula de adquiriente']);
+                if($base64_doc_limitacion == ''){
+                    $errors = new MessageBag();
+                    $errors->add('Documentos', 'Debe adjuntar documento fundante de limitación');
+                    return json_encode(['status'=>'ERROR','esRevision'=>false,'msj'=>'Error al subir documento fundante de limitación']);
+                }
             }
 
 
@@ -297,6 +312,15 @@ class LimitacionController extends Controller{
         }
         die;
 
+    }
+
+    public function getFileAsBase64($filePath)
+    {
+        // Obtener el contenido del archivo utilizando el almacenamiento de Laravel
+        $fileContents = Storage::get($filePath);
+        // Convertir el contenido del archivo a base64
+        $base64 = base64_encode($fileContents);
+        return $base64;
     }
 
 

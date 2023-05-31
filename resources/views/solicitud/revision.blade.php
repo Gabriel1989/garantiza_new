@@ -31,7 +31,7 @@
                                 <td>{{date('d-m-Y h:i A', strtotime($item->created_at))}}</td>
                                 <td>{{$item->concesionaria}}</td>
                                 <td>
-                                    {{$item->nombreCliente->razon_social_recep}}
+                                    {{@$item->nombreCliente->razon_social_recep}}
                                 </td>
                                 <td>{{$item->tramites}}</td>
                                 <td>

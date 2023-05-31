@@ -239,7 +239,13 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
         });
 
         $.ajax({
-            url: "/solicitud/{{$id}}/updateRevisionFacturaMoto",
+            url: "@php  if(Auth::user()->rol_id >= 4){ 
+                            echo '/solicitud/'.$id.'/updateRevisionFacturaMoto';
+                        }elseif(Auth::user()->rol_id <= 3){ 
+                            echo  '/solicitud/'.$id.'/updateRevisionFacturaMoto/revision';
+                        }
+                  @endphp
+                ",
             type: "post",
             data: formData,
             processData: false,

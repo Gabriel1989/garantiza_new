@@ -100,8 +100,10 @@
                                                         @elseif($acceso == "ingreso")
                                                             @if($estadoSolicitud != '' && $estadoSolicitud == 6)
                                                                 href="#pills-docs"
-                                                            @else href="#"
-
+                                                            @elseif($id_solicitud_rc != 0) 
+                                                                href="#pills-docs"
+                                                            @else
+                                                                href="#"
                                                             @endif
                                                         @endif
                                                             role="tab" aria-controls="pills-docs" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Documentación</a>
@@ -209,6 +211,14 @@
                         @else
                             @include('solicitud.revision.docsIdentidadCamion')
                         @endif
+                    @elseif($id_solicitud_rc != 0)
+                        @if($id_tipo_vehiculo == 1)
+                            @include('solicitud.revision.docsIdentidadAuto')
+                        @elseif ($id_tipo_vehiculo == 2)
+                            @include('solicitud.revision.docsIdentidadMoto')
+                        @else
+                            @include('solicitud.revision.docsIdentidadCamion')
+                        @endif
                     @endif
                 @endif
             </div>
@@ -219,7 +229,9 @@
                         @include('solicitud.limitacion')
                     @endif
                 @elseif($acceso == "ingreso")
-                    @include('solicitud.limitacion')
+                    @if($id_solicitud != 0)
+                        @include('solicitud.limitacion')
+                    @endif
                 @endif
             </div>
             @if($acceso == "revision")
@@ -415,11 +427,31 @@
         let formData = new FormData(document.getElementById('form-solicitud-create'));
 
         $.ajax({
-            url: "{{route('solicitud.store')}}",
+            url: "{{  ($acceso == 'revision')? route('solicitud.store') : route('solicitud.storeConces') }}",
             type: "post",
             processData: false,
             contentType: false,
             data: formData,
+            error: function(jqXHR, textStatus, errorThrown) {
+                // Acción cuando hay un error.
+                new PNotify({
+                        title: 'Error',
+                        text: "AJAX error: " + textStatus + ' : ' + errorThrown,
+                        shadow: true,
+                        opacity: '0.75',
+                        addclass: 'stack_top_right',
+                        type: 'danger',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '290px',
+                        delay: 5000
+                });
+            },
             success: function(data) {
                 hideOverlay();
                 let jsondata = JSON.parse(data);

@@ -124,18 +124,20 @@ Route::group(['prefix' => 'administrador', 'middleware' => ['auth', 'admin']], f
     Route::get('solicitud/{id}/datosAuto', 'SolicitudController@datosAuto')->name('solicitud.datosAuto');
     Route::get('solicitud/{id}/datosCamion', 'SolicitudController@datosCamion')->name('solicitud.datosCamion');
     Route::put('solicitud/{id}/saveDatosMoto', 'SolicitudController@saveDatosMoto')->name('solicitud.saveDatosMoto');
-    Route::post('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
-    Route::post('solicitud/{id}/updateRevisionFacturaAuto', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
-    Route::post('solicitud/{id}/updateRevisionFacturaCamion','SolicitudController@updateRevisionFacturaCamion')->name('solicitud.updateRevisionFacturaCamion');
+    Route::post('solicitud/{id}/updateRevisionFacturaMoto/revision', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
+    Route::post('solicitud/{id}/updateRevisionFacturaAuto/revision', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
+    Route::post('solicitud/{id}/updateRevisionFacturaCamion/revision','SolicitudController@updateRevisionFacturaCamion')->name('solicitud.updateRevisionFacturaCamion');
 
     //Crear limitación o prohibición para vehículo
 
     Route::post('solicitud/{id}/limitacion/form','LimitacionController@ingresarLimitacionForm')->name('solicitud.limitacion.form');
-    Route::post('solicitud/{id}/limitacion/new','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
+    Route::post('solicitud/{id}/limitacion/new/revision','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
     Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
     //Generar comprobante RVM
-    Route::post('solicitud/{id}/descargaComprobanteRVM','SolicitudController@descargaComprobanteRVM')->name('solicitud.descargaComprobanteRVM');
+    //Route::post('solicitud/{id}/descargaComprobanteRVM','SolicitudController@descargaComprobanteRVM')->name('solicitud.descargaComprobanteRVM');
 
+    //Documentos
+    Route::post('documento/destroy/revision', 'DocumentoController@destroy')->name('documento.destroy.revision');
 });
 
 
@@ -148,12 +150,13 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::post('solicitud/consultaPPU','SolicitudController@consultaPPU')->name('solicitud.consultaPPU');
 
     Route::get('solicitud/create', 'SolicitudController@create')->name('solicitud.create');
-    Route::post('solicitud', 'SolicitudController@store')->name('solicitud.store');
+    Route::post('solicitud/storeConces', 'SolicitudController@store')->name('solicitud.storeConces');
+    //Route::post('solicitud', 'SolicitudController@store')->name('solicitud.store');
     Route::get('solicitud/sinTerminar', 'SolicitudController@sinTerminar')->name('solicitud.sinTerminar');
     Route::get('solicitud/{id}/adquirientes', 'SolicitudController@adquirientes')->name('solicitud.adquirientes');
-    Route::post('solicitud/{id}/saveAdquirientes', 'SolicitudController@saveAdquirientes')->name('solicitud.saveAdquirientes');
+    Route::post('solicitud/{id}/saveAdquirientesConces', 'SolicitudController@saveAdquirientes')->name('solicitud.saveAdquirientes');
     Route::get('solicitud/{id}/compraPara', 'SolicitudController@compraPara')->name('solicitud.compraPara');
-    Route::post('solicitud/{id}/saveCompraPara', 'SolicitudController@saveCompraPara')->name('solicitud.saveCompraPara');
+    Route::post('solicitud/{id}/saveCompraParaConces', 'SolicitudController@saveCompraPara')->name('solicitud.saveCompraPara');
     Route::get('solicitud/{id}/datosMoto', 'SolicitudController@datosMoto')->name('solicitud.datosMoto');
     Route::get('solicitud/{id}/datosAuto', 'SolicitudController@datosAuto')->name('solicitud.datosAuto');
     Route::get('solicitud/{id}/datosCamion', 'SolicitudController@datosCamion')->name('solicitud.datosCamion');
@@ -229,18 +232,21 @@ Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {
     Route::get('solicitud/{id}/datosAuto', 'SolicitudController@datosAuto')->name('solicitud.datosAuto');
     Route::get('solicitud/{id}/datosCamion', 'SolicitudController@datosCamion')->name('solicitud.datosCamion');
     Route::put('solicitud/{id}/saveDatosMoto', 'SolicitudController@saveDatosMoto')->name('solicitud.saveDatosMoto');
-    Route::post('solicitud/{id}/updateRevisionFacturaMoto', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
-    Route::post('solicitud/{id}/updateRevisionFacturaAuto', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
-    Route::post('solicitud/{id}/updateRevisionFacturaCamion','SolicitudController@updateRevisionFacturaCamion')->name('solicitud.updateRevisionFacturaCamion');
+    Route::post('solicitud/{id}/updateRevisionFacturaMoto/revision', 'SolicitudController@updateRevisionFacturaMoto')->name('solicitud.updateRevisionFacturaMoto');
+    Route::post('solicitud/{id}/updateRevisionFacturaAuto/revision', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
+    Route::post('solicitud/{id}/updateRevisionFacturaCamion/revision','SolicitudController@updateRevisionFacturaCamion')->name('solicitud.updateRevisionFacturaCamion');
 
     //Crear limitación o prohibición para vehículo
 
     Route::post('solicitud/{id}/limitacion/form','LimitacionController@ingresarLimitacionForm')->name('solicitud.limitacion.form');
-    Route::post('solicitud/{id}/limitacion/new','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
+    Route::post('solicitud/{id}/limitacion/new/revision','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
     Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
 
     //Generar comprobante RVM
-    Route::post('solicitud/{id}/descargaComprobanteRVM','SolicitudController@descargaComprobanteRVM')->name('solicitud.descargaComprobanteRVM');
+    //Route::post('solicitud/{id}/descargaComprobanteRVM','SolicitudController@descargaComprobanteRVM')->name('solicitud.descargaComprobanteRVM');
+
+    //Documentos
+    Route::post('documento/destroy/revision', 'DocumentoController@destroy')->name('documento.destroy.revision');
 });
 
 

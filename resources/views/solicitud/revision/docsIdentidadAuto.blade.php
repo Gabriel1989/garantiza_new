@@ -56,7 +56,7 @@ $solicitud = Solicitud::find($id);
                 @endif
 
                 @if ($solicitud->empresa==1)
-                <div class="form-group">
+                
                     <div class="col-sm-12 col-lg-12 mb5">
                         <div class="col-lg-2">
                             <span class="btn btn-warning fileinput-button col-sm-12" name="pic" id="RolPDF">
@@ -67,7 +67,7 @@ $solicitud = Solicitud::find($id);
                             <label id="lbl_Rol_PDF"></label>
                         </div>
                     </div>
-                </div>
+                
                 @endif
                 <!--
                 <div class="col-sm-4 col-lg-4 mb5">

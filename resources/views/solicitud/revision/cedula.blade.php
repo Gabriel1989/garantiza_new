@@ -16,16 +16,19 @@
                 <div class="row">
                     <div class="col-lg-4">
                         @if($cedula_cliente != null)
+                        <label>Cédula Cliente</label>
                         <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $cedula_cliente->name)}}" frameborder="0"></iframe>
                         @endif
                     </div>
                     <div class="col-lg-4">
                         @if($cedula_compra_para != null)
+                        <label>Cédula Compra Para</label>
                         <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $cedula_compra_para->name)}}" frameborder="0"></iframe>
                         @endif
                     </div>
-                    <div class="col-lg-4">
+                    <div class="col-lg-3">
                         @if($factura_cliente != null)
+                        <label>Factura</label>
                         <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $factura_cliente->name)}}" frameborder="0"></iframe>
                         @endif
                     </div>

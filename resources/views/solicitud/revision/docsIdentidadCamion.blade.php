@@ -1,7 +1,8 @@
 <?php 
 
 use App\Models\CompraPara;
-
+use App\Models\Solicitud;
+$solicitud = Solicitud::find($id);
 
 ?>
 
@@ -52,6 +53,21 @@ use App\Models\CompraPara;
                         <label id="lbl_Cedula_Para_PDF"></label>
                     </div>
                 </div>
+                @endif
+
+                @if ($solicitud->empresa==1)
+                
+                    <div class="col-sm-6 col-lg-6 mb5">
+                        <div class="col-lg-6">
+                            <span style="white-space:normal;" class="btn btn-warning fileinput-button col-sm-12" name="pic" id="RolPDF">
+                                Seleccionar Rol de Cliente PDF</span>
+                        </div>
+                        <div class="col-lg-6">
+                            <input id="Rol_PDF" name="Rol_PDF" type="file" style="display:none" accept="application/pdf"/>
+                            <label id="lbl_Rol_PDF"></label>
+                        </div>
+                    </div>
+                
                 @endif
 
                 <!--
