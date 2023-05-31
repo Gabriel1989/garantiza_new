@@ -329,7 +329,7 @@
                     },
                     success: function(){
 
-                        window.location.href= "http://"+"{{ $_SERVER['HTTP_HOST'] }}"+ "/solicitud/solicitarPPU";
+                        window.location.href= "https://"+"{{ $_SERVER['HTTP_HOST'] }}"+ "/solicitud/solicitarPPU";
                     }
                 });
             }

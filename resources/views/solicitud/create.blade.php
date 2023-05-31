@@ -544,7 +544,7 @@
                 });
 
                 if(parseInt(solicitud_id) != 0){
-                    window.location.href= "http://"+"{{$_SERVER['HTTP_HOST']}}"+ "/solicitud/continuarSolicitud/"+ solicitud_id;
+                    window.location.href= "https://"+"{{$_SERVER['HTTP_HOST']}}"+ "/solicitud/continuarSolicitud/"+ solicitud_id;
                 }
                 else{
                     new PNotify({
