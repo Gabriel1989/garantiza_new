@@ -18,14 +18,14 @@ class SucursalController extends Controller
     public function index()
     {
         $sucursales = Sucursal::all();
-        return view('Sucursal.index', compact('sucursales'));
+        return view('sucursal.index', compact('sucursales'));
     }
 
     public function create()
     {
         $concesionarias = Concesionaria::all();
         $comunas = Comuna::allOrder();
-        return view('Sucursal.create', compact('concesionarias', 'comunas'));
+        return view('sucursal.create', compact('concesionarias', 'comunas'));
     }
 
     public function store(SucursalRequest $request)
@@ -39,7 +39,7 @@ class SucursalController extends Controller
         $concesionarias = Concesionaria::all();
         $comunas = Comuna::allOrder();
         $sucursal = Sucursal::findOrFail($id);
-        return view('Sucursal.edit', compact('sucursal'), compact('concesionarias', 'comunas'));
+        return view('sucursal.edit', compact('sucursal'), compact('concesionarias', 'comunas'));
     }
 
     public function update(Request $request, $id)
