@@ -265,11 +265,13 @@ class DocumentoController extends Controller
             //dd($salida);
             if (isset($salida['OUTPUT'])) {
                 if ($salida['OUTPUT'] != "OK") {
-                    return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de adquiriente 1']);
+                    Log::error('Error al subir cédula de adquiriente 1');
+                    return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de adquiriente. Inténtelo nuevamente.']);
                 }
             }
             else{
-                return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de adquiriente 2']);
+                Log::error('Error al subir cédula de adquiriente 2');
+                return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de adquiriente. Inténtelo nuevamente.']);
             }
             sleep(4);
 
@@ -292,11 +294,13 @@ class DocumentoController extends Controller
                 $salida = json_decode($data, true);
                 if (isset($salida['OUTPUT'])) {
                     if ($salida['OUTPUT'] != "OK") {
-                        return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de estipulante o compra para 1']);
+                        Log::error('Error al subir cédula de estipulante o compra para 1');
+                        return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de estipulante o compra para. Inténtelo nuevamente.']);
                     }
                 }
                 else{
-                    return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de estipulante o compra para 2']);
+                    Log::error('Error al subir cédula de estipulante o compra para 2');
+                    return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de estipulante o compra para. Inténtelo nuevamente']);
                 }
             }
             sleep(4);
@@ -317,11 +321,13 @@ class DocumentoController extends Controller
             $salida = json_decode($data, true);
             if (isset($salida['OUTPUT'])) {
                 if ($salida['OUTPUT'] != "OK") {
-                    return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir factura en PDF 1']);
+                    Log::error('Error al subir factura en PDF 1');
+                    return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir factura en PDF. Inténtelo nuevamente']);
                 }
             }
             else{
-                return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir factura en PDF 2']);
+                Log::error('Error al subir factura en PDF 2');
+                return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir factura en PDF. Inténtelo nuevamente']);
             }
 
 
@@ -342,11 +348,13 @@ class DocumentoController extends Controller
             $salida = json_decode($data, true);
             if (isset($salida['OUTPUT'])) {
                 if ($salida['OUTPUT'] != "OK") {
-                    return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF 1']);
+                    Log::error('Error al subir rol de empresa en PDF 1');
+                    return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF. Inténtelo nuevamente']);
                 }
             }
             else{
-                return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF 2']);
+                Log::error('Error al subir rol de empresa en PDF 2');
+                return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF. Inténtelo nuevamente']);
             }
 
             $new_documento_rc = new EnvioDocumentoRC();

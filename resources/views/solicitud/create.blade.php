@@ -22,11 +22,11 @@
 
 
     @if($reingreso != null)
-    <div class="panel-header">
+    <div class="panel-header panel_info">
         <div class="row">
             
             <div class="col-md-6" style="padding-left:30px;">
-                <h4><i class="fa fa-exclamation-triangle" style="color:red;" aria-hidden="true"></i> Solicitud debe ser reingresada</h4>
+                <h4><i class="fa fa-exclamation-triangle" style="color:red;" aria-hidden="true"></i> Solicitud debe ser reingresada</h4><button class="btn btn-xs btn-success" onclick="$('.panel_info').hide(); $(this).hide();">OK</button>
             </div>
         </div>
     </div>

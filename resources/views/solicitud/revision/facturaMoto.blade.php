@@ -250,6 +250,27 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
             data: formData,
             processData: false,
             contentType: false,
+            error: function(jqXHR, textStatus, errorThrown) {
+                hideOverlay();
+                // Acción cuando hay un error.
+                new PNotify({
+                        title: 'Error',
+                        text: "Error: " + textStatus + ' : ' + errorThrown,
+                        shadow: true,
+                        opacity: '0.75',
+                        addclass: 'stack_top_right',
+                        type: 'danger',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '290px',
+                        delay: 5000
+                });
+            },
             success: function(data){
                 hideOverlay();
                 $("#pills-docs").html(data);
