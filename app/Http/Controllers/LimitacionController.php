@@ -44,13 +44,25 @@ class LimitacionController extends Controller{
             $error_doc_limi = ErrorEnvioDoc::where('solicitud_id',$id)->first();
             //Actualizamos documento en la bd
             $doc = Documento::where('solicitud_id',$id)->where('tipo_documento_id',$error_doc_limi->tipo_documento_id)->first();
-            $doc->name = 'public/'.$path;
-            $doc->type = 'pdf';
-            $doc->description = trim(Tipo_Documento::select('name')->where('id',$error_doc_limi->tipo_documento_id)->first()->name);
-            $doc->solicitud_id = $id;
-            $doc->tipo_documento_id = $error_doc_limi->tipo_documento_id;
-            $doc->added_at = Carbon::now()->toDateTimeString();
-            $doc->save();
+            if($doc != null){
+                $doc->name = 'public/'.$path;
+                $doc->type = 'pdf';
+                $doc->description = trim(Tipo_Documento::select('name')->where('id',$error_doc_limi->tipo_documento_id)->first()->name);
+                $doc->solicitud_id = $id;
+                $doc->tipo_documento_id = $error_doc_limi->tipo_documento_id;
+                $doc->added_at = Carbon::now()->toDateTimeString();
+                $doc->save();
+            }
+            else{
+                $doc = new Documento();
+                $doc->name = 'public/'.$path;
+                $doc->type = 'pdf';
+                $doc->description = trim(Tipo_Documento::select('name')->where('id',$error_doc_limi->tipo_documento_id)->first()->name);
+                $doc->solicitud_id = $id;
+                $doc->tipo_documento_id = $error_doc_limi->tipo_documento_id;
+                $doc->added_at = Carbon::now()->toDateTimeString();
+                $doc->save();
+            }
 
             sleep(2);
             $base64_doc_limitacion = '';
