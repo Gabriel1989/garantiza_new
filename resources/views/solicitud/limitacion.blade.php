@@ -39,7 +39,7 @@ use App\Models\ErrorEnvioDoc;
             $acreedores = Acreedor::all();
             $limitacion_rc = LimitacionRC::getSolicitud($id);
             $limitacion = Limitacion::where('solicitud_id',$id)->first();
-            $error_envio_doc = ErrorEnvioDoc::where('id_solicitud',$id)->first();
+            $error_envio_doc = ErrorEnvioDoc::where('solicitud_id',$id)->first();
         ?>
         @if(count($limitacion_rc) == 0)
         <div class="panel-body">
