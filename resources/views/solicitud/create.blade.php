@@ -26,7 +26,7 @@
         <div class="row">
             
             <div class="col-md-6" style="padding-left:30px;">
-                <h4><i class="fa fa-exclamation-triangle" style="color:red;" aria-hidden="true"></i> Solicitud debe ser reingresada</h4><button class="btn btn-xs btn-success" onclick="$('.panel_info').hide(); $(this).hide();">OK</button>
+                <h4><i class="fa fa-exclamation-triangle" style="color:red;" aria-hidden="true"></i> Solicitud debe ser reingresada <button class="btn btn-xs btn-success" onclick="$('.panel_info').hide(); $(this).hide();">OK</button></h4>
             </div>
         </div>
     </div>
