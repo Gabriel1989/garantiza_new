@@ -106,6 +106,7 @@ class LimitacionController extends Controller{
                     return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación. Favor enviar el archivo de limitación nuevamente.']);
                 }
 
+                $error_doc_limi->delete();
                 return json_encode(['status'=>'OK','msj'=>'Archivo de limitación enviado exitosamente']);
             }
         }
