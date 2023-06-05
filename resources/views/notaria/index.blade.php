@@ -4,9 +4,9 @@
 @include('includes.mensaje')
 <div class="panel panel-info panel-border top">
     <div class="panel-heading">
-        <span class="panel-title">Listado de Concesionarias</span>
+        <span class="panel-title">Listado de Notarias</span>
         <div class="widget-menu pull-right">
-            <a href="{{route('concesionaria.create')}}" class="btn btn-info btn-sm"><li class="fa fa-plus"></li> Agregar Concesionaria</a>
+            <a href="{{route('notaria.create')}}" class="btn btn-info btn-sm"><li class="fa fa-plus"></li> Agregar Notaria</a>
         </div>
     </div>
     <div class="panel-body">
@@ -16,25 +16,27 @@
                     <table id="tabla-data" class="table table-bordered">
                         <thead>
                         <tr>
-                            <th scope="col">Código</th>
-                            <th scope="col">Rut</th>
+                            <th scope="col">ID</th>
                             <th scope="col">Nombre</th>
-                            <th scope="col">Razón Social</th>
+                            <th scope="col">Código Notaria RC</th>
+                            <th scope="col">Fecha creación</th>
+                            <th scope="col">Fecha modificación</th>
                             <th scope="col" style="width:250px">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($concesionarias as $item)
+                        @foreach ($notarias as $item)
                             <tr>
                                 <td scope="row">{{$item->id}}</td>
-                                <td>{{number_format($item->rut, 0, ',', '.') . '-' . $item->dv}}</td>
                                 <td>{{$item->name}}</td>
-                                <td>{{$item->razon_social}}</td>
+                                <td>{{$item->codigo_notaria_rc}}</td>
+                                <td>{{$item->created_at}}</td>
+                                <td>{{$item->updated_at}}</td>
                                 <td>
-                                    <form action="{{route('concesionaria.destroy', ['id' => $item->id])}}" class="form-eliminar" method="post">
+                                    <form action="{{route('notaria.destroy', ['id' => $item->id])}}" class="form-eliminar" method="post">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="button" class="btn btn-system btn-sm" onclick="location.href='{{route('concesionaria.edit', ['id' => $item->id])}}'">
+                                        <button type="button" class="btn btn-system btn-sm" onclick="location.href='{{route('notaria.edit', ['id' => $item->id])}}'">
                                             <li class="fa fa-pencil"></li> Editar</button>
                                         <button type="submit" class="btn btn-danger btn-sm"><li class="fa fa-trash-o"></li> Eliminar</button>
                                     </form>

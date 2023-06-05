@@ -38,6 +38,18 @@
                         </select>
                     </label>
                 </div>
+
+                <div id="notaria">
+                    <label for="notaria_id" class="col-lg-1 control-label">Notaria</label>
+                    <label class="col-lg-5">
+                        <select class="col-sm-12 form-select" name="notaria_id" id="notaria_id" >
+                            <option value="0" selected>Seleccione Notaria...</option>
+                            @foreach ($notarias as $item)
+                                <option value="{{$item->id}}" @if ($usuario->notaria_id==$item->id) selected @endif>{{$item->name}}</option>    
+                            @endforeach
+                        </select>
+                    </label>
+                </div>
             </div>
             
         </div>
@@ -56,14 +68,25 @@
     jQuery(document).ready(function() {
         $('#rol_id').multiselect();
         $('#concesionaria_id').multiselect();
+        $('#notaria_id').multiselect();
         $("#rol_id").trigger("change");
 
         $('#rol_id').change(function () {  
             var id = $('#rol_id').find(':selected')[0].value;
             if(id<4){
+                //Usuarios de Garantiza NO necesitan tener notaria y/o concesionaria
                 $('#concesionaria').hide();
-            }else{
+                $('#notaria').hide();
+            }
+            else if(id == 7){
+                //Usuarios de Notaria tienen notaria
+                $('#notaria').show();
+                $('#concesionaria').hide();
+            }
+            else{
+                //Usuarios de concesionaria tienen concesionaria
                 $('#concesionaria').show();
+                $('#notaria').hide();
             }
         });
     });

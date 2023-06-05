@@ -5,6 +5,7 @@ namespace App\Helpers;
 use Illuminate\Support\Facades\Http;
 
 class RegistroCivil{
+    /************CONEXIÓN SPIEV ***************/
     public static function PPUDisponible($parametro){
         //$wsdl = 'SpievAPI/WSDL/PPUDisponible_porTipo_PID.wsdl';
         $url = 'http://181.212.92.141/RC_API/PPUDisponible.php';
@@ -127,6 +128,20 @@ class RegistroCivil{
     public static function LimPrimera($parametro){
         //$wsdl = 'SpievAPI/WSDL/PID_LimiSpie.wsdl';
         $url = 'http://181.212.92.141/RC_API/LimiPrimera.php';
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
+    }
+    /*************** CONEXIÓN STEV DESDE ESTE PUNTO ***********/
+    public static function consultaDatosVehiculo($parametro){
+        //$wsdl = 'StevAPI/WSDL/PID_LimiSpie.wsdl';
+        $url = 'http://181.212.92.141/RC_API/STEV/CertAVigente.php';
         $curl = curl_init($url);
 
         curl_setopt($curl, CURLOPT_POST, true);

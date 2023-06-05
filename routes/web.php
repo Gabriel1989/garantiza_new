@@ -110,6 +110,14 @@ Route::group(['prefix' => 'administrador', 'middleware' => ['auth', 'admin']], f
     Route::put('usuario/{id}', 'UserController@update')->name('usuario.update');
     Route::delete('usuario/{id}', 'UserController@destroy')->name('usuario.destroy');
 
+    //Notarias
+    Route::get('notaria/index', 'NotariaController@index')->name('notaria.index');
+    Route::get('notaria/create', 'NotariaController@create')->name('notaria.create');
+    Route::post('notaria', 'NotariaController@store')->name('notaria.store');
+    Route::get('notaria/{id}/edit', 'NotariaController@edit')->name('notaria.edit');
+    Route::put('notaria/{id}', 'NotariaController@update')->name('notaria.update');
+    Route::delete('notaria/{id}', 'NotariaController@destroy')->name('notaria.destroy');
+
     //Revisión
     Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
     Route::put('solicitud/{id}/updateRevisionCedula', 'SolicitudController@updateRevisionCedula')->name('solicitud.updateRevisionCedula');
@@ -179,6 +187,7 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::post('solicitud/{id}/limitacion/new','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');
     Route::post('solicitud/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstado')->name('solicitud.limitacion.estadoSolicitud');
     Route::post('solicitud/{id}/descargaComprobanteLimi','LimitacionController@descargaComprobanteLimi')->name('solicitud.descargaComprobanteLimi');
+    Route::post('solicitud/{id}/limitacion/resendFile','LimitacionController@reenviarArchivo')->name('solicitud.limitacion.reenviarArchivo');
 
     Route::get('solicitud/{id}/show', 'SolicitudController@show')->name('solicitud.show');
     Route::get('solicitud/verSolicitudes', 'SolicitudController@verSolicitudes')->name('solicitud.verSolicitudes');
@@ -193,6 +202,8 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
     Route::get('documento/{id}/get', 'DocumentoController@get')->name('documento.get');
 
     Route::post('documento/{id}/cargadocs', 'DocumentoController@CargaDocumentos')->name('documento.cargadocs.rc');
+
+    
 });
 
 Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {
@@ -252,6 +263,17 @@ Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {
     Route::post('documento/destroy/revision', 'DocumentoController@destroy')->name('documento.destroy.revision');
     //Registrar Pago
     Route::post('/documento/{id}/cargapago', 'SolicitudController@registrarPago')->name('pago.registrar.revision');
+});
+
+Route::group(["middleware"=>["auth","ejecut.notaria"]],function(){
+
+    //Transferencias STEV
+    Route::get('transferencia/create', 'TransferenciaController@create')->name('transferencia.create');
+    Route::get('transferencia/index', 'TransferenciaController@index')->name('transferencia.index');
+    Route::post('transferencia/consultaDataVehiculo', 'TransferenciaController@consultaDataVehiculo')->name('transferencia.consultaDataVehiculo');
+    Route::post('transferencia', 'TransferenciaController@store')->name('transferencia.store');
+    Route::get('transferencia/continuarSolicitud/{id}/{reingresa?}/{acceso?}','TransferenciaController@continuarSolicitud')->name('transferencia.continuarSolicitud');
+
 });
 
 

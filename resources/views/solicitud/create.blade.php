@@ -433,6 +433,7 @@
             contentType: false,
             data: formData,
             error: function(jqXHR, textStatus, errorThrown) {
+                hideOverlay();
                 // Acción cuando hay un error.
                 new PNotify({
                         title: 'Error',

@@ -19,6 +19,7 @@ use App\Models\Tipo_Documento;
 use App\Models\Acreedor;
 use App\Models\LimitacionRC;
 use App\Models\Limitacion;
+use App\Models\ErrorEnvioDoc;
 
 ?>
 
@@ -38,6 +39,7 @@ use App\Models\Limitacion;
             $acreedores = Acreedor::all();
             $limitacion_rc = LimitacionRC::getSolicitud($id);
             $limitacion = Limitacion::where('solicitud_id',$id)->first();
+            $error_envio_doc = ErrorEnvioDoc::where('id_solicitud',$id)->first();
         ?>
         @if(count($limitacion_rc) == 0)
         <div class="panel-body">
@@ -129,6 +131,22 @@ use App\Models\Limitacion;
             <button type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Grabar y Continuar Revisión </button>
         </div>
         @else
+            @if($error_envio_doc != null)
+                <div class="row">
+                    <div class="col-lg-3">Adjunte documento fundante nuevamente:</div>
+                    <div class="col-lg-3">
+                        <span class="btn btn-warning fileinput-button col-sm-12" name="DocLim2" id="DocLim2">
+                            Seleccionar Documento</span>
+                    </div>
+                    <div class="col-lg-3">
+                        <input id="Doc_Lim2" name="Doc_Lim2" type="file" style="display:none" accept="application/pdf" />
+                        <label id="lbl_Doc_Lim2"></label>
+                    </div>
+                </div>    
+
+                <button type="button" class="btn btn-system btnReenviaArchivoLimitacion"><li class="fa fa-send"></li>  Enviar archivo </button>
+            @endif
+
             <ul>
             @foreach($limitacion_rc as $lim)
                 <li>N° Solicitud Limitación: {{$lim->numSol}}</li>
@@ -292,6 +310,14 @@ use App\Models\Limitacion;
         $('#Doc_Lim').on('change', function() {
             $('#lbl_Doc_Lim').text($('#Doc_Lim').val());
         });
+
+        $('#DocLim2').on('click', function() {
+            $('#Doc_Lim2').trigger('click');
+        });
+
+        $('#Doc_Lim2').on('change', function() {
+            $('#lbl_Doc_Lim2').text($('#Doc_Lim2').val());
+        });
     });
 
     $(document).on("change","#runAcreedor",function(){
@@ -373,6 +399,75 @@ use App\Models\Limitacion;
             hideOverlay();
             showErrorNotification(error.message);
         });
+    });
+
+    $(document).on("click",".btnReenviaArchivoLimitacion",function(e){
+        showOverlay();
+        e.preventDefault();
+        let formData = new FormData();
+        let inputFile = document.querySelector('#Doc_Lim2');
+
+        if (inputFile.files.length > 0) {
+            let file = inputFile.files[0]; // Obtener el primer archivo seleccionado
+            formData.append('Doc_Lim2', file, file.name);
+        }
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        $.ajax({
+            url: "{{route('solicitud.limitacion.reenviarArchivo',['id' => $id])}}",
+            type: "post",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(data){
+                hideOverlay();
+                let json = JSON.parse(data);
+                if(json.status == "ERROR"){
+                    new PNotify({
+                        title: 'Inscribir limitación',
+                        text: json.msj,
+                        shadow: true,
+                        opacity: '0.75',
+                        addclass: 'stack_top_right',
+                        type: 'danger',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '290px'
+                    });
+                    return false;
+                }
+                else{
+                    new PNotify({
+                        title: 'Inscribir limitación',
+                        text: json.msj,
+                        shadow: true,
+                        opacity: '0.75',
+                        addclass: 'stack_top_right',
+                        type: 'success',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '290px'
+                    });
+                    return true;
+                }
+            }
+        });
+
     });
 
 

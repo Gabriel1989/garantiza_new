@@ -15,6 +15,7 @@ use App\Models\Acreedor;
 use App\Models\Tipo_Documento;
 use App\Models\Solicitud;
 use App\Models\Documento;
+use App\Models\ErrorEnvioDoc;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\MessageBag;
@@ -31,6 +32,71 @@ class LimitacionController extends Controller{
 
 
         return view('solicitud.limitacion');
+    }
+
+    public function reenviarArchivo(Request $request, $id){
+        if($request->hasFile('Doc_Lim2')){
+            //Obtenemos archivo adjunto
+            $file = $request->file('Doc_Lim2');
+            //Guardamos archivo y obtenemos el path
+            $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+            //Obtenemos los datos de la limitación por medio del error en documento
+            $error_doc_limi = ErrorEnvioDoc::where('solicitud_id',$id)->first();
+            //Actualizamos documento en la bd
+            $doc = Documento::where('solicitud_id',$id)->where('tipo_documento_id',$error_doc_limi->tipo_documento_id)->first();
+            $doc->name = 'public/'.$path;
+            $doc->type = 'pdf';
+            $doc->description = trim(Tipo_Documento::select('name')->where('id',$error_doc_limi->tipo_documento_id)->first()->name);
+            $doc->solicitud_id = $id;
+            $doc->tipo_documento_id = $error_doc_limi->tipo_documento_id;
+            $doc->added_at = Carbon::now()->toDateTimeString();
+            $doc->save();
+
+            sleep(2);
+            $base64_doc_limitacion = '';
+            $doc_limitacion = Documento::where('solicitud_id', $id)->where('tipo_documento_id',$error_doc_limi->tipo_documento_id)->first();
+            if($doc_limitacion != null){
+                $base64_doc_limitacion = $this->getFileAsBase64($doc_limitacion->name);
+            }
+            //Si no obtiene base64, manda mensaje de error
+            if($base64_doc_limitacion == ''){
+                return json_encode(['status'=>'ERROR','msj'=>'Error al crear prohibición, no se adjuntó ni guardó el documento fundante de la prohibición']);
+            }
+
+            $validaDocLimi = true;
+            if($error_doc_limi != null){
+
+                $parametros = [
+                    'consumidor' => 'ACOBRO',
+                    'servicio' => 'INGRESO DOCUMENTOS RVM',
+                    'file' => ($base64_doc_limitacion == '')? base64_encode(file_get_contents($request->file('Doc_Lim2')->getRealPath())) : $base64_doc_limitacion,
+                    'patente' => $error_doc_limi->patente,
+                    'nro' => $error_doc_limi->numSol,
+                    'tipo_sol' => 'A',
+                    'tipo_doc' => "PDF",
+                    'clasificacion' => 1,
+                    'fecha_ing' => date('d-m-Y'),
+                    'nombre' => ($base64_doc_limitacion == '')? $request->file('Doc_Lim2')->getClientOriginalName() : str_replace('public/','',$doc_limitacion->name)
+                ];
+                $data = RegistroCivil::subirDocumentos(json_encode($parametros));
+                $salida = json_decode($data, true);
+                //dd($salida);
+                if (isset($salida['OUTPUT'])) {
+                    if ($salida['OUTPUT'] != "OK") {
+                        $validaDocLimi = false;
+                        
+                        return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación. Favor enviar el archivo de limitación nuevamente']);
+                    }
+                }
+                else{
+                    $validaDocLimi = false;
+                    
+                    return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación. Favor enviar el archivo de limitación nuevamente.']);
+                }
+            }
+        }
+        
+
     }
 
     public function ingresaLimitacion(Request $request, $id){
@@ -237,12 +303,24 @@ class LimitacionController extends Controller{
                     if (isset($salida['OUTPUT'])) {
                         if ($salida['OUTPUT'] != "OK") {
                             $validaDocLimi = false;
-                            return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación 1']);
+                            $error_docs = new ErrorEnvioDoc();
+                            $error_docs->tipo_documento_id = Tipo_Documento::select('id')->where('name',trim($request->get('tipoDoc')))->first()->id;
+                            $error_docs->solicitud_id = $id;
+                            $error_docs->numSol = $limitacion_rc_2[0]->numSol;
+                            $error_docs->patente = str_replace(".","",explode("-",$limitacion_rc_2[0]->ppu)[0]);
+                            $error_docs->save();
+                            return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación. Favor enviar el archivo de limitación nuevamente']);
                         }
                     }
                     else{
                         $validaDocLimi = false;
-                        return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación 2']);
+                        $error_docs = new ErrorEnvioDoc();
+                        $error_docs->tipo_documento_id = Tipo_Documento::select('id')->where('name',trim($request->get('tipoDoc')))->first()->id;
+                        $error_docs->solicitud_id = $id;
+                        $error_docs->numSol = $limitacion_rc_2[0]->numSol;
+                        $error_docs->patente = str_replace(".","",explode("-",$limitacion_rc_2[0]->ppu)[0]);
+                        $error_docs->save();
+                        return json_encode(['status'=>'ERROR','msj'=>'Error al subir documento de limitación. Favor enviar el archivo de limitación nuevamente.']);
                     }
 
                     return json_encode(['status'=>'OK','msj'=>'Solicitud de limitación registrada exitosamente']);

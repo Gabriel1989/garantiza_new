@@ -26,6 +26,11 @@
                 <label class="col-lg-5">
                     <input type="text" name="name" id="name" class="form-control" value="{{$concesionaria->name}}">
                 </label>
+
+                <label for="razon_social" class="col-lg-1 control-label">Razón social</label>
+                <label class="col-lg-5">
+                    <input type="text" name="razon_social" id="name" class="form-control" value="{{$concesionaria->name}}">
+                </label>
             </div>
             
         </div>

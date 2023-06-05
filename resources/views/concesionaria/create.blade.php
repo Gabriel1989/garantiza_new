@@ -12,7 +12,7 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label for="rut" class="col-lg-1 control-label">Código</label>
+                <label for="rut" class="col-lg-1 control-label">Rut</label>
                 <label class="col-lg-1">
                     <input type="text" name="rut" id="rut" class="form-control" placeholder="99.999.999-9" value="{{old('rut')}}">
                 </label>
@@ -20,6 +20,11 @@
                 <label for="name" class="col-lg-1 control-label">Concesionaria</label>
                 <label class="col-lg-5">
                     <input type="text" name="name" id="name" class="form-control" placeholder="Nombre de Concesionaria" value="{{old('name')}}">
+                </label>
+
+                <label for="razon_social" class="col-lg-1 control-label">Razón social</label>
+                <label class="col-lg-5">
+                    <input type="text" name="razon_social" id="razon_social" class="form-control" placeholder="Razón social de Concesionaria" value="{{old('razon_social')}}">
                 </label>
             </div>
         </div>

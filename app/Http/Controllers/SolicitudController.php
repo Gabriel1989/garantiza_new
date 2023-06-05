@@ -351,11 +351,11 @@ class SolicitudController extends Controller
                     
                 }
             }else{
-                return view('general.errorRC', ['glosa' => $ppu['glosa']]); 
+                return view('general.ErrorRC', ['glosa' => $ppu['glosa']]); 
             }
         }
         else{
-            return view('general.errorRC', ['glosa' => 'No hay una respuesta válida desde RC']); 
+            return view('general.ErrorRC', ['glosa' => 'No hay una respuesta válida desde RC']); 
         }
         
     }
@@ -1734,7 +1734,7 @@ class SolicitudController extends Controller
             $ppu = $ppu['PPU'];
             return view('solicitud.revision.PPU', compact('solicitud_PPU', 'ppu', 'id'));
         }else{
-            return view('general.errorRC', ['glosa' => $ppu['glosa']]); 
+            return view('general.ErrorRC', ['glosa' => $ppu['glosa']]); 
         }
     }
 
@@ -1952,7 +1952,7 @@ class SolicitudController extends Controller
         $salida = json_decode($data, true);
 
         if(!$salida['codigoresp']=='OK'){
-            return view('general.errorRC', ['glosa' => $salida['glosa']]); 
+            return view('general.ErrorRC', ['glosa' => $salida['glosa']]); 
         }
         return dd($salida);
         
@@ -2235,7 +2235,7 @@ class SolicitudController extends Controller
                     $solicitud2 = Solicitud::find($id);
                     $solicitud2->estado_id = 11;
                     $solicitud2->save();
-                    return view('general.errorRC', ['glosa' => $salida['glosa']]);
+                    return view('general.ErrorRC', ['glosa' => $salida['glosa']]);
                 }
             }
         }
@@ -2593,7 +2593,7 @@ class SolicitudController extends Controller
                     return view('solicitud.revision.docsIdentidadAuto', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
                 }
                 else{
-                    return view('general.errorRC', ['glosa' => $salida['glosa']]);
+                    return view('general.ErrorRC', ['glosa' => $salida['glosa']]);
                 }
             }
         }
@@ -2887,7 +2887,7 @@ class SolicitudController extends Controller
                     return view('solicitud.revision.docsIdentidadCamion', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
                 }
                 else{
-                    return view('general.errorRC', ['glosa' => $salida['glosa']]);
+                    return view('general.ErrorRC', ['glosa' => $salida['glosa']]);
                 }
             }
         }

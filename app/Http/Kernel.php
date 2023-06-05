@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'admin' => \App\Http\Middleware\PermisoAdmin::class,
         'ejecut.conces' => \App\Http\Middleware\EjecutConces::class,
         'ejecut.garantiza' => \App\Http\Middleware\EjecutGarantiza::class,
+        'ejecut.notaria' => \App\Http\Middleware\EjecutNotaria::class,
     ];
 }

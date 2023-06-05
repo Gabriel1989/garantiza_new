@@ -1,6 +1,6 @@
         <!-- sidebar menu -->
         <ul class="nav sidebar-menu">
-            @if (Auth::user()->rol_id>=4)
+            @if (Auth::user()->rol_id>=4 && Auth::user()->rol_id < 7)
             <li class="sidebar-label pt20">Menu</li>
             <li>
                 <a href="{{route('solicitud.verSolicitudes')}}">
@@ -25,11 +25,100 @@
             </li>
             
             <li>
+                
+                
                 <a href="{{route('solicitud.solicitarPPU')}}">
                     <span class="glyphicons glyphicons-inbox_plus"></span>
                     <span class="sidebar-title">Nueva Solicitud </span>
                 </a>
+
+                <!--
+                <a class="accordion-toggle 
+                    @php
+                        if (Route::is('solicitud.*')||
+                            Route::is('transferencia.*')) {
+                            echo 'menu-open';
+                        }   
+                    @endphp
+                    " 
+                    href="#">
+                    <span class="glyphicons glyphicons-inbox_plus"></span>
+                    <span class="sidebar-title">Nueva Solicitud</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+                    <li class="{{!Route::is('solicitud.*') ?: 'active'}}">
+                        <a href="{{route('solicitud.solicitarPPU')}}">
+                            <span class="glyphicons glyphicons-inbox_plus"></span> Primera inscripción </a>
+                    </li>
+                    <li class="{{!Route::is('transferencia.*') ?: 'active'}}">
+                        <a href="{{route('transferencia.index')}}">
+                            <span class="glyphicons glyphicons-car"></span> Transferencia </a>
+                    </li>
+                </ul>-->
             </li>
+            @endif
+
+            @if(Auth::user()->rol_id==7)
+            <li class="sidebar-label pt20">Menu</li>
+            <!--
+            <li>
+                <a href="{{route('solicitud.verSolicitudes')}}">
+                    <span class="glyphicons glyphicons-inbox_in"></span>
+                    <span class="sidebar-title">Mis Solicitudes </span>
+                    <span class="sidebar-title-tray">
+                        <span class="label label-xs bg-primary">{{App\Models\Solicitud::getCountFromUser(Auth::user()->id)[0]->cantidad}}</span>
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{route('solicitud.sinTerminar')}}">
+                    <span class="fa fa-warning"></span>
+                    <span class="sidebar-title">Solicitudes sin terminar </span>
+                    <span class="sidebar-title-tray">
+                        <span class="label label-xs bg-warning">
+                            {{App\Models\Solicitud::getCountFromUnterminated(Auth::user()->id)[0]->cantidad}}
+                        </span>
+                    </span>
+                </a>
+            </li>-->
+            
+            <li>
+                
+                
+                <a href="{{route('transferencia.index')}}">
+                    <span class="glyphicons glyphicons-inbox_plus"></span>
+                    <span class="sidebar-title">Nueva Solicitud </span>
+                </a>
+
+                <!--
+                <a class="accordion-toggle 
+                    @php
+                        if (Route::is('solicitud.*')||
+                            Route::is('transferencia.*')) {
+                            echo 'menu-open';
+                        }   
+                    @endphp
+                    " 
+                    href="#">
+                    <span class="glyphicons glyphicons-inbox_plus"></span>
+                    <span class="sidebar-title">Nueva Solicitud</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+                    <li class="{{!Route::is('solicitud.*') ?: 'active'}}">
+                        <a href="{{route('solicitud.solicitarPPU')}}">
+                            <span class="glyphicons glyphicons-inbox_plus"></span> Primera inscripción </a>
+                    </li>
+                    <li class="{{!Route::is('transferencia.*') ?: 'active'}}">
+                        <a href="{{route('transferencia.index')}}">
+                            <span class="glyphicons glyphicons-car"></span> Transferencia </a>
+                    </li>
+                </ul>-->
+            </li>
+
+
             @endif
 
             @if (Auth::user()->rol_id==1)
@@ -44,7 +133,8 @@
                             Route::is('tipo_tramite.*')||
                             Route::is('tipo_documento.*') ||
                             Route::is('acreedor.*') ||
-                            Route::is('rechazo.*')) {
+                            Route::is('rechazo.*') ||
+                            Route::is('notaria.*')) {
                             echo 'menu-open';
                         }   
                     @endphp
@@ -86,6 +176,10 @@
                     <li  class="{{!Route::is('rechazo.*') ?: 'active'}}">
                         <a href="{{route('rechazo.index')}}">
                             <span class="glyphicon glyphicon-minus-sign"></span> Estado Rechazos </a>
+                    </li>
+                    <li  class="{{!Route::is('notaria.*') ?: 'active'}}">
+                        <a href="{{route('notaria.index')}}">
+                            <span class="glyphicon glyphicon-folder-close"></span> Notarias </a>
                     </li>
                 </ul>
             </li>

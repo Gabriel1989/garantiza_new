@@ -45,6 +45,7 @@ class ConcesionariaController extends Controller
         $concesionaria->name = $request->get('name');
         $concesionaria->rut = $rut;
         $concesionaria->dv = $dv;
+        $concesionaria->razon_social = $request->get('razon_social');
 
         $concesionaria->save();
 
@@ -91,6 +92,7 @@ class ConcesionariaController extends Controller
         $concesionaria->name = $request->get('name');
         $concesionaria->rut = $rut;
         $concesionaria->dv = $dv;
+        $concesionaria->razon_social = $request->get('razon_social');
 
         $concesionaria->save();
 

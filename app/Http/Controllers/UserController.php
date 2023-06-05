@@ -6,6 +6,7 @@ use App\Http\Requests\UserRequest;
 use App\Models\Concesionaria;
 use App\Models\Rol;
 use App\Models\User;
+use App\Models\Notaria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\MessageBag;
@@ -22,7 +23,8 @@ class UserController extends Controller
     {
         $roles = Rol::all();
         $concesionarias = Concesionaria::all();
-        return view('usuario.create', compact('roles', 'concesionarias'));
+        $notarias = Notaria::all();
+        return view('usuario.create', compact('roles', 'concesionarias','notarias'));
     }
 
     public function store(UserRequest $request)
@@ -32,6 +34,12 @@ class UserController extends Controller
         $user->email = $request->get('email');
         $user->password = Hash::make($request->get('password'));
         $user->rol_id = $request->get('rol_id');
+        if($request->get('rol_id') == 7){
+            $user->notaria_id = $request->get('notaria_id');
+        }
+        else if($request->get('rol') >=4 && $request->get('rol') < 7){
+            $user->concesionaria_id = $request->get('concesionaria_id');
+        }
         $user->activo = 1;
         $user->save();
         return redirect()->route('usuario.index')->with('mensaje', 'Usuario agregado correctamente');
@@ -48,7 +56,8 @@ class UserController extends Controller
         $usuario = User::findOrFail($id);
         $roles = Rol::all();
         $concesionarias = Concesionaria::all();
-        return view('usuario.edit', compact('usuario', 'roles', 'concesionarias'));
+        $notarias = Notaria::all();
+        return view('usuario.edit', compact('usuario', 'roles', 'concesionarias','notarias'));
     }
 
     public function update(Request $request, $id)
@@ -67,8 +76,9 @@ class UserController extends Controller
             $tieneError = true;
         }
 
-        if(is_null($request->get('concesionaria_id'))){
-            $errors->add('Garantiza', 'Debe seleccionar una concesionaria.');
+        
+        if(is_null($request->get('concesionaria_id')) && is_null($request->get('notaria_id'))){
+            $errors->add('Garantiza', 'Debe seleccionar una concesionaria o una notaria');
             $tieneError = true;
         }
 
@@ -78,7 +88,12 @@ class UserController extends Controller
 
         $usuario->name = $request->get('name');
         $usuario->rol_id = $request->get('rol_id');
-        $usuario->concesionaria_id = $request->get('concesionaria_id');
+        if($request->get('rol_id') == 7){
+            $usuario->notaria_id = $request->get('notaria_id');
+        }
+        else if($request->get('rol') >=4 && $request->get('rol') < 7){
+            $usuario->concesionaria_id = $request->get('concesionaria_id');
+        }
         $usuario->save();
         return redirect()->route('usuario.index')->with('mensaje', 'Usuario modificado correctamente');
 
@@ -96,46 +111,4 @@ class UserController extends Controller
             abort(404);
         }
     }
-}
-
-
-/*
-        $errors = new MessageBag();
-        $usuario = User::findOrFail($id);
-        
-        $tieneError = false;
-
-        // Validación para cambio de password
-        if($request->has('new_pass_1')){
-            if(is_null($request->get('old_pass'))){
-                $errors->add('Garantiza', 'El ingreso de la password actual es obligatorio.');
-                $tieneError = true;
-            }
-
-            if(is_null($request->get('new_pass_1'))){
-                $errors->add('Garantiza', 'El ingreso de la nueva password es obligatorio.');
-                $tieneError = true;
-            }
-
-            if(is_null($request->get('new_pass_2'))){
-                $errors->add('Garantiza', 'El reingreso de la nueva password es obligatorio.');
-                $tieneError = true;
-            }
-
-            if($request->get('new_pass_1')!=$request->get('new_pass_2')){
-                $errors->add('Garantiza', 'La nueva password no fue reingresada correctamente.');
-                $tieneError = true;
-            }
-
-            if(Hash::make($request->get('old_pass'))!=$usuario->password){
-                $errors->add('Garantiza', 'La password actual es incorrecta.');
-                $tieneError = true;
-            }
-
-            if($tieneError){
-                return view('usuario.password', compact('usuario'))->withErrors($errors);
-            }
-        }
-
-        return 'Listo';
-*/        
+}       
