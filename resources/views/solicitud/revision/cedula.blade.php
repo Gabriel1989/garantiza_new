@@ -11,25 +11,41 @@
             <span class="panel-title">Revisión de Solicitud N° {{$id}} - Datos Solicitud del Cliente</span>
         </div>
         <div class="panel-body">
-            <iframe width="1400" height="800" src="{{route('solicitud.continuar', ['id' => $id,'reingresa'=> 0,'acceso' => 'revision'])}}"></iframe>
+            <div class="flex-container">
+                <div class="responsive-iframe">
+                    <iframe width="1400" height="800" src="{{route('solicitud.continuar', ['id' => $id,'reingresa'=> 0,'acceso' => 'revision'])}}"></iframe>
+                </div>
+            </div>
             <div class="form-group">
                 <div class="row">
                     <div class="col-lg-4">
                         @if($cedula_cliente != null)
                         <label>Cédula Cliente</label>
-                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $cedula_cliente->name)}}" frameborder="0"></iframe>
+                            <div class="flex-container">
+                                <div class="responsive-iframe">
+                                    <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $cedula_cliente->name)}}" frameborder="0"></iframe>
+                                </div>
+                            </div>
                         @endif
                     </div>
                     <div class="col-lg-4">
                         @if($cedula_compra_para != null)
                         <label>Cédula Compra Para</label>
-                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $cedula_compra_para->name)}}" frameborder="0"></iframe>
+                        <div class="flex-container">
+                            <div class="responsive-iframe">
+                                    <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $cedula_compra_para->name)}}" frameborder="0"></iframe>
+                            </div>
+                        </div>
                         @endif
                     </div>
                     <div class="col-lg-3">
                         @if($factura_cliente != null)
                         <label>Factura</label>
-                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $factura_cliente->name)}}" frameborder="0"></iframe>
+                        <div class="flex-container">
+                            <div class="responsive-iframe">
+                                <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $factura_cliente->name)}}" frameborder="0"></iframe>
+                            </div>
+                        </div>
                         @endif
                     </div>
                 </div>
@@ -37,7 +53,11 @@
                     <div class="col-lg-4">
                         @if($rol_empresa != null)
                         <label>Rol de empresa</label>
-                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $rol_empresa->name)}}" frameborder="0"></iframe>
+                        <div class="flex-container">
+                            <div class="responsive-iframe">
+                                <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $rol_empresa->name)}}" frameborder="0"></iframe>
+                            </div>
+                        </div>
                         @endif
                     </div>
                     <div class="col-lg-4">
@@ -45,7 +65,11 @@
                     <div class="col-lg-3">
                         @if($doc_limitacion != null)
                         <label>Documento limitación/prohibición</label>
-                        <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $doc_limitacion->name)}}" frameborder="0"></iframe>
+                        <div class="flex-container">
+                            <div class="responsive-iframe">
+                                <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $doc_limitacion->name)}}" frameborder="0"></iframe>
+                            </div>
+                        </div>
                         @endif
                     </div>
                 </div>

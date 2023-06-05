@@ -41,3 +41,26 @@
         transform: rotate(360deg);
     }
 }
+
+.flex-container {
+    display: flex;
+    justify-content: center;
+    /* Centrar el iframe horizontalmente */
+}
+
+.responsive-iframe {
+    position: relative;
+    width: 100%;
+    /* O cualquier porcentaje o cantidad fija que prefieras */
+    padding-bottom: 56.25%;
+    /* Proporción 16:9 */
+    overflow: hidden;
+}
+
+.responsive-iframe iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
