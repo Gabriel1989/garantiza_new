@@ -10,7 +10,7 @@
         <div class="panel-heading">
             <span class="panel-title">Revisión de Solicitud N° {{$id}} - Datos Solicitud del Cliente</span>
         </div>
-        <div class="panel-body">
+        <div class="panel-body" style="overflow:scroll;">
             <div class="flex-container">
                 <div class="responsive-iframe">
                     <iframe width="1400" height="800" src="{{route('solicitud.continuar', ['id' => $id,'reingresa'=> 0,'acceso' => 'revision'])}}"></iframe>
