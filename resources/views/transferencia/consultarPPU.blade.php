@@ -15,8 +15,7 @@
             <div class="form-group">
                 <label for="name" class="col-lg-1">Ingrese PPU de vehículo a consultar: </label>
                 <label class="col-lg-5">
-                    <input type="text" name="ppu_request" id="ppu_request" placeholder="" maxlength="6" value="<?php if($solicitud_data != null){ echo trim($solicitud_data->vehiculo->ppu);}?>
-                    ">
+                    <input type="text" name="ppu_request" id="ppu_request" placeholder="" maxlength="6" value="{{($solicitud_data != null)?trim($solicitud_data->vehiculo->ppu) : ''}}">
                 </label>
             </div>
             

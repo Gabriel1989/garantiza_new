@@ -330,31 +330,32 @@ class DocumentoController extends Controller
                 return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir factura en PDF. Inténtelo nuevamente']);
             }
 
-
-            //Rol de empresa
-            $parametros4 = [
-                'consumidor' => 'ACOBRO',
-                'servicio' => 'INGRESO DOCUMENTOS RVM',
-                'file' => ($base64_rol_empresa == '')? base64_encode(file_get_contents($request->file('Rol_PDF')->getRealPath())) : $base64_rol_empresa,
-                'patente' => str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]),
-                'nro' => $solicitud_rc[0]->numeroSol,
-                'tipo_sol' => 'P',
-                'tipo_doc' => "PDF",
-                'clasificacion' => 1,
-                'fecha_ing' => date('d-m-Y'),
-                'nombre' => ($base64_rol_empresa == '')? $request->file('Rol_PDF')->getClientOriginalName() : str_replace('public/','',$rol_empresa->name)
-            ];
-            $data = RegistroCivil::subirDocumentos(json_encode($parametros4));
-            $salida = json_decode($data, true);
-            if (isset($salida['OUTPUT'])) {
-                if ($salida['OUTPUT'] != "OK") {
-                    Log::error('Error al subir rol de empresa en PDF 1');
+            if($solicitud->empresa==1){
+                //Rol de empresa
+                $parametros4 = [
+                    'consumidor' => 'ACOBRO',
+                    'servicio' => 'INGRESO DOCUMENTOS RVM',
+                    'file' => ($base64_rol_empresa == '')? base64_encode(file_get_contents($request->file('Rol_PDF')->getRealPath())) : $base64_rol_empresa,
+                    'patente' => str_replace(".","",explode("-",$solicitud_rc[0]->ppu)[0]),
+                    'nro' => $solicitud_rc[0]->numeroSol,
+                    'tipo_sol' => 'P',
+                    'tipo_doc' => "PDF",
+                    'clasificacion' => 1,
+                    'fecha_ing' => date('d-m-Y'),
+                    'nombre' => ($base64_rol_empresa == '')? $request->file('Rol_PDF')->getClientOriginalName() : str_replace('public/','',$rol_empresa->name)
+                ];
+                $data = RegistroCivil::subirDocumentos(json_encode($parametros4));
+                $salida = json_decode($data, true);
+                if (isset($salida['OUTPUT'])) {
+                    if ($salida['OUTPUT'] != "OK") {
+                        Log::error('Error al subir rol de empresa en PDF 1');
+                        return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF. Inténtelo nuevamente']);
+                    }
+                }
+                else{
+                    Log::error('Error al subir rol de empresa en PDF 2');
                     return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF. Inténtelo nuevamente']);
                 }
-            }
-            else{
-                Log::error('Error al subir rol de empresa en PDF 2');
-                return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF. Inténtelo nuevamente']);
             }
 
             $new_documento_rc = new EnvioDocumentoRC();

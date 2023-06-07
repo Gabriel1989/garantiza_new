@@ -38,8 +38,13 @@ class TransferenciaController extends Controller{
         $solicita_data = false;
         $salida = null;
         $id_transferencia = 0;
+        $id_comprador = 0;
+        $id_vendedor = 0;
         $solicitud_data = null;
-        return view('transferencia.index',compact('solicita_data','salida','id_transferencia','solicitud_data'));
+        $id_transferencia_rc = 0;
+        $id_estipulante = 0;
+        
+        return view('transferencia.index',compact('solicita_data','salida','id_estipulante','id_transferencia_rc','id_comprador','id_vendedor','id_transferencia','solicitud_data'));
     }
 
     public function consultaDataVehiculo(Request $request){
@@ -629,7 +634,7 @@ class TransferenciaController extends Controller{
                     'nombresRazon' => $estipulante->nombre,
                     'aPaterno' => $estipulante->aPaterno,
                     'aMaterno' => $estipulante->aMaterno,
-                    'email' => is_null($estipulante->email) ? 'info@acobro.cl' : $estipulante->email
+                    'Email' => is_null($estipulante->email) ? 'info@acobro.cl' : $estipulante->email
                 ],
                 'direccion' => [
                     'calle' => $estipulante->calle,
@@ -651,7 +656,7 @@ class TransferenciaController extends Controller{
                     'nombresRazon' => '',
                     'aPaterno' => '',
                     'aMaterno' => '',
-                    'email' => ''
+                    'Email' => ''
                 ],
                 'direccion' => [
                     'calle' => '',
@@ -669,21 +674,21 @@ class TransferenciaController extends Controller{
         $datosReingreso = null;
         if($reingreso != null && $get_transferencia_rc != null){
             $datosReingreso = array(
-                'fechaResExenta' => $request->get('fechaResExenta'),
-                'fechaSolRech' => $request->get('fechaSolRech'),
-                'nroResExenta' => $request->get('nroResExenta'),
-                'nroSolicitud' => $reingreso->nroSolicitud,
-                'ppu' => $reingreso->ppu
+                'FechaResExenta' => $request->get('fechaResExenta'),
+                'FechaSolRech' => $request->get('fechaSolRech'),
+                'NroResExenta' => $request->get('nroResExenta'),
+                'NroSolicitud' => $reingreso->nroSolicitud,
+                'PPU' => $reingreso->ppu
             );
             Log::info('adjunta datos de reingreso');
         }
         else{
             $datosReingreso = array(
-                'fechaResExenta' => '',
-                'fechaSolRech' => '',
-                'nroResExenta' => '',
-                'nroSolicitud' => '',
-                'ppu' => ''
+                'FechaResExenta' => '',
+                'FechaSolRech' => '',
+                'NroResExenta' => '',
+                'NroSolicitud' => '',
+                'PPU' => ''
             );
             Log::info('no adjunta datos de reingreso');
         }
@@ -783,8 +788,8 @@ class TransferenciaController extends Controller{
             )
         ];
 
-        $parametros['estipulante'] = $datosEstipulante;
-        $parametros['reIngreso'] = $datosReingreso;
+        $parametros['Estipulante'] = $datosEstipulante;
+        $parametros['ReIngreso'] = $datosReingreso;
 
         //dd($parametros);
 
@@ -793,10 +798,9 @@ class TransferenciaController extends Controller{
 
         dd($salida);
 
-        if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3){
+        //if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3){
             
             
-
             if(isset($salida['codigoresp'])){
                 //dd((int)$salida['codigoresp']);
                 $cod_salida_resp = (int)$salida['codigoresp'];
@@ -879,7 +883,7 @@ class TransferenciaController extends Controller{
             else{
                 return view('general.ErrorRC', ['glosa' => $salida['glosa']]);
             }
-        }
+        /*}
         else{
             $solicitud2 = Transferencia::find($id);
             $solicitud2->estado_id = 5;
@@ -890,6 +894,6 @@ class TransferenciaController extends Controller{
             $ppu_rc = null;
 
             return view('transferencia.menuDocs', compact('id', 'nro_solicitud_transf_rc', 'ppu_rc','transferencia_rc'));
-        }
+        }*/
     }
 }
