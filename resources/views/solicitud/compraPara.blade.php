@@ -18,7 +18,7 @@
                     
                     <label for="nombre" class="col-lg-2 control-label">Nombre :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="nombre" id="nombre_comprapara" class="form-control" placeholder="Nombre del Adquiriente" value="{{!is_null($comprapara)?  $comprapara->nombre : ''}}" >
+                        <input type="text" name="nombre" id="nombre_comprapara" class="form-control" placeholder="Nombre del Compra Para" value="{{!is_null($comprapara)?  $comprapara->nombre : ''}}" >
                     </label>
                 </div>
                 <div class="form-group">
@@ -218,6 +218,42 @@
             processData: false,
             contentType: false,
             type: "POST",
+            error: function(jqXHR, textStatus, errorThrown) {
+                hideOverlay();
+                if (jqXHR.status == 400) { // Verificar el código de estado
+                    var errors = JSON.parse(jqXHR.responseText).errors;
+                    for (var errorKey in errors) {
+                        if (errors.hasOwnProperty(errorKey)) {
+                            var messages = errors[errorKey];
+                            for (var i = 0; i < messages.length; i++) {
+                                new PNotify({
+                                    title: 'Error',
+                                    text: messages[i],
+                                });
+                            }
+                        }
+                    }
+                } else {
+                    // Acción cuando hay un error.
+                    new PNotify({
+                        title: 'Error',
+                        text: "Error: " + textStatus + ' : ' + errorThrown,
+                        shadow: true,
+                        opacity: '1',
+                        addclass: 'stack_top_right',
+                        type: 'danger',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '500px'
+                    });
+                }
+
+            },
             success: function(data){
                 hideOverlay();
                 if(parseFloat($("#id_comprapara").val()) == 0){

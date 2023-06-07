@@ -151,6 +151,8 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
                                     $(".fechaRechazos").datepicker({
                                         language: 'es',
                                         dateFormat: 'yymmdd',
+                                        changeMonth: true, 
+                                        changeYear: true
                                     });
                                 </script>
 

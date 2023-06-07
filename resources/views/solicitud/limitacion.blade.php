@@ -593,5 +593,7 @@ use App\Models\ErrorEnvioDoc;
     $(".fechaRechazos").datepicker({
         language: 'es',
         dateFormat: 'yymmdd',
+        changeMonth: true, 
+        changeYear: true
     });
 </script>

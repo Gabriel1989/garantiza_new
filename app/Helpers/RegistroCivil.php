@@ -152,4 +152,46 @@ class RegistroCivil{
 
         return $result;
     }
+
+    public static function creaStev($parametro){
+        //$wsdl = 'StevAPI/WSDL/CreaStev_new.wsdl';
+        $url = 'http://181.212.92.141/RC_API/STEV/CreaStev.php';
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
+    }
+
+    public static function limTransf($parametro){
+        //$wsdl = 'StevAPI/WSDL/LimTransf.wsdl';
+        $url = 'http://181.212.92.141/RC_API/STEV/LimTransf.php';
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
+    }
+
+    public static function consultaTransferencia($parametro){
+        //$wsdl = 'StevAPI/WSDL/ConsultaTransferenciaConConsumidor_PID.wsdl';
+        $url = 'http://181.212.92.141/RC_API/STEV/ConsultaTransf.php';
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
+    }
 }

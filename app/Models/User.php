@@ -21,4 +21,8 @@ class User extends Model
     public function concesionaria(){
         return $this->belongsTo('App\Models\Concesionaria','concesionaria_id','id');
     }
+
+    public function notaria(){
+        return $this->belongsTo('App\Models\Notaria','notaria_id','id');
+    }
 }

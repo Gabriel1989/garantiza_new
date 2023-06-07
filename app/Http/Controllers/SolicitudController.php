@@ -1270,15 +1270,15 @@ class SolicitudController extends Controller
             $no_para->solicitud_id = $id;
             $no_para->save();
         }
-
-        $solicitud = Solicitud::find($id);
-        $solicitud->estado_id = 3;
-        if(!$solicitud->save()){
-            DB::rollBack();
-            $errors->add('Garantiza', 'Problemas al actualizar estado de Solicitud.');
-            return redirect()->route('solicitud.adquirientes', ['id' => $id])->withErrors($errors);
+        if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 5 || Auth::user()->rol_id == 6){
+            $solicitud = Solicitud::find($id);
+            $solicitud->estado_id = 3;
+            if(!$solicitud->save()){
+                DB::rollBack();
+                $errors->add('Garantiza', 'Problemas al actualizar estado de Solicitud.');
+                return redirect()->route('solicitud.adquirientes', ['id' => $id])->withErrors($errors);
+            }
         }
-
         DB::commit();
 
         $solicitud = Solicitud::getTipoVehiculo($id);

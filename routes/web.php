@@ -273,6 +273,11 @@ Route::group(["middleware"=>["auth","ejecut.notaria"]],function(){
     Route::post('transferencia/consultaDataVehiculo', 'TransferenciaController@consultaDataVehiculo')->name('transferencia.consultaDataVehiculo');
     Route::post('transferencia', 'TransferenciaController@store')->name('transferencia.store');
     Route::get('transferencia/continuarSolicitud/{id}/{reingresa?}/{acceso?}','TransferenciaController@continuarSolicitud')->name('transferencia.continuarSolicitud');
+    Route::post('transferencia/{id}/saveCompradores','TransferenciaController@saveCompradores')->name('transferencia.saveCompradores');
+    Route::post('transferencia/{id}/saveVendedor','TransferenciaController@saveVendedor')->name('transferencia.saveVendedor');
+    Route::post('transferencia/{id}/saveEstipulante','TransferenciaController@saveEstipulante')->name('transferencia.saveEstipulante');
+    Route::post('transferencia/traeNaturalezasporTipoDoc','TransferenciaController@traeNaturalezasporTipoDoc')->name('traeNaturalezasporTipoDoc');
+    Route::post('transferencia/{id}/updateDataTransferencia','TransferenciaController@updateDataTransferencia')->name('transferencia.updateDataTransferencia');
 
 });
 

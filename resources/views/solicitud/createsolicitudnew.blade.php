@@ -168,6 +168,8 @@ $(document).ready(function() {
     $("#fecha_emision_fac").datepicker({
         language: 'es',
         dateFormat: 'yymmdd',
+        changeMonth: true, 
+        changeYear: true
     });
 
     $('#FacturaXML').on('click', function() {

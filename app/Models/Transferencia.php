@@ -14,6 +14,10 @@ class Transferencia extends Model
         return $this->hasOne(InfoVehiculoTransferencia::class, 'transferencia_id','id');
     }
 
+    public function propietario(){
+        return $this->hasOne(Propietario::class, 'transferencia_id','id');
+    }
+
     public static function getTransferenciaRC($id){
         return DB::table('transferencias_rc')
             ->where('transferencias_rc.transferencia_id', '=', $id)
