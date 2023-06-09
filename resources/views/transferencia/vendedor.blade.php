@@ -16,7 +16,7 @@
                             value="{{ isset($vendedor->id) ? $vendedor->id : 0 }}">
                         <input type="text" name="rut" id="rut2" class="form-control rut2"
                             placeholder="99.999.999-9"
-                            value="{{ isset($vendedor->rut) ? str_replace('.', '', explode('-', $vendedor->rut)[0]) : $propietario_data->rut }}"
+                            value="{{ isset($vendedor->rut) ? str_replace('.', '', explode('-', $vendedor->rut)[0]) : str_replace('.', '', explode('-',$propietario_data->rut)[0]) }}"
                             required>
                     </label>
                     <label class="col-lg-2"></label>
@@ -25,7 +25,7 @@
                     <label class="col-lg-4">
                         <input type="text" name="nombre" id="nombre" class="form-control"
                             placeholder="Nombre del Vendedor"
-                            value="{{ isset($vendedor->nombre) ? $vendedor->nombre : $propietario_data->nombre }}" required>
+                            value="{{ isset($vendedor->nombre) ? $vendedor->nombre : (($propietario_data->nombre != null)? $propietario_data->nombre : $propietario_data->razon_social)  }}" required>
                     </label>
                 </div>
                 <div class="form-group">
@@ -43,22 +43,24 @@
                             value="{{ isset($vendedor->aMaterno) ? $vendedor->aMaterno : $propietario_data->aMaterno }}">
                     </label>
                 </div>
+                <!--
                 <div class="form-group">
                     <label for="calle" class="col-lg-2 control-label">Dirección (calle) :</label>
                     <label class="col-lg-4">
                         <input type="text" name="calle" id="calle" class="form-control"
                             placeholder="Calle de la dirección"
-                            value="{{ isset($vendedor->calle) ? $vendedor->calle : '' }}" required>
+                            value="{{ isset($vendedor->calle) ? $vendedor->calle : '' }}">
                     </label>
 
                     <label for="numero" class="col-lg-2 control-label">Número :</label>
                     <label class="col-lg-2">
                         <input type="text" name="numero" id="numero" class="form-control"
                             placeholder="Número de la dirección"
-                            value="{{ isset($vendedor->numero) ? $vendedor->numero : old('numero') }}" required>
+                            value="{{ isset($vendedor->numero) ? $vendedor->numero : old('numero') }}">
                     </label>
                     <label class="col-lg-2"></label>
-                </div>
+                </div>-->
+                <!--
                 <div class="form-group">
                     <label for="rDireccion" class="col-lg-2 control-label">Complemento de dirección :</label>
                     <label class="col-lg-4">
@@ -78,26 +80,24 @@
                             @endforeach
                         </select>
                     </label>
-                </div>
+                </div>-->
                 <div class="form-group">
                     <label for="email" class="col-lg-2 control-label">Email :</label>
                     <label class="col-lg-4">
                         <input type="email" name="email" id="email" class="form-control" placeholder="Email"
-                            value="{{ isset($vendedor->email) ? $vendedor->email : '' }}" required>
+                            value="{{ isset($vendedor->email) ? $vendedor->email : '' }}">
                     </label>
-
+                    <!--
                     <label for="telefono" class="col-lg-2 control-label">Teléfono :</label>
                     <label class="col-lg-2">
                         <input type="text" name="telefono" id="telefono" class="form-control"
                             placeholder="Ej. 978653214"
-                            value="{{ isset($vendedor->telefono) ? $vendedor->telefono : '' }}" required>
+                            value="{{ isset($vendedor->telefono) ? $vendedor->telefono : '' }}" >
                     </label>
-                    <label class="col-lg-2"></label>
-                </div>
-                <div class="form-group">
+                    <label class="col-lg-2"></label>-->
                     <label for="tipoPersona2" class="col-lg-2 control-label">Tipo de Persona :</label>
                     <label class="col-lg-4">
-                        <select class="col-sm-12 form-select" name="tipoPersona" id="tipoPersona2">
+                        <select class="col-sm-12 form-select" name="tipoPersona" id="tipoPersona2" required>
                             @if (!isset($vendedor->tipo))
                                 <option value="N" selected>NATURAL</option>
                                 <option value="J">JURÍDICO</option>
@@ -115,6 +115,9 @@
                             @endif
                         </select>
                     </label>
+                </div>
+                <div class="form-group">
+                    
                 </div>
                 <hr>
             </div>
@@ -250,14 +253,15 @@
                 let json = JSON.parse(jsonString);
                 if (json.status == "OK") {
                     if (parseFloat($("#vendedor_1").val()) == 0) {
-                        $("#pills-vendedor").html(json.html);
-                        $("#pills-profile").removeClass('show');
-                        $("#pills-home").removeClass('show');
+                        $("#pills-estipulante").html(json.html);
                         $("#pills-vendedor").removeClass('show');
-                        $("#pills-vendedor-tab").attr("href", "#pills-vendedor");
-                        $("#pills-vendedor-tab").toggleClass('disabled');
-                        $("#pills-vendedor-tab").attr("aria-disabled", false);
-                        $("#pills-vendedor-tab").click();
+                        $("#pills-vendedor").addClass('hide');
+                        $("#pills-estipulante").removeClass('hide');
+                        $("#pills-estipulante").addClass('show');
+                        $("#pills-estipulante-tab").attr("href", "#pills-estipulante");
+                        $("#pills-estipulante-tab").toggleClass('disabled');
+                        $("#pills-estipulante-tab").attr("aria-disabled", false);
+                        $("#pills-estipulante-tab").click();
                         $("#vendedor_1").val(json.id_vendedor);
                     } else {
                         new PNotify({

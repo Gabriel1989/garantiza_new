@@ -20,6 +20,7 @@ use App\Models\NaturalezaDoc;
 use App\Models\NaturalezaActo;
 use App\Models\Tipo_Documento;
 use App\Models\TransferenciaData;
+use App\Models\Documento;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -43,8 +44,9 @@ class TransferenciaController extends Controller{
         $solicitud_data = null;
         $id_transferencia_rc = 0;
         $id_estipulante = 0;
+        $acceso = 'ingreso';
         
-        return view('transferencia.index',compact('solicita_data','salida','id_estipulante','id_transferencia_rc','id_comprador','id_vendedor','id_transferencia','solicitud_data'));
+        return view('transferencia.index',compact('acceso','solicita_data','salida','id_estipulante','id_transferencia_rc','id_comprador','id_vendedor','id_transferencia','solicitud_data'));
     }
 
     public function consultaDataVehiculo(Request $request){
@@ -73,7 +75,7 @@ class TransferenciaController extends Controller{
         $solicitud_id = $request->get('transferencia_id');
         if($solicitud_id != 0){
             $solicitud = Transferencia::find($solicitud_id);
-            $solicitud->notaria_id = $request->get('notaria_id');
+            $solicitud->notaria_id = Auth::user()->notaria->id;
             if(Auth::user()->rol_id == 7){
                 $solicitud->estado_id = 1;
                 $solicitud->user_id = Auth::user()->id;
@@ -118,7 +120,7 @@ class TransferenciaController extends Controller{
         }
         else{
             $solicitud = new Transferencia();
-            $solicitud->notaria_id = $request->get('notaria_id');
+            $solicitud->notaria_id = Auth::user()->notaria->id;
             if(Auth::user()->rol_id == 7){
                 $solicitud->estado_id = 1;
                 $solicitud->user_id = Auth::user()->id;
@@ -176,6 +178,8 @@ class TransferenciaController extends Controller{
         $region = Region::all();
         $solicita_data = true;
 
+        session(['solicitud_id_transf' => $id]);
+
         if($reingresa){
             if($reingreso == null){
                 $transferencia_rc = TransferenciaRC::where('solicitud_id',$id)->first();
@@ -229,7 +233,12 @@ class TransferenciaController extends Controller{
                     $id_estipulante = 0;
                 }
             }
-
+            return view('transferencia.index', compact('acceso','estipulante','compradores','vendedor','propietario_data','documento_rc','reingreso','region','solicita_data','solicitud_data','comunas','id_transferencia','id','id_comprador','id_estipulante','id_vendedor','id_transferencia_rc'));
+        }
+        else{
+            $estipulante = null;
+            $compradores = null;
+            $vendedor = null;
         }
         //Menu comprador: solicitud recién creada
         return view('transferencia.index', compact('acceso','estipulante','compradores','vendedor','propietario_data','documento_rc','reingreso','region','solicita_data','solicitud_data','comunas','id_transferencia','id','id_comprador','id_estipulante','id_vendedor','id_transferencia_rc'));
@@ -382,7 +391,11 @@ class TransferenciaController extends Controller{
         $compradores = Comprador::getSolicitud($id);
         $comunas = Comuna::allOrder();
         $vendedor = null;
-        $html = view('solicitud.vendedor', compact('id', 'comunas', 'compradores','vendedor'))->render();
+        $propietario_data = null;
+        if($solicitud != null){
+            $propietario_data = Propietario::where('transferencia_id',$id)->where('vehiculo_id',$solicitud->vehiculo->id)->first();
+        }
+        $html = view('transferencia.vendedor', compact('id', 'comunas','propietario_data', 'compradores','vendedor'))->render();
 
         return response()->json(['status' => "OK","html" => $html, "id_comprador" => $comprador->id]);
 
@@ -392,11 +405,7 @@ class TransferenciaController extends Controller{
         $errors = new MessageBag();
         if(is_null($request->input('rut'))) $errors->add('Garantiza', 'Debe Ingresar el Rut del Vendedor.');
         if(is_null($request->input('nombre'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Vendedor.');
-        if(is_null($request->input('calle'))) $errors->add('Garantiza', 'Debe Ingresar la dirección del Vendedor.');
-        if(is_null($request->input('numero'))) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Vendedor.');
-        if($request->input('comuna')=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Vendedor.');
         if(is_null($request->input('email'))) $errors->add('Garantiza', 'Debe Ingresar el email del Vendedor.');
-        if(is_null($request->input('telefono'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Vendedor.');
 
         if($errors->count()>0) return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
         DB::beginTransaction();
@@ -456,12 +465,14 @@ class TransferenciaController extends Controller{
         }
 
         DB::commit();
+        sleep(2);
         $vendedor = Vendedor::getSolicitud($id);
         $comunas = Comuna::allOrder();
         $estipulante = null;
-        $html = view('transferencia.estipulante', compact('id', 'comunas', 'vendedor','estipulante'))->render();
+        $compradores = Comprador::getSolicitud($id);
+        $html = view('transferencia.estipulante', compact('id', 'comunas','compradores', 'vendedor','estipulante'))->render();
 
-        return response()->json(['status' => "OK","html" => $html, "id_vendedor" => $vendedor->id]);
+        return response()->json(['status' => "OK","html" => $html, "id_vendedor" => $vendedor[0]->id]);
     }
 
     public function saveEstipulante(Request $request, $id){
@@ -563,8 +574,9 @@ class TransferenciaController extends Controller{
         }
 
         DB::commit();
+        $comunas = Comuna::all();
 
-        $html = view('transferencia.dataResumen', compact('id'))->render();
+        $html = view('transferencia.dataResumen', compact('id','comunas'))->render();
         if ($guardaestipulante == "SI") {
             return response()->json(['status' => "OK","html" => $html, "id_estipulante" => $estipulante->id]);
         }else{
@@ -575,8 +587,16 @@ class TransferenciaController extends Controller{
     public function traeNaturalezasporTipoDoc(Request $request){
         $tipo_doc = Tipo_Documento::select('id')->where('name',trim($request->tipoDocTransf))->first()->id;
         $naturalezas = NaturalezaDoc::where('tipo_documento_id',$tipo_doc)->get();
+        $id = session('solicitud_id_transf');
+        $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
+        $selected = '';
         foreach($naturalezas as $item){
-            echo '<option value="'.$item->naturalezas->nombre.'">'.$item->naturalezas->nombre.'</option>';    
+            if($transferencia_data != null){
+                if($item->naturalezas->nombre == $transferencia_data->naturaleza->nombre){
+                    $selected = 'selected';
+                }
+            }
+            echo '<option value="'.$item->naturalezas->nombre.'" '.$selected.'>'.$item->naturalezas->nombre.'</option>';    
         }
     }
 
@@ -624,6 +644,49 @@ class TransferenciaController extends Controller{
             $transferencia_data->codigoNotaria = Auth::user()->notaria->codigo_notaria_rc;
             $transferencia_data->save();
         }
+
+        if($request->hasFile('Documento_Transferencia')){
+            //Si se adjunta documento, se revisa primero si hay un documento anterior
+            $trae_doc = Documento::where('transferencia_id',$id)->where('name',$request->file('Documento_Transferencia')->getClientOriginalName())->first();
+            if($trae_doc == null){
+                //Si no hay doc anterior, se guarda el archivo en servidor y bd
+                $file = $request->file('Documento_Transferencia');
+                $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+                $doc = new Documento();
+                $doc->name = 'public/'.$path;
+                $doc->type = 'pdf';
+                $doc->description = Tipo_Documento::select('name')->where('id',$transferencia_data->tipo_documento_id)->first()->name;
+                $doc->transferencia_id = $id;
+                $doc->tipo_documento_id = $transferencia_data->tipo_documento_id;
+                $doc->added_at = Carbon::now()->toDateTimeString();
+                $doc->save();
+            }
+            else{
+                $trae_doc->type = 'pdf';
+                $trae_doc->description = Tipo_Documento::select('name')->where('id',$transferencia_data->tipo_documento_id)->first()->name;
+                $trae_doc->transferencia_id = $id;
+                $trae_doc->tipo_documento_id = $transferencia_data->tipo_documento_id;
+                $trae_doc->added_at = Carbon::now()->toDateTimeString();
+                $trae_doc->save();
+            }
+        }
+        else{
+            $trae_doc = Documento::where('transferencia_id',$id)->where('tipo_documento_id',$transferencia_data->tipo_documento_id)->first();
+            if($trae_doc == null){            
+                $errors = new MessageBag();
+                $errors->add('Documentos', 'Debe adjuntar documento');
+                return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()]);
+            }
+            else{
+                $trae_doc->type = 'pdf';
+                $trae_doc->description = Tipo_Documento::select('name')->where('id',$transferencia_data->tipo_documento_id)->first()->name;
+                $trae_doc->transferencia_id = $id;
+                $trae_doc->tipo_documento_id = $transferencia_data->tipo_documento_id;
+                $trae_doc->added_at = Carbon::now()->toDateTimeString();
+                $trae_doc->save();
+            }
+        }
+        
 
         $datosEstipulante = null;
         if($estipulante != null){
@@ -796,7 +859,7 @@ class TransferenciaController extends Controller{
         $data = RegistroCivil::creaStev(json_encode($parametros));
         $salida = json_decode($data, true);
 
-        dd($salida);
+        //dd($salida);
 
         //if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3){
             
@@ -840,7 +903,7 @@ class TransferenciaController extends Controller{
 
                     if(@sizeof($observaciones)==0){
                         $solicitud2 = Transferencia::find($id);
-                        $solicitud2->estado_id = 6;
+                        $solicitud2->estado_id = 5;
                         $solicitud2->save();
 
                         if($reingreso != null && $get_transferencia_rc != null){
@@ -873,15 +936,23 @@ class TransferenciaController extends Controller{
 
                     sleep(4);
                     $transferencia_rc = TransferenciaRC::getSolicitud($id);
-                    return view('transferencia.menuDocs', compact('id', 'nro_solicitud_transf_rc', 'ppu_rc','transferencia_rc'));
+                    $html = view('transferencia.menuDocs', compact('id', 'nro_solicitud_transf_rc', 'ppu_rc','transferencia_rc'))->render();
+                    return response()->json(['status' => "OK","html" => $html],200);
 
                 }
                 else{
-                    return view('general.ErrorRC', ['glosa' => $salida['glosa']]);
+                    $html = view('general.ErrorRC', ['glosa' => $salida['glosa']])->render();
+                    $errors = new MessageBag();
+                    $errors->add('Solicitud STEV', $salida['glosa']);
+                    return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()]);
+                    
                 }
             }
             else{
-                return view('general.ErrorRC', ['glosa' => $salida['glosa']]);
+                $html = view('general.ErrorRC', ['glosa' => $salida['glosa']])->render();
+                $errors = new MessageBag();
+                $errors->add('Solicitud STEV', $salida['glosa']);
+                return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()],500);
             }
         /*}
         else{
@@ -896,4 +967,44 @@ class TransferenciaController extends Controller{
             return view('transferencia.menuDocs', compact('id', 'nro_solicitud_transf_rc', 'ppu_rc','transferencia_rc'));
         }*/
     }
+
+    public function verSolicitudes(){
+
+        $solicitudes = Transferencia::getSolicitudesUser(Auth::user()->id);
+        
+        $SolicitudItem = array();
+        foreach($solicitudes as $item){
+            try{
+                $item->cliente = Propietario::select('nombre','razon_social','aPaterno','aMaterno')->where('transferencia_id',$item->id)->first();
+                
+            }
+            catch(Exception $e){
+                $item->cliente = '';
+            }
+        }
+        return view('transferencia.verSolicitudes', compact('solicitudes'));
+    }
+
+    public function sinTerminar()
+    {
+        $header = new stdClass;
+
+        $solicitudes = Transferencia::sinTerminar(auth()->user()->id);
+        
+        $SolicitudItem = array();
+        foreach($solicitudes as $item){
+            try{
+                $item->cliente = Propietario::select('nombre','razon_social','aPaterno','aMaterno')->where('transferencia_id',$item->id)->first();
+                
+            }
+            catch(Exception $e){
+                $item->cliente = '';
+            }
+        }
+        
+        //return dd($solicitudes);
+        return view('transferencia.sinTerminar', compact('solicitudes'));
+    }
+
+
 }

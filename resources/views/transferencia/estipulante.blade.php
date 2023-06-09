@@ -223,11 +223,13 @@
                 var jsonString = JSON.stringify(data);
                 let json = JSON.parse(jsonString);
                 if (json.status == "OK") {
-                    $("#pills-invoice").html(data);
+                    $("#pills-invoice").html(json.html);
                     $("#pills-invoice").toggleClass('show');
-                    $("#pills-home").removeClass('show');
-                    $("#pills-contact").removeClass('show');
-                    $("#pills-profile").removeClass('show');
+                    $("#pills-invoice").removeClass('hide');
+                    $("#pills-estipulante").addClass('hide');
+                    $("#pills-estipulante").removeClass('show');
+                    $("#pills-vendedor").addClass('hide');
+                    $("#pills-comprador").addClass('hide');
                     $("#pills-invoice-tab").attr("href","#pills-invoice");
                     $("#pills-invoice-tab").toggleClass('disabled');
                     $("#pills-invoice-tab").attr("aria-disabled",false);
@@ -318,11 +320,13 @@
                 let json = JSON.parse(jsonString);
                 if (json.status == "OK") {
                     if(parseFloat($("#id_estipulante").val()) == 0){
-                        $("#pills-invoice").html(data);
+                        $("#pills-invoice").html(json.html);
                         $("#pills-invoice").toggleClass('show');
-                        $("#pills-home").removeClass('show');
-                        $("#pills-contact").removeClass('show');
-                        $("#pills-profile").removeClass('show');
+                        $("#pills-invoice").removeClass('hide');
+                        $("#pills-estipulante").addClass('hide');
+                        $("#pills-estipulante").removeClass('show');
+                        $("#pills-vendedor").addClass('hide');
+                        $("#pills-comprador").addClass('hide');
                         $("#pills-invoice-tab").attr("href","#pills-invoice");
                         $("#pills-invoice-tab").toggleClass('disabled');
                         $("#pills-invoice-tab").attr("aria-disabled",false);

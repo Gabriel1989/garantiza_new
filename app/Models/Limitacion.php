@@ -23,6 +23,20 @@ class Limitacion extends Model
             ->get();
     }
 
+    public static function getSolicitudTransferencia($id){
+        return DB::table('limitaciones')
+            ->where('limitaciones.transferencia_id', '=', $id)
+            ->select('limitaciones.*')
+            ->get();
+    }
+
+    public static function getLimitacionTransferenciaRC($id){
+        return DB::table('limitaciones_rc')
+            ->where('limitaciones_rc.transferencia_id', '=', $id)
+            ->select('limitaciones_rc.*')
+            ->get();
+    }
+
     public function acreedor(){
         return $this->belongsTo(Acreedor::class, 'acreedor_id','id');
     }

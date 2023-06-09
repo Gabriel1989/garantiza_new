@@ -15,8 +15,10 @@
 <?php
 use App\Models\Reingreso;
 use App\Models\Tipo_Documento;
+use App\Models\TransferenciaData;
 $reingreso = Reingreso::where('transferencia_id',$id)->first();
 $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
+$transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
 ?>
 
 @include('includes.form-error-message')
@@ -32,7 +34,7 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
                 <div class="form-group">
                     <label for="digitoVerificadorPPU" class="col-lg-3 control-label ">Digito verificador PPU:</label>
                     <label class="col-lg-4">
-                        <input type="text" name="digitoVerificadorPPU" id="digitoVerificadorPPU" class="form-control" maxlength="1">
+                        <input value="{{ ($transferencia_data != null)? $transferencia_data->dv_ppu : '' }}" type="text" name="digitoVerificadorPPU" id="digitoVerificadorPPU" class="form-control" maxlength="1">
                     </label>
                 </div>
                 <div class="form-group">
@@ -40,7 +42,7 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
                     <label class="col-lg-4">
                         <select name="tipoDocTransf" id="tipoDocTransf" class="form-control"  required>
                             @foreach ($tipoDocs as $doc)
-                                <option value="{{ $doc->name }}">{{ $doc->name }}</option>
+                                <option value="{{ $doc->name }}" @if($transferencia_data != null) @if($transferencia_data->tipoDocumento->name == $doc->name)  selected @endif @endif>{{ $doc->name }}</option>
                             @endforeach
                         </select>
                     </label>
@@ -55,14 +57,26 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
                 <div class="form-group">
                     <label for=" numDocTransf" class="col-lg-3 control-label ">Número de documento:</label>
                     <label class="col-lg-4">
-                        <input type="number" name="numDocTransf" id="numDocTransf" class="form-control"  required>
+                        <input value="{{ ($transferencia_data != null)? $transferencia_data->num_doc : 0 }}" type="number" name="numDocTransf" id="numDocTransf" class="form-control"  required>
                         
                     </label>
                 </div>
                 <div class="form-group">
+                    <div class="col-sm-12 col-lg-12 mb5">
+                        <div class="col-lg-7">
+                            <span class="btn btn-warning fileinput-button col-sm-12" name="pic" id="DocumentoTransferencia">
+                                Seleccionar Documento PDF</span>
+                        </div>
+                        <div class="col-lg-5">
+                            <input id="Documento_Transferencia" name="Documento_Transferencia" type="file" style="display:none" accept="text/xml,application/pdf" />
+                            <label id="lbl_Documento_Transferencia"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label for="fechaEmisionTransf" class="col-lg-3 control-label ">Fecha emisión documento o factura:</label>
                     <label class="col-lg-4">
-                        <input type="text" name="fechaEmisionTransf" id="fechaEmisionTransf" class="form-control datepicker"  required>
+                        <input value="{{ ($transferencia_data != null)? $transferencia_data->fecha_emision : 0 }}" type="text" name="fechaEmisionTransf" id="fechaEmisionTransf" class="form-control datepicker"  required>
                     </label>
                 </div>
 
@@ -72,7 +86,7 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
                             <select class="col-sm-12 form-select comuna" name="lugarTransf" id="comuna3">
                                 <option value="0">Seleccione Comuna...</option>
                                 @foreach ($comunas as $item)
-                                    <option value="{{ $item->Codigo }}">{{ $item->Nombre }}</option>
+                                    <option value="{{ $item->Codigo }}" @if($transferencia_data != null) @if($transferencia_data->lugar_id == $item->Codigo)  selected @endif @endif>{{ $item->Nombre }}</option>
                                 @endforeach
                             </select>
                         </label>
@@ -82,7 +96,7 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
                 <div class="form-group">
                     <label for="totalTransf" class="col-lg-3 control-label ">Total Venta:</label>
                     <label class="col-lg-4">
-                        <input type="number" name="totalTransf" id="totalTransf" class="form-control"  required>
+                        <input value="{{ ($transferencia_data != null)? $transferencia_data->total_venta : 0 }}" type="number" name="totalTransf" id="totalTransf" class="form-control"  required>
                         
                     </label>
                 </div>
@@ -91,10 +105,10 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
                     <label for="monedaTransf" class="col-lg-2 control-label">Moneda :</label>
                         <label class="col-lg-5">
                             <select class="col-sm-12 form-select" name="monedaTransf" id="monedaTransf">
-                                <option value="0">Seleccione Moneda...</option>
-                                <option value="$">Peso</option>
-                                <option value="US">Dólar</option>
-                                <option value="UF">Unidad de Fomento</option>
+                                <option value="0" >Seleccione Moneda...</option>
+                                <option value="$" @if($transferencia_data != null) @if($transferencia_data->moneda == "$")  selected @endif @endif>Peso</option>
+                                <option value="US" @if($transferencia_data != null) @if($transferencia_data->moneda == "US")  selected @endif @endif>Dólar</option>
+                                <option value="UF" @if($transferencia_data != null) @if($transferencia_data->moneda == "UF")  selected @endif @endif>Unidad de Fomento</option>
                             </select>
                         </label>
                 </div>
@@ -102,14 +116,14 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
                 <div class="form-group">
                     <label for="kilometraje" class="col-lg-3 control-label ">Kilometraje vehículo:</label>
                     <label class="col-lg-4">
-                        <input type="number" name="kilometraje" id="kilometraje" class="form-control">
+                        <input value="{{ ($transferencia_data != null)? $transferencia_data->kilometraje : 0 }}" type="number" name="kilometraje" id="kilometraje" class="form-control">
                     </label>
                 </div>
 
                 <div class="form-group">
                     <label for="rutEmisorTransf" class="col-lg-3 control-label ">Rut emisor:</label>
                     <label class="col-lg-4">
-                        <input type="text" name="rutEmisorTransf" id="rutEmisorTransf" class="form-control rut4">
+                        <input value="{{ ($transferencia_data != null)? $transferencia_data->rut_emisor : '' }}" type="text" name="rutEmisorTransf" id="rutEmisorTransf" class="form-control rut4">
                     </label>
                 </div>
 
@@ -119,21 +133,21 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
                     <div class="form-group">
                         <label for="codigoCID" class="col-lg-3 control-label ">Código CID del pago:</label>
                         <label class="col-lg-4">
-                            <input type="text" name="codigoCID" id="codigoCID" class="form-control">
+                            <input value="{{ ($transferencia_data != null)? $transferencia_data->codigo_cid : 0 }}" type="text" name="codigoCID" id="codigoCID" class="form-control">
                         </label>
                     </div>
 
                     <div class="form-group">
                         <label for="montoPagadoImpuesto" class="col-lg-3 control-label ">Monto pagado:</label>
                         <label class="col-lg-4">
-                            <input type="number" name="montoPagadoImpuesto" id="montoPagadoImpuesto" class="form-control">
+                            <input value="{{ ($transferencia_data != null)? $transferencia_data->monto_impuesto : 0 }}" type="number" name="montoPagadoImpuesto" id="montoPagadoImpuesto" class="form-control">
                         </label>
                     </div>
                 </fieldset>
             </div>
         </div>
         <div class="panel-footer">
-            <button id="enviaSolicitud1" type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Grabar y Continuar Revisión </button>
+            <button id="enviaSolicitud1" type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Enviar Solicitud RC </button>
         </div>
     </div>
 
@@ -141,6 +155,13 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
 
 <script>
     $(document).ready(function () { 
+
+        var rut_format = $("#rutEmisorTransf").val();
+        console.log(rut_format);
+        if(rut_format.trim() != ''){
+            rut_format = rut_format + $.computeDv(rut_format);
+            $("#rutEmisorTransf").val($.formatRut(rut_format)); 
+        }
 
         $(".rut4").rut({
             formatOn: 'keyup',
@@ -191,6 +212,16 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
         });
 
         $('#tipoDocTransf').change();
+
+        $('#DocumentoTransferencia').on('click', function() {
+            $('#Documento_Transferencia').trigger('click');
+        });
+
+        $('#Documento_Transferencia').on('change', function() {
+            $('#lbl_Documento_Transferencia').text($('#Documento_Transferencia').val());
+        });
+
+
     });
 
 
@@ -243,6 +274,7 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
             contentType: false,
             error: function(jqXHR, textStatus, errorThrown) {
                 hideOverlay();
+                console.log('error');
                 $("#enviaSolicitud1").prop("disabled",false);
                 // Acción cuando hay un error.
                 new PNotify({
@@ -266,18 +298,56 @@ $tipoDocs = Tipo_Documento::whereIn('id',[9,10,11,12,13,14])->get();
             success: function(data){
                 $("#enviaSolicitud1").prop("disabled",false);
                 hideOverlay();
-                $("#pills-docs").html(data);
-                $("#pills-docs").toggleClass('show');
-                $("#pills-home").removeClass('show');
-                $("#pills-contact").removeClass('show');
-                $("#pills-profile").removeClass('show');
-                $("#pills-invoice").removeClass('show');
-                $("#pills-voucher").removeClass('show');
-                $("#pills-pay").removeClass('show');
-                $("#pills-docs-tab").attr("href","#pills-docs");
-                $("#pills-docs-tab").toggleClass('disabled');
-                $("#pills-docs-tab").attr("aria-disabled",false);
-                $("#pills-docs-tab").click();
+                try {
+                    let datos = JSON.stringify(data);
+                    datos = JSON.parse(datos);
+                    var isJson = true;
+                } catch (e) {
+                    var isJson = false;
+                }
+
+                if(isJson) {
+                    data = JSON.stringify(data);
+                    var jsonData = JSON.parse(data);
+                    if(jsonData.status == "OK"){
+                        console.log('1');
+                        $("#pills-docs").html(jsonData.html);
+                        $("#pills-docs").toggleClass('show');
+                        $("#pills-docs").removeClass('hide');
+                        $("#pills-invoice").toggleClass('show');
+                        $("#pills-invoice").addClass('hide');
+                        $("#pills-docs-tab").attr("href","#pills-docs");
+                        $("#pills-docs-tab").toggleClass('disabled');
+                        $("#pills-docs-tab").attr("aria-disabled",false);
+                        $("#pills-docs-tab").click();
+                    }
+                    else{
+                        var errors = jsonData.errors;
+                        for (var errorKey in errors) {
+                            if (errors.hasOwnProperty(errorKey)) {
+                                var messages = errors[errorKey];
+                                for (var i = 0; i < messages.length; i++) {
+                                    new PNotify({
+                                        title: 'Error',
+                                        text: messages[i],
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    
+                } else {
+                    $("#pills-docs").html(data);
+                    $("#pills-docs").toggleClass('show');
+                    $("#pills-docs").removeClass('hide');
+                    $("#pills-invoice").toggleClass('show');
+                    $("#pills-invoice").addClass('hide');
+                    $("#pills-docs-tab").attr("href","#pills-docs");
+                    $("#pills-docs-tab").toggleClass('disabled');
+                    $("#pills-docs-tab").attr("aria-disabled",false);
+                    $("#pills-docs-tab").click();
+
+                }
             }
         });
     });

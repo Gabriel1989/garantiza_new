@@ -14,4 +14,11 @@ class EnvioDocumentoRC extends Model
             ->select('documentos_rc.*')
             ->get();
     }
+
+    public static function getSolicitudTransf($id){
+        return DB::table('documentos_rc')
+            ->where('documentos_rc.transferencia_id', '=', $id)
+            ->select('documentos_rc.*')
+            ->get();
+    }
 }

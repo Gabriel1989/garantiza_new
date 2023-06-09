@@ -279,6 +279,15 @@ Route::group(["middleware"=>["auth","ejecut.notaria"]],function(){
     Route::post('transferencia/traeNaturalezasporTipoDoc','TransferenciaController@traeNaturalezasporTipoDoc')->name('traeNaturalezasporTipoDoc');
     Route::post('transferencia/{id}/updateDataTransferencia','TransferenciaController@updateDataTransferencia')->name('transferencia.updateDataTransferencia');
 
+    Route::get('transferencia/verSolicitudes', 'TransferenciaController@verSolicitudes')->name('transferencia.verSolicitudes');
+    Route::get('transferencia/sinTerminar', 'TransferenciaController@sinTerminar')->name('transferencia.sinTerminar');
+
+    //Documentos Transferencias STEV
+    Route::post('documentoTransferencia/destroy', 'DocumentoController@destroyDocTransf')->name('transferencia.documento.destroy');
+    Route::get('documentoTransferencia/{id}/get', 'DocumentoController@getDocsTransferencia')->name('transferencia.documento.get');
+    Route::post('documentoTransferencia/{id}/cargadocs', 'DocumentoController@CargaDocumentosTransf')->name('transferencia.documento.cargadocs.rc');
+
+
 });
 
 

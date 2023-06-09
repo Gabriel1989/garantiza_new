@@ -3076,7 +3076,7 @@ class SolicitudController extends Controller
         $parametro = [
             'consumidor' => 'ACOBRO',
             'servicio' => 'CONSULTA SOLICITUD RVM',
-            'ppu' => str_replace(".","",explode("-",$solicitud_rc->ppu)[0]),
+            'ppu' => $solicitud_rc->ppu,
             'nroSolicitud' => $request->get('id_solicitud_rc'),
             'anho' => substr($solicitud_rc->fecha,0,4)
         ];

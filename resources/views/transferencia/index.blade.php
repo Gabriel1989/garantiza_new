@@ -7,6 +7,17 @@
 @include('includes.form-error-message')
 @include('includes.mensaje')
 
+    @php
+        use App\Models\Transferencia;
+        if($id_transferencia != 0){
+            $estadoSolicitud = Transferencia::select('estado_id')->where('id',$id_transferencia)->first();
+            $estadoSolicitud = $estadoSolicitud->estado_id;
+        }
+        else{
+            $estadoSolicitud = '';
+        }
+    @endphp
+
 <div class="panel panel-info panel-border top">
     <div class="panel-body">
         <ul class="nav nav-pills mb-3" id="transferencia-tab" role="tablist">
@@ -32,6 +43,42 @@
 
             <li class="nav-item @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_transferencia_rc == 0 && $id_estipulante != 0)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_transferencia == 0 && $id_comprador == 0 && $id_vendedor == 0 && $id_transferencia_rc == 0 && $id_estipulante == 0)  disabled    @endif" id="pills-invoice-tab" data-toggle="pill" @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_estipulante != 0) href="#pills-invoice" @else href="#" @endif role="tab" aria-controls="pills-invoice" aria-selected="false" @if($id_transferencia == 0 && $id_comprador == 0 && $id_vendedor == 0 && $id_estipulante == 0) aria-disabled="true" @endif>Datos adicionales</a>
+            </li>
+
+            <li class="nav-item @if($acceso == "revision") 
+                                    @if($id_transferencia_rc != 0 && $documento_rc == null)  
+                                        active 
+                                    @endif 
+                                @elseif($acceso == "ingreso") 
+                                    @if($estadoSolicitud != '' && $estadoSolicitud == 6)   
+                                        active
+                                    @endif   
+                                @endif" role="presentation">
+                <a class="nav-link @if($acceso == "revision") 
+                @if($id_transferencia_rc != 0 && $documento_rc == null)  
+                    disabled 
+                @endif 
+            @elseif($acceso == "ingreso") 
+                @if($estadoSolicitud != '' && $estadoSolicitud != 6)   
+                    disabled
+                @endif   
+            @endif" id="pills-docs-tab" data-toggle="pill"  
+                                                        @if($acceso == "revision")
+                                                            @if($id_transferencia_rc != 0) 
+                                                                href="#pills-docs" 
+                                                            @else href="#" 
+                                                            
+                                                            @endif 
+                                                        @elseif($acceso == "ingreso")
+                                                            @if($estadoSolicitud != '' && $estadoSolicitud == 6)
+                                                                href="#pills-docs"
+                                                            @elseif($id_transferencia_rc != 0) 
+                                                                href="#pills-docs"
+                                                            @else
+                                                                href="#"
+                                                            @endif
+                                                        @endif
+                                                            role="tab" aria-controls="pills-docs" aria-selected="false" @if($id_transferencia_rc == 0) aria-disabled="true" @endif>Documentación</a>
             </li>
 
         </ul>
@@ -65,6 +112,30 @@
             @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_transferencia_rc == 0 && $id_estipulante != 0)
                 @include('transferencia.dataResumen')
             @endif
+        </div>
+
+        <div class="tab-pane fade
+                @if($acceso == "revision") 
+                    @if($id_transferencia_rc != 0 && $documento_rc == null)  
+                        active show in 
+                    @endif
+                @elseif($acceso == "ingreso")
+                    @if($estadoSolicitud == 6)
+                        show active in
+                    @endif
+                @endif
+                " id="pills-docs" role="tabpanel" aria-labelledby="pills-docs-tab">
+                @if($acceso == "revision")
+                    @if($id_transferencia_rc != 0)
+                        @include('transferencia.menuDocs')
+                    @endif
+                @elseif($acceso == "ingreso")
+                    @if($estadoSolicitud == 6)
+                        @include('transferencia.menuDocs')
+                    @elseif($id_transferencia_rc != 0)
+                        @include('transferencia.menuDocs')
+                    @endif
+                @endif
         </div>
 
     </div>

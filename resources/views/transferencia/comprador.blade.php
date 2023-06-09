@@ -451,6 +451,9 @@
                         $("#pills-profile").removeClass('show');
                         $("#pills-home").removeClass('show');
                         $("#pills-vendedor").removeClass('show');
+                        $("#pills-vendedor").removeClass('hide');
+                        $("#pills-comprador").addClass('hide');
+                        $("#pills-comprador").removeClass('show');
                         $("#pills-vendedor-tab").attr("href", "#pills-vendedor");
                         $("#pills-vendedor-tab").toggleClass('disabled');
                         $("#pills-vendedor-tab").attr("aria-disabled", false);

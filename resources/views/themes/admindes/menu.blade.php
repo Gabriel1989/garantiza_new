@@ -61,28 +61,28 @@
 
             @if(Auth::user()->rol_id==7)
             <li class="sidebar-label pt20">Menu</li>
-            <!--
+            
             <li>
-                <a href="{{route('solicitud.verSolicitudes')}}">
+                <a href="{{route('transferencia.verSolicitudes')}}">
                     <span class="glyphicons glyphicons-inbox_in"></span>
                     <span class="sidebar-title">Mis Solicitudes </span>
                     <span class="sidebar-title-tray">
-                        <span class="label label-xs bg-primary">{{App\Models\Solicitud::getCountFromUser(Auth::user()->id)[0]->cantidad}}</span>
+                        <span class="label label-xs bg-primary">{{App\Models\Transferencia::getCountFromUser(Auth::user()->id)[0]->cantidad}}</span>
                     </span>
                 </a>
             </li>
 
             <li>
-                <a href="{{route('solicitud.sinTerminar')}}">
+                <a href="{{route('transferencia.sinTerminar')}}">
                     <span class="fa fa-warning"></span>
                     <span class="sidebar-title">Solicitudes sin terminar </span>
                     <span class="sidebar-title-tray">
                         <span class="label label-xs bg-warning">
-                            {{App\Models\Solicitud::getCountFromUnterminated(Auth::user()->id)[0]->cantidad}}
+                            {{App\Models\Transferencia::getCountFromUnterminated(Auth::user()->id)[0]->cantidad}}
                         </span>
                     </span>
                 </a>
-            </li>-->
+            </li>
             
             <li>
                 

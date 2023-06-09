@@ -13,8 +13,8 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label for="name" class="col-lg-1">Ingrese PPU de vehículo a consultar: </label>
-                <label class="col-lg-5">
+                <label for="name" class="col-lg-5">Ingrese PPU de vehículo a consultar (sin puntos ni digito verificador): </label>
+                <label class="col-lg-7">
                     <input type="text" name="ppu_request" id="ppu_request" placeholder="" maxlength="6" value="{{($solicitud_data != null)?trim($solicitud_data->vehiculo->ppu) : ''}}">
                 </label>
             </div>
