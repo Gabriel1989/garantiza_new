@@ -37,7 +37,7 @@ class UserController extends Controller
         if($request->get('rol_id') == 7){
             $user->notaria_id = $request->get('notaria_id');
         }
-        else if($request->get('rol') >=4 && $request->get('rol') < 7){
+        else if($request->get('rol_id') >=4 && $request->get('rol_id') < 7){
             $user->concesionaria_id = $request->get('concesionaria_id');
         }
         $user->activo = 1;
@@ -91,7 +91,7 @@ class UserController extends Controller
         if($request->get('rol_id') == 7){
             $usuario->notaria_id = $request->get('notaria_id');
         }
-        else if($request->get('rol') >=4 && $request->get('rol') < 7){
+        else if($request->get('rol_id') >=4 && $request->get('rol_id') < 7){
             $usuario->concesionaria_id = $request->get('concesionaria_id');
         }
         $usuario->save();
