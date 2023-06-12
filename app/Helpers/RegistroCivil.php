@@ -194,4 +194,48 @@ class RegistroCivil{
 
         return $result;
     }
+
+    public static function subirDocumentosStev($parametro){
+        //$wsdl = 'StevAPI/WSDL/PID_LimiSpie.wsdl';
+        $url = 'http://181.212.92.141/RC_API/STEV/CargaDocumentosPID.php';
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
+    }
+
+    public static function consultaSolicitudStev($parametro){
+        //$wsdl = 'StevAPI/WSDL/EstadoSolicitud_PID.wsdl';
+        $url = 'http://181.212.92.141/RC_API/STEV/consultaEstadoSolicitud.php';
+        $curl = curl_init($url);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
+    }
+
+    public static function consultaLimitacionStev($parametro){
+        //$wsdl = 'SpievAPI/WSDL/ConsultaLimitaConConsumidor_PID.wsdl';
+        $url = 'http://181.212.92.141/RC_API/STEV/consultaLimitacion.php';
+        $curl = curl_init($url);
+
+        //dd($parametro);
+
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
+
+        $result = curl_exec($curl);
+
+        return $result;
+    }
 }

@@ -2120,23 +2120,47 @@ class SolicitudController extends Controller
                 'region' => '13',
                 'runUsuario' => '10796553',
                 'rEmpresa' => '77880510'
-            ),
-            'solicitanteDTO' => array(
-                'calidad' => 'N',
-                'calle' => 'LAS TINAJAS',
-                'comuna' => '106',
-                'email' => 'rodbay07@gmail.com',
-                'ltrDomicilio' => '',
-                'nombresRazon' => 'ROMAN ALEXIS',
-                'nroDomicilio' => '1886',
-                'runRut' => '10796553',
-                'telefono' => '979761113',
-                'aMaterno' => 'RAVEST',
-                'aPaterno' => 'PINTO',
-                'cPostal' => '',
-                'rDomicilio' => ''
             )
         ];
+
+        $solicitanteDTO = null;
+
+        if($compraPara != null){
+            $solicitanteDTO = array(
+                'calidad' => $compraPara->tipo,
+                'calle' => $compraPara->calle,
+                'comuna' => $compraPara->comuna,
+                'email' => is_null($compraPara->email) ? 'info@acobro.cl' : $compraPara->email,
+                'ltrDomicilio' => '',
+                'nombresRazon' => $compraPara->nombre,
+                'nroDomicilio' => $compraPara->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($compraPara->rut, 0, -1))),
+                'telefono' => is_null($compraPara->telefono) ? '123456789' : $compraPara->telefono,
+                'aMaterno' => $compraPara->aMaterno,
+                'aPaterno' => $compraPara->aPaterno,
+                'cPostal' => '',
+                'rDomicilio' => $compraPara->rDomicilio
+            );
+        }
+        else{
+            $solicitanteDTO = array(
+                'calidad' => $adquiriente->tipo,
+                'calle' => $adquiriente->calle,
+                'comuna' => $adquiriente->comuna,
+                'email' => is_null($adquiriente->email) ? 'info@acobro.cl' : $adquiriente->email,
+                'ltrDomicilio' => '',
+                'nombresRazon' => $adquiriente->nombre,
+                'nroDomicilio' => $adquiriente->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($adquiriente->rut, 0, -1))),
+                'telefono' => is_null($adquiriente->telefono) ? '123456789' : $adquiriente->telefono,
+                'aMaterno' => $adquiriente->aMaterno,
+                'aPaterno' => $adquiriente->aPaterno,
+                'cPostal' => '',
+                'rDomicilio' => $adquiriente->rDomicilio
+            );
+        }
+
+        $parametro['solicitanteDTO'] = $solicitanteDTO;
         $parametro['compraParaDTO'] = $datosCompraPara;
         $parametro['reIngreso'] = $datosReingreso;
         // Llamar RC
@@ -2480,23 +2504,47 @@ class SolicitudController extends Controller
                 'region' => '13',
                 'runUsuario' => '10796553',
                 'rEmpresa' => '77880510'
-            ),
-            'solicitanteDTO' => array(
-                'calidad' => 'N',
-                'calle' => 'LAS TINAJAS',
-                'comuna' => '106',
-                'email' => 'rodbay07@gmail.com',
-                'ltrDomicilio' => '',
-                'nombresRazon' => 'ROMAN ALEXIS',
-                'nroDomicilio' => '1886',
-                'runRut' => '10796553',
-                'telefono' => '979761113',
-                'aMaterno' => 'RAVEST',
-                'aPaterno' => 'PINTO',
-                'cPostal' => '',
-                'rDomicilio' => ''
             )
         ];
+
+        $solicitanteDTO = null;
+
+        if($compraPara != null){
+            $solicitanteDTO = array(
+                'calidad' => $compraPara->tipo,
+                'calle' => $compraPara->calle,
+                'comuna' => $compraPara->comuna,
+                'email' => is_null($compraPara->email) ? 'info@acobro.cl' : $compraPara->email,
+                'ltrDomicilio' => '',
+                'nombresRazon' => $compraPara->nombre,
+                'nroDomicilio' => $compraPara->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($compraPara->rut, 0, -1))),
+                'telefono' => is_null($compraPara->telefono) ? '123456789' : $compraPara->telefono,
+                'aMaterno' => $compraPara->aMaterno,
+                'aPaterno' => $compraPara->aPaterno,
+                'cPostal' => '',
+                'rDomicilio' => $compraPara->rDomicilio
+            );
+        }
+        else{
+            $solicitanteDTO = array(
+                'calidad' => $adquiriente->tipo,
+                'calle' => $adquiriente->calle,
+                'comuna' => $adquiriente->comuna,
+                'email' => is_null($adquiriente->email) ? 'info@acobro.cl' : $adquiriente->email,
+                'ltrDomicilio' => '',
+                'nombresRazon' => $adquiriente->nombre,
+                'nroDomicilio' => $adquiriente->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($adquiriente->rut, 0, -1))),
+                'telefono' => is_null($adquiriente->telefono) ? '123456789' : $adquiriente->telefono,
+                'aMaterno' => $adquiriente->aMaterno,
+                'aPaterno' => $adquiriente->aPaterno,
+                'cPostal' => '',
+                'rDomicilio' => $adquiriente->rDomicilio
+            );
+        }
+
+        $parametro['solicitanteDTO'] = $solicitanteDTO;
         $parametro['compraParaDTO'] = $datosCompraPara;
         $parametro['reIngreso'] = $datosReingreso;
         // Llamar RC
@@ -2772,24 +2820,47 @@ class SolicitudController extends Controller
                 'region' => '13',
                 'runUsuario' => '10796553',
                 'rEmpresa' => '77880510'
-            ),
-            'solicitanteDTO' => array(
-                'calidad' => 'N',
-                'calle' => 'LAS TINAJAS',
-                'comuna' => '106',
-                'email' => 'rodbay07@gmail.com',
-                'ltrDomicilio' => '',
-                'nombresRazon' => 'ROMAN ALEXIS',
-                'nroDomicilio' => '1886',
-                'runRut' => '10796553',
-                'telefono' => '979761113',
-                'aMaterno' => 'RAVEST',
-                'aPaterno' => 'PINTO',
-                'cPostal' => '',
-                'rDomicilio' => ''
             )
         ];
 
+        $solicitanteDTO = null;
+
+        if($compraPara != null){
+            $solicitanteDTO = array(
+                'calidad' => $compraPara->tipo,
+                'calle' => $compraPara->calle,
+                'comuna' => $compraPara->comuna,
+                'email' => is_null($compraPara->email) ? 'info@acobro.cl' : $compraPara->email,
+                'ltrDomicilio' => '',
+                'nombresRazon' => $compraPara->nombre,
+                'nroDomicilio' => $compraPara->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($compraPara->rut, 0, -1))),
+                'telefono' => is_null($compraPara->telefono) ? '123456789' : $compraPara->telefono,
+                'aMaterno' => $compraPara->aMaterno,
+                'aPaterno' => $compraPara->aPaterno,
+                'cPostal' => '',
+                'rDomicilio' => $compraPara->rDomicilio
+            );
+        }
+        else{
+            $solicitanteDTO = array(
+                'calidad' => $adquiriente->tipo,
+                'calle' => $adquiriente->calle,
+                'comuna' => $adquiriente->comuna,
+                'email' => is_null($adquiriente->email) ? 'info@acobro.cl' : $adquiriente->email,
+                'ltrDomicilio' => '',
+                'nombresRazon' => $adquiriente->nombre,
+                'nroDomicilio' => $adquiriente->numero,
+                'runRut' => str_replace('.', '', str_replace('-', '', substr($adquiriente->rut, 0, -1))),
+                'telefono' => is_null($adquiriente->telefono) ? '123456789' : $adquiriente->telefono,
+                'aMaterno' => $adquiriente->aMaterno,
+                'aPaterno' => $adquiriente->aPaterno,
+                'cPostal' => '',
+                'rDomicilio' => $adquiriente->rDomicilio
+            );
+        }
+
+        $parametro['solicitanteDTO'] = $solicitanteDTO;
         $parametro['compraParaDTO'] = $datosCompraPara;
         $parametro['reIngreso'] = $datosReingreso;
 

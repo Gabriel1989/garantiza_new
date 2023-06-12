@@ -287,6 +287,12 @@ Route::group(["middleware"=>["auth","ejecut.notaria"]],function(){
     Route::get('documentoTransferencia/{id}/get', 'DocumentoController@getDocsTransferencia')->name('transferencia.documento.get');
     Route::post('documentoTransferencia/{id}/cargadocs', 'DocumentoController@CargaDocumentosTransf')->name('transferencia.documento.cargadocs.rc');
 
+    //Limitación STEV
+
+    Route::post('transferencia/{id}/limitacion/new','LimitacionController@ingresaLimitacionTransferencia')->name('transferencia.limitacion.new');
+    Route::post('transferencia/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstadoLimiTransf')->name('transferencia.limitacion.estadoSolicitud');
+    Route::post('transferencia/{id}/descargaComprobanteLimi','LimitacionController@descargaComprobanteLimiTransf')->name('transferencia.descargaComprobanteLimi');
+    Route::post('transferencia/{id}/limitacion/resendFile','LimitacionController@reenviarArchivoLimiTransf')->name('transferencia.limitacion.reenviarArchivo');
 
 });
 

@@ -15,4 +15,11 @@ class LimitacionRC extends Model
             ->select('limitaciones_rc.*')
             ->get();
     }
+
+    public static function getSolicitudTransferencia($id){
+        return DB::table('limitaciones_rc')
+            ->where('limitaciones_rc.transferencia_id', '=', $id)
+            ->select('limitaciones_rc.*')
+            ->get();
+    }
 }
