@@ -14,12 +14,12 @@
 
 <?php
 
-use App\Models\Factura;
 use App\Models\Tipo_Documento;
 use App\Models\Acreedor;
 use App\Models\LimitacionRC;
 use App\Models\Limitacion;
 use App\Models\ErrorEnvioDoc;
+use App\Models\Transferencia;
 
 ?>
 
@@ -34,12 +34,13 @@ use App\Models\ErrorEnvioDoc;
             <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de Prohibición y/o Limitación de Transferencia</span>
         </div>
         <?php
-            $factura = Factura::where('id_solicitud',$id)->first();
+            
             $tipo_documento = Tipo_Documento::whereIn('id',[9,10])->get();
             $acreedores = Acreedor::all();
             $limitacion_rc = LimitacionRC::getSolicitudTransferencia($id);
             $limitacion = Limitacion::where('transferencia_id',$id)->first();
             $error_envio_doc = ErrorEnvioDoc::where('transferencia_id',$id)->first();
+            $transferencia = Transferencia::find($id);
         ?>
         @if(count($limitacion_rc) == 0)
         <div class="panel-body">
@@ -63,25 +64,25 @@ use App\Models\ErrorEnvioDoc;
                 <div class="row">
                     <label for="nro_chasis" class="col-lg-3 control-label ">Nro Chasis:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_chasis" id="nro_chasis" value="{{ ($limitacion == null)?  $factura->nro_chasis : $limitacion->nro_chasis}}" class="form-control" required>
+                        <input type="text" name="nro_chasis" id="nro_chasis" value="{{ ($limitacion == null)?  $transferencia->vehiculo->chasis : $limitacion->nro_chasis}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row">
                     <label for="nro_serie" class="col-lg-3 control-label ">Nro Serie:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_serie" id="nro_serie" value="{{ ($limitacion == null)?  $factura->nro_serie : $limitacion->nro_serie}}" class="form-control">
+                        <input type="text" name="nro_serie" id="nro_serie" value="{{ ($limitacion == null)?  $transferencia->vehiculo->serie : $limitacion->nro_serie}}" class="form-control">
                     </label>
                 </div>
                 <div class="row">
                     <label for="nro_vin" class="col-lg-3 control-label ">Nro Vin:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_vin" id="nro_vin" value="{{ ($limitacion == null)? $factura->nro_vin : $limitacion->nro_vin}}" class="form-control" required>
+                        <input type="text" name="nro_vin" id="nro_vin" value="{{ ($limitacion == null)? $transferencia->vehiculo->vin : $limitacion->nro_vin}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row">
                     <label for="nro_motor" class="col-lg-3 control-label ">Nro Motor:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_motor" id="nro_motor" value="{{ ($limitacion == null)? $factura->motor : $limitacion->nro_motor}}" class="form-control" required>
+                        <input type="text" name="nro_motor" id="nro_motor" value="{{ ($limitacion == null)? $transferencia->vehiculo->motor : $limitacion->nro_motor}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Documento</h4></div></div>

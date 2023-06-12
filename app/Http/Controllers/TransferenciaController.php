@@ -647,7 +647,7 @@ class TransferenciaController extends Controller{
 
         if($request->hasFile('Documento_Transferencia')){
             //Si se adjunta documento, se revisa primero si hay un documento anterior
-            $trae_doc = Documento::where('transferencia_id',$id)->where('name',$request->file('Documento_Transferencia')->getClientOriginalName())->first();
+            $trae_doc = Documento::where('transferencia_id',$id)->where('name','public/'.$request->file('Documento_Transferencia')->getClientOriginalName())->first();
             if($trae_doc == null){
                 //Si no hay doc anterior, se guarda el archivo en servidor y bd
                 $file = $request->file('Documento_Transferencia');
@@ -829,28 +829,55 @@ class TransferenciaController extends Controller{
                 'region' => '13',
                 'runUsuario' => '10796553',
                 'rutEmpresa' => '77880510'
-            ),
-            'Solicitante' => array(
-                'persona'=> [
-                    'calidad' => 'N',
-                    'runRut' => '10796553',
-                    'nombresRazon' => 'ROMAN ALEXIS',
-                    'aPaterno' => 'PINTO',
-                    'aMaterno' => 'RAVEST',
-                    'Email' => 'rodbay07@gmail.com',
-                ],
-                'direccion' => [
-                    'calle' => 'LAS TINAJAS',
-                    'comuna' => '106',
-                    'ltrDomicilio' => '',
-                    'nroDomicilio' => '1886',
-                    'telefono' => '979761113',
-                    'cPostal' => '',
-                    'rDomicilio' => ''
-                ],
             )
         ];
 
+        $solicitanteDTO = null;
+
+        if($estipulante != null){
+            $solicitanteDTO = array(
+                'persona' => [
+                    'calidad' => $estipulante->tipo,
+                    'runRut' => str_replace('.', '', str_replace('-', '', substr($estipulante->rut, 0, -1))),
+                    'nombresRazon' => $estipulante->nombre,
+                    'aPaterno' => $estipulante->aPaterno,
+                    'aMaterno' => $estipulante->aMaterno,
+                    'email' => is_null($estipulante->email) ? 'info@acobro.cl' : $estipulante->email,
+                ],
+                'direccion' => array(
+                    'calle' => $estipulante->calle,
+                    'ltrDomicilio' => '',
+                    'nroDomicilio' => $estipulante->numero,
+                    'rDomicilio' => $estipulante->rDomicilio,
+                    'telefono' => is_null($estipulante->telefono) ? '123456789' : $estipulante->telefono,
+                    'comuna' => $estipulante->comuna,
+                    'cPostal' => '',
+                )
+            );
+        }
+        else{
+            $solicitanteDTO = array(
+                'persona' => [
+                    'calidad' => $comprador->tipo,
+                    'runRut' => str_replace('.', '', str_replace('-', '', substr($comprador->rut, 0, -1))),
+                    'nombresRazon' => $comprador->nombre,
+                    'aPaterno' => $comprador->aPaterno,
+                    'aMaterno' => $comprador->aMaterno,
+                    'email' => is_null($comprador->email) ? 'info@acobro.cl' : $comprador->email,
+                ],
+                'direccion' => array(
+                    'calle' => $comprador->calle,
+                    'ltrDomicilio' => '',
+                    'nroDomicilio' => $comprador->numero,
+                    'rDomicilio' => $comprador->rDomicilio,
+                    'telefono' => is_null($comprador->telefono) ? '123456789' : $comprador->telefono,
+                    'comuna' => $comprador->comuna,
+                    'cPostal' => '',
+                )
+            );
+        }
+
+        $parametros['Solicitante'] = $solicitanteDTO;
         $parametros['Estipulante'] = $datosEstipulante;
         $parametros['ReIngreso'] = $datosReingreso;
 

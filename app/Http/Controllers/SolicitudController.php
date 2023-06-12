@@ -396,7 +396,7 @@ class SolicitudController extends Controller
 
         if($request->hasFile('Factura_XML')){
             //Si se adjunta documento, se revisa primero si hay un documento anterior
-            $trae_doc = Documento::where('solicitud_id',$solicitud->id)->where('name',$request->file('Factura_XML')->getClientOriginalName())->first();
+            $trae_doc = Documento::where('solicitud_id',$solicitud->id)->where('name','public/'.$request->file('Factura_XML')->getClientOriginalName())->first();
             if($trae_doc == null){
                 //Si no hay doc anterior, se guarda el archivo en servidor y bd
                 $file = $request->file('Factura_XML');
