@@ -84,7 +84,6 @@ class LimitacionController extends Controller{
 
             $validaDocLimi = true;
             if($error_doc_limi != null){
-
                 $parametros = [
                     'consumidor' => 'ACOBRO',
                     'servicio' => 'INGRESO DOCUMENTOS RVM',

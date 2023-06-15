@@ -2221,6 +2221,9 @@ class SolicitudController extends Controller
                     if(@sizeof($observaciones)==0){
                         $solicitud2 = Solicitud::find($id);
                         $solicitud2->estado_id = 6;
+                        $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+                        $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+                        $solicitud2->incluyeTAG = $request->get('incluyeTAG');
                         $solicitud2->save();
 
                         if($reingreso != null && $get_solicitud_rc != null){
@@ -2233,6 +2236,9 @@ class SolicitudController extends Controller
                     else{
                         $solicitud2 = Solicitud::find($id);
                         $solicitud2->estado_id = 12;
+                        $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+                        $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+                        $solicitud2->incluyeTAG = $request->get('incluyeTAG');
                         $solicitud2->save();
 
                         if($reingreso != null && $get_solicitud_rc != null){
@@ -2258,6 +2264,9 @@ class SolicitudController extends Controller
                 else{
                     $solicitud2 = Solicitud::find($id);
                     $solicitud2->estado_id = 11;
+                    $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+                    $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+                    $solicitud2->incluyeTAG = $request->get('incluyeTAG');
                     $solicitud2->save();
                     return view('general.ErrorRC', ['glosa' => $salida['glosa']]);
                 }
@@ -2266,6 +2275,9 @@ class SolicitudController extends Controller
         else{
             $solicitud2 = Solicitud::find($id);
             $solicitud2->estado_id = 6;
+            $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+            $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+            $solicitud2->incluyeTAG = $request->get('incluyeTAG');
             $solicitud2->save();
 
             $solicitud_rc = null;
@@ -2605,6 +2617,9 @@ class SolicitudController extends Controller
                     if(@sizeof($observaciones)==0){
                         $solicitud2 = Solicitud::find($id);
                         $solicitud2->estado_id = 6;
+                        $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+                        $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+                        $solicitud2->incluyeTAG = $request->get('incluyeTAG');
                         $solicitud2->save();
 
                         if($reingreso != null && $get_solicitud_rc != null){
@@ -2617,6 +2632,9 @@ class SolicitudController extends Controller
                     else{
                         $solicitud2 = Solicitud::find($id);
                         $solicitud2->estado_id = 12;
+                        $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+                        $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+                        $solicitud2->incluyeTAG = $request->get('incluyeTAG');
                         $solicitud2->save();
 
                         if($reingreso != null && $get_solicitud_rc != null){
@@ -2648,6 +2666,9 @@ class SolicitudController extends Controller
         else{
             $solicitud2 = Solicitud::find($id);
             $solicitud2->estado_id = 6;
+            $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+            $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+            $solicitud2->incluyeTAG = $request->get('incluyeTAG');
             $solicitud2->save();
 
             $solicitud_rc = null;
@@ -2922,6 +2943,9 @@ class SolicitudController extends Controller
                     if(@sizeof($observaciones)==0){
                         $solicitud2 = Solicitud::find($id);
                         $solicitud2->estado_id = 6;
+                        $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+                        $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+                        $solicitud2->incluyeTAG = $request->get('incluyeTAG');
                         $solicitud2->save();
 
                         if($reingreso != null && $get_solicitud_rc != null){
@@ -2934,6 +2958,9 @@ class SolicitudController extends Controller
                     else{
                         $solicitud2 = Solicitud::find($id);
                         $solicitud2->estado_id = 12;
+                        $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+                        $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+                        $solicitud2->incluyeTAG = $request->get('incluyeTAG');
                         $solicitud2->save();
 
                         if($reingreso != null && $get_solicitud_rc != null){
@@ -2965,6 +2992,9 @@ class SolicitudController extends Controller
         else{
             $solicitud2 = Solicitud::find($id);
             $solicitud2->estado_id = 6;
+            $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+            $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+            $solicitud2->incluyeTAG = $request->get('incluyeTAG');
             $solicitud2->save();
 
             $solicitud_rc = null;

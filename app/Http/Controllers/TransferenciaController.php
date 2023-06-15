@@ -842,7 +842,7 @@ class TransferenciaController extends Controller{
                     'nombresRazon' => $estipulante->nombre,
                     'aPaterno' => $estipulante->aPaterno,
                     'aMaterno' => $estipulante->aMaterno,
-                    'email' => is_null($estipulante->email) ? 'info@acobro.cl' : $estipulante->email,
+                    'Email' => is_null($estipulante->email) ? 'info@acobro.cl' : $estipulante->email,
                 ],
                 'direccion' => array(
                     'calle' => $estipulante->calle,
@@ -863,7 +863,7 @@ class TransferenciaController extends Controller{
                     'nombresRazon' => $comprador->nombre,
                     'aPaterno' => $comprador->aPaterno,
                     'aMaterno' => $comprador->aMaterno,
-                    'email' => is_null($comprador->email) ? 'info@acobro.cl' : $comprador->email,
+                    'Email' => is_null($comprador->email) ? 'info@acobro.cl' : $comprador->email,
                 ],
                 'direccion' => array(
                     'calle' => $comprador->calle,

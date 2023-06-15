@@ -472,7 +472,7 @@ class DocumentoController extends Controller
     public function CargaDocumentosTransf(Request $request, $id){
         $solicitud = Transferencia::find($id);
         //Obtenemos factura guardada en bd y en storage para convertir el archivo a base64
-        $documentos = Documento::where('transferencia_id', $id)->where('tipo_documento_id',2)->first();
+        $documentos = Documento::where('transferencia_id', $id)->whereIn('tipo_documento_id',[9,10,11,12,13,14])->first();
         $base64_factura = $this->getFileAsBase64($documentos->name);
 
         $cedula_cliente = Documento::where('transferencia_id', $id)->where('tipo_documento_id',3)->first();

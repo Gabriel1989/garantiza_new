@@ -284,22 +284,40 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
                     <div class="panel">
                         <div class="panel-heading">
                             <span class="panel-title">
-                                <span class="glyphicon glyphicon-cog hidden"></span>Información Detalle de la Factura
+                                <span class="glyphicon glyphicon-cog hidden"></span>Servicios adicionales
                             </span>
                         </div>
                         <div class="panel-body">
                             <div class="form-group">
-                                @for ($i = 0; $i < count($detalle) - 1; $i++)
-                                    <div class="row">
-                                        <label for="linea{{ $i }}" class="col-lg-2 control-label ">Línea
-                                            {{ $i + 1 }}:</label>
-                                        <label class="col-lg-10">
-                                            <input type="input" name="linea{{ $i }}"
-                                                id="linea{{ $i }}" class="form-control"
-                                                value="{{ $detalle[$i] }}" readonly>
-                                        </label>
+                                <label class="col-lg-2 control-label">SOAP:</label>
+                                <label class="col-lg-4">
+                                    <div class="switch switch-success switch-inline">
+                                        <input type="checkbox" id="incluyeSOAP" name="incluyeSOAP" value="{{ isset($solicitud_data)? ((is_null($solicitud_data->incluyeSOAP))? "0" : $solicitud_data->incluyeSOAP) : "0" }}" 
+                                        @if(isset($solicitud_data))   @if(!is_null($solicitud_data->incluyeSOAP))  @if($solicitud_data->incluyeSOAP == 1) checked   @endif @endif @endif >
+                                        <label for="incluyeSOAP"></label>
                                     </div>
-                                @endfor
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label">TAG:</label>
+                                <label class="col-lg-4">
+                                    <div class="switch switch-success switch-inline">
+                                        <input type="checkbox" id="incluyeTAG" name="incluyeTAG" value="{{ isset($solicitud_data)? ((is_null($solicitud_data->incluyeTAG))? "0" : $solicitud_data->incluyeTAG) : "0" }}"
+                                        @if(isset($solicitud_data))   @if(!is_null($solicitud_data->incluyeTAG))  @if($solicitud_data->incluyeTAG == 1) checked   @endif @endif @endif>
+                                        <label for="incluyeTAG"></label>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label">Permiso de circulación:</label>
+                                <label class="col-lg-4">
+                                    <div class="switch switch-success switch-inline">
+                                        <input type="checkbox" id="incluyePermiso" name="incluyePermiso"
+                                            value="{{ isset($solicitud_data)? ((is_null($solicitud_data->incluyePermiso))? "0" : $solicitud_data->incluyePermiso) : "0" }}" 
+                                            @if(isset($solicitud_data))   @if(!is_null($solicitud_data->incluyePermiso))  @if($solicitud_data->incluyePermiso == 1) checked   @endif @endif @endif>
+                                        <label for="incluyePermiso"></label>
+                                    </div>
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -339,6 +357,30 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
                 $("#tipoTraccion").html(options);
             } else {
                 $("#tipoTraccion").html(options);
+            }
+        });
+
+        $('#incluyeSOAP').on('change', function(e) {
+            if ($('#incluyeSOAP').prop('checked')==true){
+                $(this).val(1);
+            }else{
+                $(this).val(0);
+            }
+        });
+
+        $('#incluyeTAG').on('change', function(e) {
+            if ($('#incluyeTAG').prop('checked')==true){
+                $(this).val(1);
+            }else{
+                $(this).val(0);
+            }
+        });
+
+        $('#incluyePermiso').on('change', function(e) {
+            if ($('#incluyePermiso').prop('checked')==true){
+                $(this).val(1);
+            }else{
+                $(this).val(0);
             }
         });
     });
