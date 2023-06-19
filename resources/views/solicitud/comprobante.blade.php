@@ -15,28 +15,55 @@
 
 @include('includes.form-error-message')
 
-<form method="post" id="formDescargaComprobante" role="form" class="form-horizontal form-revision">
-    @csrf
-    @method('post')
+@if($solicitud_rc != null && sizeof($solicitud_rc)>0)
+    <form method="post" id="formDescargaComprobante" role="form" class="form-horizontal form-revision">
+        @csrf
+        @method('post')
 
-    <div class="panel panel-info panel-border top">
-        <div class="panel-heading">
-            <span class="panel-title">Ingreso de Solicitud N° {{ $id }} - Descargar comprobante de
-                inscripción</span>
+        <div class="panel panel-info panel-border top">
+            <div class="panel-heading">
+                <span class="panel-title">Ingreso de Solicitud N° {{ $id }} - Descargar comprobante de
+                    inscripción</span>
+            </div>
+
+            <div class="panel-body">
+                <button type="button" data-garantizaSol="{{ $id }}"
+                    data-numsol="{{ $solicitud_rc[0]->numeroSol }}" class="btn btn-success btn-sm btnRevisaComprobante"><i
+                        class="fa fa-download"></i> Descargar comprobante desde Registro Civil</button>
+                
+                <button type="button" data-garantizaSol="{{ $id }}" class="btn btn-success btn-sm btnDescargaPdfGarantiza"><i
+                    class="fa fa-download"></i> Descargar comprobante Garantiza</button>
+
+            </div>
+
         </div>
 
-        <div class="panel-body">
-            <button type="button" data-garantizaSol="{{ $id }}"
-                data-numsol="{{ $solicitud_rc[0]->numeroSol }}" class="btn btn-success btn-sm btnRevisaComprobante"><i
-                    class="fa fa-download"></i> Descargar comprobante</button>
+    </form>
 
+@elseif($id_solicitud != 0)
 
+    <form method="post" id="formDescargaComprobante" role="form" class="form-horizontal form-revision">
+        @csrf
+        @method('post')
+
+        <div class="panel panel-info panel-border top">
+            <div class="panel-heading">
+                <span class="panel-title">Ingreso de Solicitud N° {{ $id }} - Descargar comprobante de
+                    solicitud</span>
+            </div>
+
+            <div class="panel-body">
+                <button type="button" data-garantizaSol="{{ $id }}" class="btn btn-success btn-sm btnDescargaPdfGarantiza"><i
+                    class="fa fa-download"></i> Descargar comprobante desde Garantiza</button>
+
+            </div>
 
         </div>
 
-    </div>
+    </form>
 
-</form>
+
+@endif
 
 <script>
     function showErrorNotification(message) {
@@ -58,6 +85,28 @@
             delay: 2000
         });
     }
+
+    $(document).on("click",".btnDescargaPdfGarantiza",function(e){
+        showOverlay();
+        e.preventDefault();
+        let numSolGarantiza = $(this).data('garantizasol');
+        fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteRVM", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({
+                id_solicitud: numSolGarantiza
+            })
+        }).then((response) => response.json())
+        .then((data) => {
+            hideOverlay();
+            window.open(data.file);
+        });
+        
+
+    });
     
     $(document).on("click", ".btnRevisaComprobante", function(e) {
         showOverlay();

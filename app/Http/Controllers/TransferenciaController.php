@@ -21,6 +21,7 @@ use App\Models\NaturalezaActo;
 use App\Models\Tipo_Documento;
 use App\Models\TransferenciaData;
 use App\Models\Documento;
+use App\Models\Rechazo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -75,8 +76,8 @@ class TransferenciaController extends Controller{
         $solicitud_id = $request->get('transferencia_id');
         if($solicitud_id != 0){
             $solicitud = Transferencia::find($solicitud_id);
-            $solicitud->notaria_id = Auth::user()->notaria->id;
             if(Auth::user()->rol_id == 7){
+                $solicitud->notaria_id = Auth::user()->notaria->id;
                 $solicitud->estado_id = 1;
                 $solicitud->user_id = Auth::user()->id;
             }
@@ -120,8 +121,8 @@ class TransferenciaController extends Controller{
         }
         else{
             $solicitud = new Transferencia();
-            $solicitud->notaria_id = Auth::user()->notaria->id;
             if(Auth::user()->rol_id == 7){
+                $solicitud->notaria_id = Auth::user()->notaria->id;
                 $solicitud->estado_id = 1;
                 $solicitud->user_id = Auth::user()->id;
             }
@@ -625,7 +626,9 @@ class TransferenciaController extends Controller{
             $transferencia_data->rut_emisor = str_replace('.', '', str_replace('-', '', substr($request->rutEmisorTransf, 0, -1)));
             $transferencia_data->codigo_cid = $request->codigoCID;
             $transferencia_data->monto_impuesto = $request->montoPagadoImpuesto;
-            $transferencia_data->codigoNotaria = Auth::user()->notaria->codigo_notaria_rc;
+            if(Auth::user()->rol_id == 7){
+                $transferencia_data->codigoNotaria = Auth::user()->notaria->codigo_notaria_rc;
+            }
             $transferencia_data->save();
         }
         else{
@@ -641,7 +644,9 @@ class TransferenciaController extends Controller{
             $transferencia_data->rut_emisor = str_replace('.', '', str_replace('-', '', substr($request->rutEmisorTransf, 0, -1)));
             $transferencia_data->codigo_cid = $request->codigoCID;
             $transferencia_data->monto_impuesto = $request->montoPagadoImpuesto;
-            $transferencia_data->codigoNotaria = Auth::user()->notaria->codigo_notaria_rc;
+            if(Auth::user()->rol_id == 7){
+                $transferencia_data->codigoNotaria = Auth::user()->notaria->codigo_notaria_rc;
+            }
             $transferencia_data->save();
         }
 
@@ -827,7 +832,7 @@ class TransferenciaController extends Controller{
             ],
             'operador' => array(
                 'region' => '13',
-                'runUsuario' => '10796553',
+                'runUsuario' => '10544207',
                 'rutEmpresa' => '77880510'
             )
         ];
@@ -1031,6 +1036,80 @@ class TransferenciaController extends Controller{
         
         //return dd($solicitudes);
         return view('transferencia.sinTerminar', compact('solicitudes'));
+    }
+
+    public function revision()
+    {
+        $solicitudes = Transferencia::PorAprobar();
+        
+
+        $SolicitudItem = array();
+        foreach($solicitudes as $item){
+            $item->cliente = Propietario::select('nombre','razon_social','aPaterno','aMaterno')->where('transferencia_id',$item->id)->first();
+
+
+            $SolicitudItem[] = $item;
+        }
+        $solicitudes = collect($SolicitudItem);
+        
+        return view('transferencia.revision', compact('solicitudes'));
+    }
+
+    public function RevisionCedula($id)
+    {
+        $header = new stdClass;
+        //Obtengo listado de rechazos
+        $rechazos = Rechazo::all();
+        //Obtengo datos de la solicitud
+        $data_solicitud = $this->continuarSolicitud($id,false,"revision");
+        $data_solicitud = $data_solicitud->render();
+        //Obtengo los documentos de la solicitud
+        $documentos = Transferencia::DocumentosSolicitud($id);
+        //Obtengo el nombre de archivo de la factura subida en pdf
+        $file = $documentos->whereIn('tipo_documento_id', [9,10,11,12,13,14])->first()->name;
+        //Obtengo la cédula subida del cliente en pdf
+        $cedula_comprador = $documentos->where('tipo_documento_id', '3')->where('transferencia_id',$id)->first();
+        $cedula_estipulante = $documentos->where('tipo_documento_id', '5')->where('transferencia_id',$id)->first();
+        $cedula_vendedor = $documentos->where('tipo_documento_id', '15')->where('transferencia_id',$id)->first();
+        $doc_transferencia = $documentos->whereIn('tipo_documento_id', [9,10,11,12,13,14])->where('transferencia_id',$id)->first();
+        $rol_empresa = $documentos->where('tipo_documento_id', '4')->where('transferencia_id',$id)->first();
+        $doc_limitacion = $documentos->whereIn('tipo_documento_id', [9,10])->where('transferencia_id',$id)->where('esProhibicion',1)->first();
+        if (Storage::exists($file)) {
+            //Obtenemos los datos de la factura guardada en la BD
+            $factura_data = Comprador::where('transferencia_id',$id)->first();
+            $header->RUTRecep = (string)$factura_data->rut;
+            $header->RznSocRecep = (string)$factura_data->nombre.' '.$factura_data->aPaterno.' '.$factura_data->aMaterno;
+        }
+       
+        return view('transferencia.revision.cedula', compact('data_solicitud','rechazos','header','doc_limitacion','rol_empresa','cedula_vendedor','cedula_comprador','doc_transferencia','cedula_estipulante', 'id'));
+    }
+
+    public function updateRevisionCedula(Request $request, $id)
+    {
+        $motivo = $request->get('motivo_rechazo');
+
+        if(!$request->has('aprobado')&&$motivo=="0"){
+            $errors = new MessageBag();
+            $errors->add('Garantiza', 'Debe seleccionar un motivo de rechazo.');
+            return redirect()->route('transferencia.revision.cedula', ['id' => $id]);
+        }
+
+        if(!$request->has('aprobado')){
+            $solicitud = Transferencia::findOrFail($id);
+            $solicitud->estado_id = 9;
+            $solicitud->rechazo_id = $motivo;
+            $solicitud->save();
+            return redirect()->route('transferencia.revision');
+        }
+
+        if($request->has('aprobado')){
+            $solicitud = Transferencia::findOrFail($id);
+            $solicitud->estado_id = 8;
+            $solicitud->save();
+            return redirect()->route('transferencia.revision');
+        }
+
+        //return redirect()->route(Funciones::FlujoRevision(1, $id), ['id' => $id]);
     }
 
 

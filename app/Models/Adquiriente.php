@@ -31,4 +31,8 @@ class Adquiriente extends Model
             ->select('adquirientes.*')
             ->get();
     }
+
+    public function comunas(){
+        return $this->belongsTo(Comuna::class, 'comuna','Codigo');
+    }
 }

@@ -50,12 +50,13 @@ class LimitacionController extends Controller{
             //Obtenemos los datos de la limitación por medio del error en documento
             $error_doc_limi = ErrorEnvioDoc::where('transferencia_id',$id)->first();
             //Actualizamos documento en la bd
-            $doc = Documento::where('transferencia_id',$id)->where('tipo_documento_id',$error_doc_limi->tipo_documento_id)->first();
+            $doc = Documento::where('transferencia_id',$id)->where('tipo_documento_id',$error_doc_limi->tipo_documento_id)->where('esProhibicion',1)->first();
             if($doc != null){
                 $doc->name = 'public/'.$path;
                 $doc->type = 'pdf';
                 $doc->description = trim(Tipo_Documento::select('name')->where('id',$error_doc_limi->tipo_documento_id)->first()->name);
                 $doc->transferencia_id = $id;
+                $doc->esProhibicion = 1;
                 $doc->tipo_documento_id = $error_doc_limi->tipo_documento_id;
                 $doc->added_at = Carbon::now()->toDateTimeString();
                 $doc->save();
@@ -66,6 +67,7 @@ class LimitacionController extends Controller{
                 $doc->type = 'pdf';
                 $doc->description = trim(Tipo_Documento::select('name')->where('id',$error_doc_limi->tipo_documento_id)->first()->name);
                 $doc->transferencia_id = $id;
+                $doc->esProhibicion = 1;
                 $doc->tipo_documento_id = $error_doc_limi->tipo_documento_id;
                 $doc->added_at = Carbon::now()->toDateTimeString();
                 $doc->save();
@@ -73,7 +75,7 @@ class LimitacionController extends Controller{
 
             sleep(2);
             $base64_doc_limitacion = '';
-            $doc_limitacion = Documento::where('transferencia_id', $id)->where('tipo_documento_id',$error_doc_limi->tipo_documento_id)->first();
+            $doc_limitacion = Documento::where('transferencia_id', $id)->where('tipo_documento_id',$error_doc_limi->tipo_documento_id)->where('esProhibicion',1)->first();
             if($doc_limitacion != null){
                 $base64_doc_limitacion = $this->getFileAsBase64($doc_limitacion->name);
             }
@@ -521,7 +523,7 @@ class LimitacionController extends Controller{
         //Si no hay archivo adjunto en request, verifica si ya hay un archivo del mismo tipo guardado en bd y servidor
         if(!$request->hasFile('Doc_Lim')){
             $base64_doc_limitacion = '';
-            $doc_limitacion = Documento::where('transferencia_id', $id)->whereIn('tipo_documento_id',[9,10])->first();
+            $doc_limitacion = Documento::where('transferencia_id', $id)->whereIn('tipo_documento_id',[9,10])->where('esProhibicion',1)->first();
             if($doc_limitacion != null){
                 //Si hay archivo guardado en la bd, obtenemos el binario desde el servidor
                 $base64_doc_limitacion = $this->getFileAsBase64($doc_limitacion->name);
@@ -750,6 +752,7 @@ class LimitacionController extends Controller{
                 $doc->name = 'public/'.$path;
                 $doc->type = 'pdf';
                 $doc->description = trim($request->get('tipoDoc'));
+                $doc->esProhibicion = 1;
                 $doc->transferencia_id = $id;
                 $doc->tipo_documento_id = Tipo_Documento::select('id')->where('name',trim($request->get('tipoDoc')))->first()->id;
                 $doc->added_at = Carbon::now()->toDateTimeString();

@@ -20,6 +20,7 @@
                             <th scope="col">Fecha</th>
                             <th scope="col">Sucursal</th>
                             <th scope="col">Cliente</th>
+                            <th scope="col">Trámites adicionales</th>
                             <th scope="col" style="width:250px">Acciones</th>
                         </tr>
                         </thead>
@@ -31,9 +32,21 @@
                                 <td>{{$item->sucursales}}</td>
                                 <td>{{@$item->cliente->razon_social_recep}}</td>
                                 <td>
-                                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('solicitud.continuarSolicitud', ['id' => $item->id,'reingresa'=> 0,'acceso'=>'ingreso'])}} '" data-old-onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
+                                  <label>SOAP @if(!is_null($item->incluyeSOAP))  @if($item->incluyeSOAP == 1) <i class="fa fa-check green"></i>  @else <i class="fa fa-times red"></i> @endif @else <i class="fa fa-times red"></i> @endif </label>
+                                  <br>
+                                  <label>TAG @if(!is_null($item->incluyeTAG))  @if($item->incluyeTAG == 1) <i class="fa fa-check green"></i>  @else <i class="fa fa-times red"></i> @endif @else <i class="fa fa-times red"></i> @endif</label>
+                                  <br>
+                                  <label>Permiso de circulación @if(!is_null($item->incluyePermiso))  @if($item->incluyePermiso == 1) <i class="fa fa-check green"></i>  @else <i class="fa fa-times red"></i> @endif @else <i class="fa fa-times red"></i> @endif</label>
+                                </td>
+                                <td>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Continuar ingreso de solicitud donde había quedado" class="btn btn-dark btn-sm" onclick="location.href='{{route('solicitud.continuarSolicitud', ['id' => $item->id,'reingresa'=> 0,'acceso'=>'ingreso'])}} '" data-old-onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
                                         <li class="fa fa-pencil"></li> Continuar Ingreso</button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Reingresar solicitud" onclick="location.href='{{route('solicitud.continuarSolicitud', ['id' => $item->id,'reingresa'=> true,'acceso'=>'ingreso'])}} '" class="btn btn-success"><i class="fa fa-refresh"></i></button>
+                                    <br>
+                                    <br>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Reingresar solicitud" onclick="location.href='{{route('solicitud.continuarSolicitud', ['id' => $item->id,'reingresa'=> true,'acceso'=>'ingreso'])}} '" class="btn btn-success"><i class="fa fa-refresh"></i> Reingresar</button>
+                                    <br>
+                                    <br>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -84,6 +97,14 @@
           height: 0;
           border-color: transparent;
           border-style: solid;
+        }
+
+        .red{
+          color: #F00;
+        }
+
+        .green{
+          color: #37e666;
         }
       </style>   
 @endsection

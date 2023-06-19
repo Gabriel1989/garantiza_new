@@ -207,11 +207,19 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
 });
 
 Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {
-    // Solicitudes
+    // Solicitudes SPIEV
     Route::get('solicitud/index', 'SolicitudController@index')->name('solicitud.index');
     Route::get('solicitud/revision', 'SolicitudController@revision')->name('solicitud.revision');
 
-    // Revisión de Solicitudes
+    //Solicitudes STEV
+    Route::get('transferencia/revision', 'TransferenciaController@revision')->name('transferencia.revision');
+    //Revisión de Solicitudes STEV
+    Route::get('transferencia/{id}/revision/cedula', 'TransferenciaController@RevisionCedula')->name('transferencia.revision.cedula');
+    Route::put('transferencia/{id}/updateRevisionCedula', 'TransferenciaController@updateRevisionCedula')->name('transferencia.updateRevisionCedula');
+    Route::get('transferencia/continuar/{id}/{reingresa?}/{acceso?}','TransferenciaController@continuarSolicitud')->name('transferencia.continuar');
+
+
+    // Revisión de Solicitudes SPIEV
     Route::get('solicitud/{id}/revision/cedula', 'SolicitudController@RevisionCedula')->name('solicitud.revision.cedula');
     Route::put('solicitud/{id}/updateRevisionCedula', 'SolicitudController@updateRevisionCedula')->name('solicitud.updateRevisionCedula');
 
@@ -250,7 +258,7 @@ Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {
     Route::post('solicitud/{id}/updateRevisionFacturaAuto/revision', 'SolicitudController@updateRevisionFacturaAuto')->name('solicitud.updateRevisionFacturaAuto');
     Route::post('solicitud/{id}/updateRevisionFacturaCamion/revision','SolicitudController@updateRevisionFacturaCamion')->name('solicitud.updateRevisionFacturaCamion');
 
-    //Crear limitación o prohibición para vehículo
+    //Crear limitación o prohibición para vehículo SPIEV
 
     Route::post('solicitud/{id}/limitacion/form','LimitacionController@ingresarLimitacionForm')->name('solicitud.limitacion.form');
     Route::post('solicitud/{id}/limitacion/new/revision','LimitacionController@ingresaLimitacion')->name('solicitud.limitacion.new');

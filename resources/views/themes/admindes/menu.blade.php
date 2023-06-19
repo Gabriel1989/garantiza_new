@@ -209,9 +209,19 @@
             @endif
 
             @if (Auth::user()->rol_id<=3)
-            <li class="sidebar-label pt15">SOLICITUDES</li>
+            <li class="sidebar-label pt15">SOLICITUDES PRIMERA INSCRIPCIÓN</li>
             <li>
                 <a href="{{route('solicitud.revision')}}">
+                    <span class="glyphicons glyphicons-check"></span>
+                    <span class="sidebar-title">Para Revisar</span>
+                    <span class="sidebar-title-tray">
+                        <!--<span class="label label-xs bg-danger">3</span>-->
+                    </span>
+                </a>
+            </li>
+            <li class="sidebar-label pt15">SOLICITUDES TRANSFERENCIAS</li>
+            <li>
+                <a href="{{route('transferencia.revision')}}">
                     <span class="glyphicons glyphicons-check"></span>
                     <span class="sidebar-title">Para Revisar</span>
                     <span class="sidebar-title-tray">

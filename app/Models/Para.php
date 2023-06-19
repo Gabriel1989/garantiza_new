@@ -9,5 +9,7 @@ class Para extends Model
 {
     protected $table = 'paras';
 
-    
+    public function comunas(){
+        return $this->belongsTo(Comuna::class, 'comuna','Codigo');
+    }
 }

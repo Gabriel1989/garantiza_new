@@ -137,6 +137,10 @@
             <li class="nav-item" role="presentation">
                 <a class="nav-link @if($id_solicitud_rc == 0)  disabled  @elseif($id_solicitud_rc != 0 && $documento_rc == null) disabled @endif" id="pills-voucher-tab" data-toggle="pill" @if($documento_rc != null) href="#pills-voucher" @else href="#" @endif role="tab" aria-controls="pills-voucher" aria-selected="false" @if($id_solicitud_rc == 0) aria-disabled="true" @endif>Comprobantes</a>
             </li>
+            @elseif($acceso == "ingreso")
+            <li class="nav-item" role="presentation">
+                <a class="nav-link " id="pills-voucher-tab" data-toggle="pill" href="#pills-voucher" role="tab" aria-controls="pills-voucher" aria-selected="false">Comprobante Solicitud</a>
+            </li>
             @endif
         </ul>
         <div class="tab-content" id="pills-tabContent">
@@ -244,6 +248,10 @@
                 @if($documento_rc != null)
                     @include('solicitud.comprobante')
                 @endif
+            </div>
+            @elseif($acceso == "ingreso")
+            <div class="tab-pane fade" id="pills-voucher" role="tabpanel" aria-labelledby="pills-voucher-tab">
+                    @include('solicitud.comprobante')
             </div>
             @endif
 

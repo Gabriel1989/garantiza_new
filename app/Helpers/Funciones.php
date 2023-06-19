@@ -69,4 +69,30 @@ class Funciones{
         }
 
     }
+
+    public static function calcularDigitoVerificador($rut)
+    {
+        $rut = str_replace('.', '', $rut); // Eliminar puntos
+        $rut = strrev($rut); // Invertir el RUT
+    
+        $suma = 0;
+        $multiplo = 2;
+    
+        for ($i = 0; $i < strlen($rut); $i++) {
+            $suma += $rut[$i] * $multiplo;
+            $multiplo = ($multiplo < 7) ? $multiplo + 1 : 2;
+        }
+    
+        $resto = $suma % 11;
+        $dv = 11 - $resto;
+    
+        // Casos especiales
+        if ($dv == 11) {
+            return 0;
+        } elseif ($dv == 10) {
+            return 'K';
+        } else {
+            return $dv;
+        }
+    }
 }

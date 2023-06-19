@@ -11,7 +11,7 @@ class Solicitud extends Model
 
     public function paras()
     {
-        return $this->hasOne(Para::class);
+        return $this->hasOne(Para::class,'solicitud_id','id');
     }
 
     public function sucursal(){
@@ -20,6 +20,34 @@ class Solicitud extends Model
 
     public function documentos(){
         return $this->hasMany(Documento::class,'solicitud_id','id');
+    }
+
+    public function adquiriente(){
+        return $this->hasOne(Adquiriente::class, 'solicitud_id','id');
+    }
+
+    public function datos_factura(){
+        return $this->hasOne(Factura::class,'id_solicitud','id');
+    }
+
+    public function solicitud_rc(){
+        return $this->belongsTo(SolicitudRC::class,'solicitud_id','id');
+    }
+
+    public function tipo_vehiculo(){
+        return $this->belongsTo(Tipo_Vehiculo::class,'tipoVehiculos_id','id');
+    }
+
+    public function region(){
+        return $this->belongsTo(Region::class,'region_id','id');
+    }
+
+    public function usuario(){
+        return $this->belongsTo(User::class, 'user_id','id');
+    }
+
+    public function limitacion(){
+        return $this->belongsTo(Limitacion::class,'solicitud_id','id');
     }
 
     public static function Tramites($id){
@@ -93,6 +121,7 @@ class Solicitud extends Model
             ->where('solicitudes.user_id', '=', $user)
             ->select('solicitudes.id', 
                      'solicitudes.created_at', 
+                     'solicitudes.incluyeSOAP', 'solicitudes.incluyeTAG', 'solicitudes.incluyePermiso',
                      'sucursales.name as sucursales')
             ->get();
     }

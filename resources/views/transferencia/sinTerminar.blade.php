@@ -38,7 +38,8 @@
                                 <td>
                                     <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('transferencia.continuarSolicitud', ['id' => $item->id,'reingresa'=> 0,'acceso'=>'ingreso'])}} '">
                                         <li class="fa fa-pencil"></li> Continuar Ingreso</button>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Reingresar transferencia" onclick="location.href='{{route('transferencia.continuarSolicitud', ['id' => $item->id,'reingresa'=> true,'acceso'=>'ingreso'])}} '" class="btn btn-success"><i class="fa fa-refresh"></i></button>
+                                    <br>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Reingresar transferencia" onclick="location.href='{{route('transferencia.continuarSolicitud', ['id' => $item->id,'reingresa'=> true,'acceso'=>'ingreso'])}} '" class="btn btn-success"><i class="fa fa-refresh"></i> Reingresar</button>
                                 </td>
                             </tr>
                         @endforeach

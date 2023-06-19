@@ -37,7 +37,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\Log;
-
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use stdClass;
 
 class SolicitudController extends Controller
@@ -80,6 +80,9 @@ class SolicitudController extends Controller
     }
 
     public function continuarSolicitud($id,$reingresa = false,$acceso = "ingreso"){
+        if($acceso == "revision" && (Auth::user()->rol_id == 4 || Auth::user()->rol_id == 5 || Auth::user()->rol_id == 6)){
+            abort(403);
+        }
         $id_solicitud = $id;
         $comunas = Comuna::allOrder();
 
@@ -3173,54 +3176,69 @@ class SolicitudController extends Controller
     }
 
     public function descargaComprobanteRVM(Request $request, $id){
-        $solicitud_rc = SolicitudRC::where('solicitud_id',$id)->first();
-        $parametro = [
-            'consumidor' => 'ACOBRO',
-            'servicio' => 'CONSULTA SOLICITUD RVM',
-            'ppu' => $solicitud_rc->ppu,
-            'nroSolicitud' => $request->get('id_solicitud_rc'),
-            'anho' => substr($solicitud_rc->fecha,0,4)
-        ];
+        $solicitud_rc_id = $request->get('id_solicitud_rc');
+        if($solicitud_rc_id != null){
+            $solicitud_rc = SolicitudRC::where('solicitud_id',$id)->first();
+            $parametro = [
+                'consumidor' => 'ACOBRO',
+                'servicio' => 'CONSULTA SOLICITUD RVM',
+                'ppu' => $solicitud_rc->ppu,
+                'nroSolicitud' => $request->get('id_solicitud_rc'),
+                'anho' => substr($solicitud_rc->fecha,0,4)
+            ];
 
-        //dd($parametro);
+            //dd($parametro);
 
 
-        $data = RegistroCivil::consultaSolicitudRVM($parametro);
+            $data = RegistroCivil::consultaSolicitudRVM($parametro);
 
-        $salida = json_decode($data, true);
-        $docdata = '';
+            $salida = json_decode($data, true);
+            $docdata = '';
 
-        foreach($salida as $index => $detalle){
-            if($index == "documento"){
-                $docdata = $detalle;
-                break;
+            foreach($salida as $index => $detalle){
+                if($index == "documento"){
+                    $docdata = $detalle;
+                    break;
+                }
+            }
+            if($docdata != ''){
+                // Decodificar la cadena en base64 a bytes
+                $data = base64_decode($docdata);
+
+                // Definir el nombre del archivo de salida
+                $filename = 'comprobante_garantiza.pdf';
+
+                // Enviar encabezados al navegador para forzar la descarga
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . strlen($data));
+
+                // Enviar el contenido del archivo PDF al navegador
+                echo $data;
+                exit;
+            }
+            else{
+                // Enviar un mensaje de error en formato JSON
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'El comprobante de la inscripción no se encuentra disponible aún']);
+                exit;
             }
         }
-        if($docdata != ''){
-            // Decodificar la cadena en base64 a bytes
-            $data = base64_decode($docdata);
-
-            // Definir el nombre del archivo de salida
-            $filename = 'comprobante_garantiza.pdf';
-
-            // Enviar encabezados al navegador para forzar la descarga
-            header('Content-Description: File Transfer');
-            header('Content-Type: application/pdf');
-            header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
-            header('Expires: 0');
-            header('Cache-Control: must-revalidate');
-            header('Pragma: public');
-            header('Content-Length: ' . strlen($data));
-
-            // Enviar el contenido del archivo PDF al navegador
-            echo $data;
-            exit;
-        }
         else{
-            // Enviar un mensaje de error en formato JSON
-            header('Content-Type: application/json');
-            echo json_encode(['error' => 'El comprobante de la inscripción no se encuentra disponible aún']);
-            exit;
+            $solicitud = Solicitud::with(['region','tipo_vehiculo','usuario','datos_factura','sucursal','adquiriente','adquiriente.comunas','paras','solicitud_rc','documentos','limitacion', 'limitacion.acreedor'])->where('id',$id)->first();
+  
+            $pdf = PDF::loadView('solicitud.pdf', ['solicitud' => $solicitud]);
+            $fileName = 'solicitud'.$id.'.pdf';
+
+            Storage::put('public/'.$fileName, $pdf->output());
+
+            return response()->json([
+                'file' => asset('storage/' . $fileName),
+            ]);
         }
     }
 
