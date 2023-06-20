@@ -234,15 +234,16 @@ class TransferenciaController extends Controller{
                     $id_estipulante = 0;
                 }
             }
-            return view('transferencia.index', compact('acceso','estipulante','compradores','vendedor','propietario_data','documento_rc','reingreso','region','solicita_data','solicitud_data','comunas','id_transferencia','id','id_comprador','id_estipulante','id_vendedor','id_transferencia_rc'));
+            return view('transferencia.index', compact('acceso','estipulante','compradores','vendedor','propietario_data','documento_rc','reingreso','region','solicita_data','solicitud_data','comunas','id_transferencia','id','id_comprador','id_estipulante','id_vendedor','id_transferencia_rc','transferencia_rc'));
         }
         else{
             $estipulante = null;
             $compradores = null;
             $vendedor = null;
+            $transferencia_rc = null;
         }
         //Menu comprador: solicitud recién creada
-        return view('transferencia.index', compact('acceso','estipulante','compradores','vendedor','propietario_data','documento_rc','reingreso','region','solicita_data','solicitud_data','comunas','id_transferencia','id','id_comprador','id_estipulante','id_vendedor','id_transferencia_rc'));
+        return view('transferencia.index', compact('acceso','estipulante','compradores','vendedor','propietario_data','documento_rc','reingreso','region','solicita_data','solicitud_data','comunas','id_transferencia','id','id_comprador','id_estipulante','id_vendedor','id_transferencia_rc','transferencia_rc'));
     }
 
     public function saveCompradores(Request $request, $id){

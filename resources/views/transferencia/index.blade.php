@@ -86,6 +86,19 @@
                 id="pills-limitation-tab" data-toggle="pill" href="#pills-limitation" role="tab" aria-controls="pills-limitation" aria-selected="false" @if($id_transferencia_rc == 0) aria-disabled="true" @endif>Limitación</a>
             </li>
 
+            @if($acceso == "revision")
+            <li class="nav-item @if($id_transferencia_rc != 0 && $documento_rc != null)  active @endif" role="presentation">
+                <a class="nav-link @if($id_transferencia_rc == 0)  disabled  @elseif($id_transferencia_rc != 0 && $documento_rc == null) disabled @elseif($documento_rc != null) active @endif" id="pills-pay-tab" data-toggle="pill" @if($documento_rc != null) href="#pills-pay" @else href="#" @endif role="tab" aria-controls="pills-pay" aria-selected="false" @if($id_transferencia_rc == 0) aria-disabled="true" @endif>Pago</a>
+            </li>
+            <li class="nav-item" role="presentation">
+                <a class="nav-link @if($id_transferencia_rc == 0)  disabled  @elseif($id_transferencia_rc != 0 && $documento_rc == null) disabled @endif" id="pills-voucher-tab" data-toggle="pill" @if($documento_rc != null) href="#pills-voucher" @else href="#" @endif role="tab" aria-controls="pills-voucher" aria-selected="false" @if($id_transferencia_rc == 0) aria-disabled="true" @endif>Comprobantes</a>
+            </li>
+            @elseif($acceso == "ingreso")
+            <li class="nav-item" role="presentation">
+                <a class="nav-link " id="pills-voucher-tab" data-toggle="pill" href="#pills-voucher" role="tab" aria-controls="pills-voucher" aria-selected="false">Comprobante Solicitud</a>
+            </li>
+            @endif
+
         </ul>
         <div class="tab-pane fade @if($solicita_data == false)  active show in @endif" id="pills-consultappu" role="tabpanel" aria-labelledby="pills-consultappu-tab">
             @include('transferencia.consultarPPU')
@@ -153,6 +166,23 @@
             @endif
         </div>
 
+        @if($acceso == "revision")
+        <div class="tab-pane fade @if($id_transferencia_rc != 0 && $documento_rc != null)  active show in @endif" id="pills-pay" role="tabpanel" aria-labelledby="pills-pay-tab">
+            @if($documento_rc != null)
+                @include('transferencia.pagos')
+            @endif
+        </div>
+        <div class="tab-pane fade" id="pills-voucher" role="tabpanel" aria-labelledby="pills-voucher-tab">
+            @if($documento_rc != null)
+                @include('transferencia.comprobante')
+            @endif
+        </div>
+        @elseif($acceso == "ingreso")
+        <div class="tab-pane fade" id="pills-voucher" role="tabpanel" aria-labelledby="pills-voucher-tab">
+                @include('transferencia.comprobante')
+        </div>
+        @endif
+
     </div>
 
 </div>
@@ -175,6 +205,8 @@ $(document).ready(function(){
         $("#pills-invoice").addClass('hide');
         $("#pills-docs").addClass('hide');
         $("#pills-limitation").addClass('hide');
+        $("#pills-voucher").addClass('hide');
+        $("#pills-pay").addClass('hide');
     }
 
     if($("#pills-vendedor").hasClass('show')){
@@ -185,6 +217,8 @@ $(document).ready(function(){
         $("#pills-invoice").addClass('hide');
         $("#pills-docs").addClass('hide');
         $("#pills-limitation").addClass('hide');
+        $("#pills-voucher").addClass('hide');
+        $("#pills-pay").addClass('hide');
     }
 
     if($("#pills-estipulante").hasClass('show')){
@@ -195,6 +229,8 @@ $(document).ready(function(){
         $("#pills-invoice").addClass('hide');
         $("#pills-docs").addClass('hide');
         $("#pills-limitation").addClass('hide');
+        $("#pills-voucher").addClass('hide');
+        $("#pills-pay").addClass('hide');
     }
 
     if($("#pills-invoice").hasClass('show')){
@@ -205,6 +241,8 @@ $(document).ready(function(){
         $("#pills-estipulante").addClass('hide');
         $("#pills-docs").addClass('hide');
         $("#pills-limitation").addClass('hide');
+        $("#pills-voucher").addClass('hide');
+        $("#pills-pay").addClass('hide');
     }
 
     if($("#pills-docs").hasClass('show')){
@@ -215,6 +253,8 @@ $(document).ready(function(){
         $("#pills-estipulante").addClass('hide');
         $("#pills-invoice").addClass('hide');
         $("#pills-limitation").addClass('hide');
+        $("#pills-voucher").addClass('hide');
+        $("#pills-pay").addClass('hide');
     }
 
     if($("#pills-limitation").hasClass('show')){
@@ -225,6 +265,32 @@ $(document).ready(function(){
         $("#pills-estipulante").addClass('hide');
         $("#pills-invoice").addClass('hide');
         $("#pills-docs").addClass('hide');
+        $("#pills-voucher").addClass('hide');
+        $("#pills-pay").addClass('hide');
+    }
+
+    if($("#pills-voucher").hasClass('show')){
+        $("#pills-consultappu").addClass('hide');
+        $("#pills-datavehiculo").addClass('hide');
+        $("#pills-comprador").addClass('hide');
+        $("#pills-vendedor").addClass('hide');
+        $("#pills-estipulante").addClass('hide');
+        $("#pills-invoice").addClass('hide');
+        $("#pills-docs").addClass('hide');
+        $("#pills-limitation").addClass('hide');
+        $("#pills-pay").addClass('hide');
+    }
+
+    if($("#pills-pay").hasClass('show')){
+        $("#pills-consultappu").addClass('hide');
+        $("#pills-datavehiculo").addClass('hide');
+        $("#pills-comprador").addClass('hide');
+        $("#pills-vendedor").addClass('hide');
+        $("#pills-estipulante").addClass('hide');
+        $("#pills-invoice").addClass('hide');
+        $("#pills-docs").addClass('hide');
+        $("#pills-limitation").addClass('hide');
+        $("#pills-voucher").addClass('hide');
     }
 });
 
@@ -254,6 +320,12 @@ $(document).on("click","#pills-datavehiculo-tab",function(e){
     $("#pills-limitation").removeClass('show');
     $("#pills-limitation").addClass('hide');
 
+    $("#pills-pay").removeClass('show');
+    $("#pills-pay").addClass('hide');
+
+    $("#pills-voucher").removeClass('show');
+    $("#pills-voucher").addClass('hide');
+
     //Quitamos hide a nav consultada
     $("#pills-datavehiculo").removeClass('hide');
 });
@@ -281,6 +353,12 @@ $(document).on("click","#pills-consultappu-tab",function(e){
     $("#pills-limitation").removeClass('show');
     $("#pills-limitation").addClass('hide');
 
+    $("#pills-pay").removeClass('show');
+    $("#pills-pay").addClass('hide');
+
+    $("#pills-voucher").removeClass('show');
+    $("#pills-voucher").addClass('hide');
+
     //Quitamos hide a nav consultada
     $("#pills-consultappu").removeClass('hide');
 });
@@ -307,6 +385,12 @@ $(document).on("click","#pills-comprador-tab",function(e){
 
     $("#pills-limitation").removeClass('show');
     $("#pills-limitation").addClass('hide');
+
+    $("#pills-pay").removeClass('show');
+    $("#pills-pay").addClass('hide');
+
+    $("#pills-voucher").removeClass('show');
+    $("#pills-voucher").addClass('hide');
     //Quitamos hide a nav consultada
     $("#pills-comprador").removeClass('hide');
 });
@@ -333,6 +417,12 @@ $(document).on("click","#pills-vendedor-tab",function(e){
 
     $("#pills-limitation").removeClass('show');
     $("#pills-limitation").addClass('hide');
+
+    $("#pills-pay").removeClass('show');
+    $("#pills-pay").addClass('hide');
+
+    $("#pills-voucher").removeClass('show');
+    $("#pills-voucher").addClass('hide');
     //Quitamos hide a nav consultada
     $("#pills-vendedor").removeClass('hide');
 });
@@ -360,6 +450,12 @@ $(document).on("click","#pills-estipulante-tab",function(e){
     $("#pills-limitation").removeClass('show');
     $("#pills-limitation").addClass('hide');
 
+    $("#pills-pay").removeClass('show');
+    $("#pills-pay").addClass('hide');
+
+    $("#pills-voucher").removeClass('show');
+    $("#pills-voucher").addClass('hide');
+
     //Quitamos hide a nav consultada
     $("#pills-estipulante").removeClass('hide');
 });
@@ -386,6 +482,12 @@ $(document).on("click","#pills-invoice-tab",function(e){
 
     $("#pills-limitation").removeClass('show');
     $("#pills-limitation").addClass('hide');
+
+    $("#pills-pay").removeClass('show');
+    $("#pills-pay").addClass('hide');
+
+    $("#pills-voucher").removeClass('show');
+    $("#pills-voucher").addClass('hide');
     //Quitamos hide a nav consultada
     $("#pills-invoice").removeClass('hide');
 });
@@ -413,8 +515,115 @@ $(document).on("click","#pills-limitation-tab",function(e){
     $("#pills-docs").removeClass('show');
     $("#pills-docs").addClass('hide');
 
+    $("#pills-pay").removeClass('show');
+    $("#pills-pay").addClass('hide');
+
+    $("#pills-voucher").removeClass('show');
+    $("#pills-voucher").addClass('hide');
 
     //Quitamos hide a nav consultada
     $("#pills-limitation").removeClass('hide');
+});
+
+
+$(document).on("click","#pills-docs-tab", function (e){
+    //Ocultar las demás pestañas
+    $("#pills-datavehiculo").removeClass('show');
+    $("#pills-datavehiculo").addClass('hide');
+
+    $("#pills-consultappu").removeClass('show');
+    $("#pills-consultappu").addClass('hide');
+
+    $("#pills-comprador").removeClass('show');
+    $("#pills-comprador").addClass('hide');
+
+    $("#pills-vendedor").removeClass('show');
+    $("#pills-vendedor").addClass('hide');
+
+    $("#pills-estipulante").removeClass('show');
+    $("#pills-estipulante").addClass('hide');
+
+    $("#pills-invoice").removeClass('show');
+    $("#pills-invoice").addClass('hide');
+
+    $("#pills-pay").removeClass('show');
+    $("#pills-pay").addClass('hide');
+
+    $("#pills-voucher").removeClass('show');
+    $("#pills-voucher").addClass('hide');
+
+    $("#pills-limitation").removeClass('show');
+    $("#pills-limitation").addClass('hide');
+
+    //Quitamos hide a nav consultada
+    $("#pills-docs").removeClass('hide');
+});
+
+
+$(document).on("click","#pills-pay-tab",function(e){
+    //Ocultar las demás pestañas
+    $("#pills-datavehiculo").removeClass('show');
+    $("#pills-datavehiculo").addClass('hide');
+
+    $("#pills-consultappu").removeClass('show');
+    $("#pills-consultappu").addClass('hide');
+
+    $("#pills-comprador").removeClass('show');
+    $("#pills-comprador").addClass('hide');
+
+    $("#pills-vendedor").removeClass('show');
+    $("#pills-vendedor").addClass('hide');
+
+    $("#pills-estipulante").removeClass('show');
+    $("#pills-estipulante").addClass('hide');
+
+    $("#pills-invoice").removeClass('show');
+    $("#pills-invoice").addClass('hide');
+
+    $("#pills-voucher").removeClass('show');
+    $("#pills-voucher").addClass('hide');
+
+    $("#pills-limitation").removeClass('show');
+    $("#pills-limitation").addClass('hide');
+
+    $("#pills-docs").removeClass('show');
+    $("#pills-docs").addClass('hide');
+
+    //Quitamos hide a nav consultada
+    $("#pills-pay").removeClass('hide');
+});
+
+$(document).on("click","#pills-voucher-tab",function(e){
+    //Ocultar las demás pestañas
+    $("#pills-datavehiculo").removeClass('show');
+    $("#pills-datavehiculo").addClass('hide');
+
+    $("#pills-consultappu").removeClass('show');
+    $("#pills-consultappu").addClass('hide');
+
+    $("#pills-comprador").removeClass('show');
+    $("#pills-comprador").addClass('hide');
+
+    $("#pills-vendedor").removeClass('show');
+    $("#pills-vendedor").addClass('hide');
+
+    $("#pills-estipulante").removeClass('show');
+    $("#pills-estipulante").addClass('hide');
+
+    $("#pills-invoice").removeClass('show');
+    $("#pills-invoice").addClass('hide');
+
+    $("#pills-limitation").removeClass('show');
+    $("#pills-limitation").addClass('hide');
+
+    $("#pills-docs").removeClass('show');
+    $("#pills-docs").addClass('hide');
+
+    $("#pills-pay").removeClass('show');
+    $("#pills-pay").addClass('hide');
+
+    //Quitamos hide a nav consultada
+    $("#pills-voucher").removeClass('hide');
+
 });
 </script>

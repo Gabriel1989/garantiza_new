@@ -12,6 +12,7 @@ use App\Helpers\Funciones;
 //dd($solicitud->documentos);
 //dd($solicitud->paras)
 //dd($solicitud);
+//dd($solicitud->limitacion->acreedor->nombre);
 ?>
 <div class="pdf" style="width:600px;">
     <div class="row">
@@ -375,7 +376,7 @@ use App\Helpers\Funciones;
                 <br>
                 <br>
             </div>
-
+            <div class="page-break"></div>
             <div class="row">
                 @if($solicitud->solicitud_rc != null)
                     <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
@@ -434,9 +435,10 @@ use App\Helpers\Funciones;
 
             <div class="row">
                 @if ($solicitud->limitacion != null)
-                    <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
+                    <div class="col-md-12">
                         <fieldset>
                             <legend>DATOS DE LA LIMITACIÓN/PROHIBICIÓN</legend>
+
                             <div class="form-group">
                                 <label>Acreedor:</label>
                                 {{ $solicitud->limitacion->acreedor->nombre }}
@@ -462,6 +464,15 @@ use App\Helpers\Funciones;
 
             </div>
 
+            <div style="position:absolute;top:550;left:330;border: 3px solid #000;;width:165px;">
+                <span style="text-align:center;margin-left:15px;font-weight:bold;font-size:20px;white-space:nowrap;">GARANTIZA</span>
+                <br>
+                <span style="font-size:9px;text-align:center;margin-left:15px;font-weight:bold;">MERCED 280, PISO 6 SANTIAGO</span>
+                <br>
+                <span style="border: 2px solid #000;text-align:center;margin-left:15px;padding:0px 15px 0px 15px;font-weight:bold;font-size:20px;">{{date("d-m-Y")}}</span>
+                <br>
+                <span style="font-size:14px;text-align:center;margin-left:15px;font-weight:bold;white-space:pre;">CONVENIO SPIEV</span>
+            </div>
 
         </div>
     </div>

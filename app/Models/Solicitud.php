@@ -31,7 +31,7 @@ class Solicitud extends Model
     }
 
     public function solicitud_rc(){
-        return $this->belongsTo(SolicitudRC::class,'solicitud_id','id');
+        return $this->hasOne(SolicitudRC::class,'solicitud_id','id');
     }
 
     public function tipo_vehiculo(){
@@ -47,7 +47,7 @@ class Solicitud extends Model
     }
 
     public function limitacion(){
-        return $this->belongsTo(Limitacion::class,'solicitud_id','id');
+        return $this->hasOne(Limitacion::class,'solicitud_id','id');
     }
 
     public static function Tramites($id){
