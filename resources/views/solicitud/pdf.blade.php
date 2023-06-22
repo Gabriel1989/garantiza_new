@@ -14,7 +14,7 @@ use App\Helpers\Funciones;
 //dd($solicitud);
 //dd($solicitud->limitacion->acreedor->nombre);
 ?>
-<div class="pdf" style="width:600px;">
+<div class="pdf" style="width:700px;">
     <div class="row">
         <div class="col-md-12">
             <img style="width:150px;height:50px;float:left;"
@@ -30,8 +30,13 @@ use App\Helpers\Funciones;
             ?>
             <span style="float:right;font-weight:bold;">Solicitud de Inscripción N°{{ $solicitud->id }} <br><br>
                 {{ $fecha_spanish }}</span>
-
-            <h4 style="text-align:center;">COMPROBANTE DE SOLICITUD PRIMERA INSCRIPCIÓN GARANTIZA</h4>
+        </div>
+        <br>
+        <br>
+        <div class="col-md-12">
+            <div style="text-align:center;width:100%;">
+                <h4 style="text-align:center;">COMPROBANTE DE SOLICITUD PRIMERA INSCRIPCIÓN GARANTIZA</h4>
+            </div>
 
             <div class="row">
                 <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
@@ -61,303 +66,303 @@ use App\Helpers\Funciones;
                     </fieldset>
                 </div>
 
-                @if($solicitud->datos_factura != null)
-                <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
-                    <fieldset>
-                        <legend>DATOS DE LA FACTURA</legend>
-                        <div class="form-group">
-                            <label>Razón Social:</label>
-                            {{ strtoupper($solicitud->datos_factura->razon_social_emisor) }}
-                        </div>
+                @if ($solicitud->datos_factura != null)
+                    <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
+                        <fieldset>
+                            <legend>DATOS DE LA FACTURA</legend>
+                            <div class="form-group">
+                                <label>Razón Social:</label>
+                                {{ strtoupper($solicitud->datos_factura->razon_social_emisor) }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Rut emisor:</label>
-                            {{ number_format($solicitud->datos_factura->rut_emisor, 0, ',', '.') }}-{{ strtoupper(Funciones::calcularDigitoVerificador($solicitud->datos_factura->rut_emisor)) }}
-                        </div>
+                            <div class="form-group">
+                                <label>Rut emisor:</label>
+                                {{ number_format($solicitud->datos_factura->rut_emisor, 0, ',', '.') }}-{{ strtoupper(Funciones::calcularDigitoVerificador($solicitud->datos_factura->rut_emisor)) }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Rut receptor:</label>
-                            {{ number_format($solicitud->datos_factura->rut_receptor, 0, ',', '.') }}-{{ strtoupper(Funciones::calcularDigitoVerificador($solicitud->datos_factura->rut_receptor)) }}
-                        </div>
+                            <div class="form-group">
+                                <label>Rut receptor:</label>
+                                {{ number_format($solicitud->datos_factura->rut_receptor, 0, ',', '.') }}-{{ strtoupper(Funciones::calcularDigitoVerificador($solicitud->datos_factura->rut_receptor)) }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>N° Factura:</label>
-                            {{ strtoupper($solicitud->datos_factura->num_factura) }}
-                        </div>
+                            <div class="form-group">
+                                <label>N° Factura:</label>
+                                {{ strtoupper($solicitud->datos_factura->num_factura) }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Ciudad:</label>
-                            {{ strtoupper($solicitud->datos_factura->ciudad) }}
-                        </div>
+                            <div class="form-group">
+                                <label>Ciudad:</label>
+                                {{ strtoupper($solicitud->datos_factura->ciudad) }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Comuna:</label>
-                            {{ strtoupper($solicitud->datos_factura->comuna) }}
-                        </div>
+                            <div class="form-group">
+                                <label>Comuna:</label>
+                                {{ strtoupper($solicitud->datos_factura->comuna) }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Fecha emisión:</label>
-                            {{ date('d-m-Y', strtotime($solicitud->datos_factura->fecha_emision)) }}
-                        </div>
+                            <div class="form-group">
+                                <label>Fecha emisión:</label>
+                                {{ date('d-m-Y', strtotime($solicitud->datos_factura->fecha_emision)) }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Monto total factura:</label>
-                            ${{ number_format($solicitud->datos_factura->monto_total_factura, 0, ',', '.') }}
-                        </div>
+                            <div class="form-group">
+                                <label>Monto total factura:</label>
+                                ${{ number_format($solicitud->datos_factura->monto_total_factura, 0, ',', '.') }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>IVA:</label>
-                            ${{ number_format($solicitud->datos_factura->monto_total_factura - floor($solicitud->datos_factura->monto_total_factura / 1.19), 1, ',', '.') }}
-                        </div>
+                            <div class="form-group">
+                                <label>IVA:</label>
+                                ${{ number_format($solicitud->datos_factura->monto_total_factura - floor($solicitud->datos_factura->monto_total_factura / 1.19), 1, ',', '.') }}
+                            </div>
 
 
-                    </fieldset>
-                    
-                </div>
+                        </fieldset>
+
+                    </div>
                 @endif
             </div>
 
             <div class="row">
-                @if($solicitud->datos_factura != null)
-                <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
-                    <fieldset style="margin-right: 10px;">
-                        <legend>DATOS DEL VEHÍCULO</legend>
-                        @if (isset($solicitud->tipo_vehiculo))
+                @if ($solicitud->datos_factura != null)
+                    <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
+                        <fieldset style="margin-right: 10px;">
+                            <legend>DATOS DEL VEHÍCULO</legend>
+                            @if (isset($solicitud->tipo_vehiculo))
+                                <div class="form-group">
+                                    <label>Tipo Vehículo:</label>
+                                    {{ $solicitud->tipo_vehiculo->name }}
+                                </div>
+                            @endif
+
                             <div class="form-group">
-                                <label>Tipo Vehículo:</label>
-                                {{ $solicitud->tipo_vehiculo->name }}
+                                <label>N° Chasis:</label>
+                                {{ $solicitud->datos_factura->nro_chasis }}
                             </div>
-                        @endif
 
-                        <div class="form-group">
-                            <label>N° Chasis:</label>
-                            {{ $solicitud->datos_factura->nro_chasis }}
-                        </div>
+                            <div class="form-group">
+                                <label>N° Vin:</label>
+                                {{ $solicitud->datos_factura->nro_vin }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>N° Vin:</label>
-                            {{ $solicitud->datos_factura->nro_vin }}
-                        </div>
+                            <div class="form-group">
+                                <label>N° Serie:</label>
+                                {{ $solicitud->datos_factura->nro_serie }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>N° Serie:</label>
-                            {{ $solicitud->datos_factura->nro_serie }}
-                        </div>
+                            <div class="form-group">
+                                <label>Motor:</label>
+                                {{ $solicitud->datos_factura->motor }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Motor:</label>
-                            {{ $solicitud->datos_factura->motor }}
-                        </div>
+                            <div class="form-group">
+                                <label>Marca:</label>
+                                {{ $solicitud->datos_factura->marca }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Marca:</label>
-                            {{ $solicitud->datos_factura->marca }}
-                        </div>
+                            <div class="form-group">
+                                <label>Modelo:</label>
+                                {{ $solicitud->datos_factura->modelo }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Modelo:</label>
-                            {{ $solicitud->datos_factura->modelo }}
-                        </div>
+                            <div class="form-group">
+                                <label>Peso Bruto Vehícular:</label>
+                                {{ $solicitud->datos_factura->peso_bruto_vehicular }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Peso Bruto Vehícular:</label>
-                            {{ $solicitud->datos_factura->peso_bruto_vehicular }}
-                        </div>
+                            <div class="form-group">
+                                <label>Año:</label>
+                                {{ $solicitud->datos_factura->agno_fabricacion }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Año:</label>
-                            {{ $solicitud->datos_factura->agno_fabricacion }}
-                        </div>
+                            <div class="form-group">
+                                <label>Tipo Combustible:</label>
+                                {{ $solicitud->datos_factura->tipo_combustible }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Tipo Combustible:</label>
-                            {{ $solicitud->datos_factura->tipo_combustible }}
-                        </div>
+                            <div class="form-group">
+                                <label>Color:</label>
+                                {{ $solicitud->datos_factura->color }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Color:</label>
-                            {{ $solicitud->datos_factura->color }}
-                        </div>
+                            <div class="form-group">
+                                <label>Tipo Carga:</label>
+                                {{ $solicitud->datos_factura->tipo_carga }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Tipo Carga:</label>
-                            {{ $solicitud->datos_factura->tipo_carga }}
-                        </div>
+                            <div class="form-group">
+                                <label>Tipo Peso Bruto Vehícular:</label>
+                                {{ $solicitud->datos_factura->tipo_pbv }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Tipo Peso Bruto Vehícular:</label>
-                            {{ $solicitud->datos_factura->tipo_pbv }}
-                        </div>
+                            <div class="form-group">
+                                <label>Código CIT:</label>
+                                {{ $solicitud->datos_factura->codigo_cit }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Código CIT:</label>
-                            {{ $solicitud->datos_factura->codigo_cit }}
-                        </div>
-
-                        <div class="form-group">
-                            <label>Código CID:</label>
-                            {{ $solicitud->datos_factura->codigo_cid }}
-                        </div>
-                    </fieldset>
-                </div>
+                            <div class="form-group">
+                                <label>Código CID:</label>
+                                {{ $solicitud->datos_factura->codigo_cid }}
+                            </div>
+                        </fieldset>
+                    </div>
                 @endif
 
-                @if($solicitud->adquiriente != null)
-                <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
-                    <fieldset>
-                        <legend>DATOS DE ADQUIRIENTE</legend>
-                        <div class="form-group">
-                            <label>RUT:</label>
-                            {{ $solicitud->adquiriente->rut }}
-                        </div>
+                @if ($solicitud->adquiriente != null)
+                    <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
+                        <fieldset>
+                            <legend>DATOS DE ADQUIRIENTE</legend>
+                            <div class="form-group">
+                                <label>RUT:</label>
+                                {{ $solicitud->adquiriente->rut }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Nombre:</label>
-                            {{ $solicitud->adquiriente->nombre }}
-                        </div>
+                            <div class="form-group">
+                                <label>Nombre:</label>
+                                {{ $solicitud->adquiriente->nombre }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Apellido Paterno:</label>
-                            {{ $solicitud->adquiriente->aPaterno }}
-                        </div>
+                            <div class="form-group">
+                                <label>Apellido Paterno:</label>
+                                {{ $solicitud->adquiriente->aPaterno }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Apellido Materno:</label>
-                            {{ $solicitud->adquiriente->aMaterno }}
-                        </div>
+                            <div class="form-group">
+                                <label>Apellido Materno:</label>
+                                {{ $solicitud->adquiriente->aMaterno }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Tipo Persona:</label>
-                            <?php
-                            switch ($solicitud->adquiriente->tipo) {
-                                case 'N':
-                                    echo 'Natural';
-                                    break;
-                                case 'J':
-                                    echo 'Jurídica';
-                                    break;
-                                case 'E':
-                                    echo 'Extranjero';
-                                    break;
-                                case 'O':
-                                    echo 'Comunidad';
-                                    break;
-                            }
-                            
-                            ?>
-                        </div>
+                            <div class="form-group">
+                                <label>Tipo Persona:</label>
+                                <?php
+                                switch ($solicitud->adquiriente->tipo) {
+                                    case 'N':
+                                        echo 'Natural';
+                                        break;
+                                    case 'J':
+                                        echo 'Jurídica';
+                                        break;
+                                    case 'E':
+                                        echo 'Extranjero';
+                                        break;
+                                    case 'O':
+                                        echo 'Comunidad';
+                                        break;
+                                }
+                                
+                                ?>
+                            </div>
 
-                        <div class="form-group">
-                            <label>Dirección:</label>
-                            {{ $solicitud->adquiriente->calle }}
-                        </div>
+                            <div class="form-group">
+                                <label>Dirección:</label>
+                                {{ $solicitud->adquiriente->calle }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>N°:</label>
-                            {{ $solicitud->adquiriente->numero }}
-                        </div>
+                            <div class="form-group">
+                                <label>N°:</label>
+                                {{ $solicitud->adquiriente->numero }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Info adicional:</label>
-                            {{ $solicitud->adquiriente->rDomicilio }}
-                        </div>
+                            <div class="form-group">
+                                <label>Info adicional:</label>
+                                {{ $solicitud->adquiriente->rDomicilio }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Comuna:</label>
-                            {{ $solicitud->adquiriente->comunas->Nombre }}
-                        </div>
+                            <div class="form-group">
+                                <label>Comuna:</label>
+                                {{ $solicitud->adquiriente->comunas->Nombre }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Email:</label>
-                            {{ $solicitud->adquiriente->email }}
-                        </div>
+                            <div class="form-group">
+                                <label>Email:</label>
+                                {{ $solicitud->adquiriente->email }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Teléfono:</label>
-                            {{ $solicitud->adquiriente->telefono }}
-                        </div>
-                    </fieldset>
-                </div>
+                            <div class="form-group">
+                                <label>Teléfono:</label>
+                                {{ $solicitud->adquiriente->telefono }}
+                            </div>
+                        </fieldset>
+                    </div>
                 @endif
             </div>
 
             <div class="row">
                 @if ($solicitud->paras != null)
-                <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
-                    <fieldset>
-                        <legend>DATOS DE COMPRA PARA</legend>
-                        <div class="form-group">
-                            <label>RUT:</label>
-                            {{ $solicitud->paras->rut }}
-                        </div>
+                    <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
+                        <fieldset>
+                            <legend>DATOS DE COMPRA PARA</legend>
+                            <div class="form-group">
+                                <label>RUT:</label>
+                                {{ $solicitud->paras->rut }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Nombre:</label>
-                            {{ $solicitud->paras->nombre }}
-                        </div>
+                            <div class="form-group">
+                                <label>Nombre:</label>
+                                {{ $solicitud->paras->nombre }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Apellido Paterno:</label>
-                            {{ $solicitud->paras->aPaterno }}
-                        </div>
+                            <div class="form-group">
+                                <label>Apellido Paterno:</label>
+                                {{ $solicitud->paras->aPaterno }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Apellido Materno:</label>
-                            {{ $solicitud->paras->aMaterno }}
-                        </div>
+                            <div class="form-group">
+                                <label>Apellido Materno:</label>
+                                {{ $solicitud->paras->aMaterno }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Tipo Persona:</label>
-                            <?php
-                            switch ($solicitud->paras->tipo) {
-                                case 'N':
-                                    echo 'Natural';
-                                    break;
-                                case 'J':
-                                    echo 'Jurídica';
-                                    break;
-                                case 'E':
-                                    echo 'Extranjero';
-                                    break;
-                                case 'O':
-                                    echo 'Comunidad';
-                                    break;
-                            }
-                            
-                            ?>
-                        </div>
+                            <div class="form-group">
+                                <label>Tipo Persona:</label>
+                                <?php
+                                switch ($solicitud->paras->tipo) {
+                                    case 'N':
+                                        echo 'Natural';
+                                        break;
+                                    case 'J':
+                                        echo 'Jurídica';
+                                        break;
+                                    case 'E':
+                                        echo 'Extranjero';
+                                        break;
+                                    case 'O':
+                                        echo 'Comunidad';
+                                        break;
+                                }
+                                
+                                ?>
+                            </div>
 
-                        <div class="form-group">
-                            <label>Dirección:</label>
-                            {{ $solicitud->paras->calle }}
-                        </div>
+                            <div class="form-group">
+                                <label>Dirección:</label>
+                                {{ $solicitud->paras->calle }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>N°:</label>
-                            {{ $solicitud->paras->numero }}
-                        </div>
+                            <div class="form-group">
+                                <label>N°:</label>
+                                {{ $solicitud->paras->numero }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Info adicional:</label>
-                            {{ $solicitud->paras->rDomicilio }}
-                        </div>
+                            <div class="form-group">
+                                <label>Info adicional:</label>
+                                {{ $solicitud->paras->rDomicilio }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Comuna:</label>
-                            {{ $solicitud->paras->comunas->Nombre }}
-                        </div>
+                            <div class="form-group">
+                                <label>Comuna:</label>
+                                {{ $solicitud->paras->comunas->Nombre }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Email:</label>
-                            {{ $solicitud->paras->email }}
-                        </div>
+                            <div class="form-group">
+                                <label>Email:</label>
+                                {{ $solicitud->paras->email }}
+                            </div>
 
-                        <div class="form-group">
-                            <label>Teléfono:</label>
-                            {{ $solicitud->paras->telefono }}
-                        </div>
-                    </fieldset>
-                </div>
+                            <div class="form-group">
+                                <label>Teléfono:</label>
+                                {{ $solicitud->paras->telefono }}
+                            </div>
+                        </fieldset>
+                    </div>
                 @endif
 
                 <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
@@ -384,7 +389,7 @@ use App\Helpers\Funciones;
             </div>
             <div class="page-break"></div>
             <div class="row">
-                @if($solicitud->solicitud_rc != null)
+                @if ($solicitud->solicitud_rc != null)
                     <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
                         <fieldset>
                             <legend>DATOS DE LA INSCRIPCIÓN</legend>
@@ -413,25 +418,24 @@ use App\Helpers\Funciones;
                                 {{ date('H:i', strtotime($solicitud->solicitud_rc->hora)) }}
                             </div>
                         </fieldset>
-                        
+
                     </div>
                 @endif
 
-                @if($solicitud->documentos != null)
+                @if ($solicitud->documentos != null)
                     <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
                         <fieldset>
                             <legend>DOCUMENTOS DE LA SOLICITUD</legend>
-                            @foreach($solicitud->documentos as $docs)
+                            @foreach ($solicitud->documentos as $docs)
                                 <div class="form-group">
                                     <label>Nombre:</label>
-                                    {{ str_replace('public/','',$docs->name) }}
+                                    {{ str_replace('public/', '', $docs->name) }}
                                 </div>
 
                                 <div class="form-group">
                                     <label>Tipo:</label>
                                     {{ $docs->description }}
                                 </div>
-
                             @endforeach
                         </fieldset>
                     </div>
@@ -468,7 +472,7 @@ use App\Helpers\Funciones;
                     </div>
                 @endif
 
-                @if($solicitud->limitacion_rc != null)
+                @if ($solicitud->limitacion_rc != null)
                     <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
                         <fieldset>
                             <legend>DATOS DE LA LIMITACIÓN/PROHIBICIÓN ENVIADA A RC</legend>
@@ -504,13 +508,17 @@ use App\Helpers\Funciones;
             </div>
 
             <div style="position:absolute;top:550;left:330;border: 3px solid #000;;width:165px;">
-                <span style="text-align:center;margin-left:15px;font-weight:bold;font-size:20px;white-space:nowrap;">GARANTIZA</span>
+                <span
+                    style="text-align:center;margin-left:15px;font-weight:bold;font-size:20px;white-space:nowrap;">GARANTIZA</span>
                 <br>
-                <span style="font-size:9px;text-align:center;margin-left:15px;font-weight:bold;">MERCED 280, PISO 6 SANTIAGO</span>
+                <span style="font-size:9px;text-align:center;margin-left:15px;font-weight:bold;">MERCED 280, PISO 6
+                    SANTIAGO</span>
                 <br>
-                <span style="border: 2px solid #000;text-align:center;margin-left:15px;padding:0px 15px 0px 15px;font-weight:bold;font-size:20px;">{{date("d-m-Y")}}</span>
+                <span
+                    style="border: 2px solid #000;text-align:center;margin-left:15px;padding:0px 15px 0px 15px;font-weight:bold;font-size:20px;">{{ date('d-m-Y') }}</span>
                 <br>
-                <span style="font-size:14px;text-align:center;margin-left:15px;font-weight:bold;white-space:pre;">CONVENIO SPIEV</span>
+                <span
+                    style="font-size:14px;text-align:center;margin-left:15px;font-weight:bold;white-space:pre;">CONVENIO SPIEV</span>
             </div>
 
         </div>

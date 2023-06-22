@@ -31,4 +31,8 @@ class Estipulante extends Model
             ->select('estipulantes.*')
             ->get();
     }
+
+    public function comunas(){
+        return $this->belongsTo(Comuna::class, 'comuna','Codigo');
+    }
 }

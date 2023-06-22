@@ -31,4 +31,8 @@ class CompraPara extends Model
             ->select('paras.*')
             ->get();
     }
+
+    public function comunas(){
+        return $this->belongsTo(Comuna::class, 'comuna','Codigo');
+    }
 }

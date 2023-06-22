@@ -162,6 +162,14 @@
             });
         });
 
+        $('#esProhibicion').on('change', function(e) {
+            if ($('#esProhibicion').prop('checked')==true){
+                $(this).val(1);
+            }else{
+                $(this).val(0);
+            }
+        });
+
     });
 
 
