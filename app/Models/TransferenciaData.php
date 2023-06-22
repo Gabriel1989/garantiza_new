@@ -22,4 +22,8 @@ class TransferenciaData extends Model
         return $this->belongsTo(NaturalezaActo::class, 'naturaleza_id','id');
     }
 
+    public function lugar(){
+        return $this->belongsTo(Comuna::class,'lugar_id', 'Codigo');
+    }
+
 }

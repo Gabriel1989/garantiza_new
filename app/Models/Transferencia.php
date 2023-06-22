@@ -26,6 +26,38 @@ class Transferencia extends Model
         return $this->hasMany(Documento::class,'transferencia_id','id');
     }
 
+    public function comprador(){
+        return $this->hasOne(Comprador::class,'transferencia_id','id');
+    }
+
+    public function vendedor(){
+        return $this->hasOne(Vendedor::class,'transferencia_id','id');
+    }
+
+    public function estipulante(){
+        return $this->hasOne(Estipulante::class,'transferencia_id','id');
+    }
+
+    public function data_transferencia(){
+        return $this->hasOne(TransferenciaData::class, 'transferencia_id','id');
+    }
+
+    public function limitacion(){
+        return $this->hasOne(Limitacion::class,'transferencia_id','id');
+    }
+
+    public function limitacion_rc(){
+        return $this->hasOne(LimitacionRC::class,'transferencia_id','id');
+    }
+
+    public function transferencia_rc(){
+        return $this->hasOne(TransferenciaRC::class,'transferencia_id','id');
+    }
+
+    public function usuario(){
+        return $this->belongsTo(User::class, 'user_id','id');
+    }
+
     public static function PorAprobar(){
         return DB::table('transferencias')
             ->join('users', 'users.id', '=', 'transferencias.user_id')

@@ -30,4 +30,8 @@ class Comprador extends Model{
             ->select('compradores.*')
             ->get();
     }
+
+    public function comunas(){
+        return $this->belongsTo(Comuna::class, 'comuna','Codigo');
+    }
 }

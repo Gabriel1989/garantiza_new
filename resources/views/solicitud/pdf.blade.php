@@ -61,6 +61,7 @@ use App\Helpers\Funciones;
                     </fieldset>
                 </div>
 
+                @if($solicitud->datos_factura != null)
                 <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
                     <fieldset>
                         <legend>DATOS DE LA FACTURA</legend>
@@ -113,9 +114,11 @@ use App\Helpers\Funciones;
                     </fieldset>
                     
                 </div>
+                @endif
             </div>
 
             <div class="row">
+                @if($solicitud->datos_factura != null)
                 <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
                     <fieldset style="margin-right: 10px;">
                         <legend>DATOS DEL VEHÍCULO</legend>
@@ -197,7 +200,9 @@ use App\Helpers\Funciones;
                         </div>
                     </fieldset>
                 </div>
+                @endif
 
+                @if($solicitud->adquiriente != null)
                 <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
                     <fieldset>
                         <legend>DATOS DE ADQUIRIENTE</legend>
@@ -273,6 +278,7 @@ use App\Helpers\Funciones;
                         </div>
                     </fieldset>
                 </div>
+                @endif
             </div>
 
             <div class="row">
@@ -435,7 +441,7 @@ use App\Helpers\Funciones;
 
             <div class="row">
                 @if ($solicitud->limitacion != null)
-                    <div class="col-md-12">
+                    <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
                         <fieldset>
                             <legend>DATOS DE LA LIMITACIÓN/PROHIBICIÓN</legend>
 
@@ -458,6 +464,39 @@ use App\Helpers\Funciones;
                                 <label>Tipo Documento:</label>
                                 {{ $solicitud->limitacion->tipodocumento->name }}
                             </div>
+                        </fieldset>
+                    </div>
+                @endif
+
+                @if($solicitud->limitacion_rc != null)
+                    <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
+                        <fieldset>
+                            <legend>DATOS DE LA LIMITACIÓN/PROHIBICIÓN ENVIADA A RC</legend>
+                            <div class="form-group">
+                                <label>PPU:</label>
+                                {{ $solicitud->limitacion_rc->ppu }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Oficina:</label>
+                                {{ $solicitud->limitacion_rc->oficina }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Número Solicitud:</label>
+                                {{ $solicitud->limitacion_rc->numSol }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Fecha:</label>
+                                {{ date('d-m-Y', strtotime($solicitud->limitacion_rc->fecha)) }}
+                            </div>
+
+                            <div class="form-group">
+                                <label>Hora:</label>
+                                {{ date('H:i', strtotime($solicitud->limitacion_rc->hora)) }}
+                            </div>
+
                         </fieldset>
                     </div>
                 @endif

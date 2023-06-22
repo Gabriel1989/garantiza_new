@@ -90,14 +90,14 @@
         showOverlay();
         e.preventDefault();
         let numSolGarantiza = $(this).data('garantizasol');
-        fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteRVM", {
+        fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteTransferencia", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRF-TOKEN": "{{ csrf_token() }}"
             },
             body: JSON.stringify({
-                id_solicitud: numSolGarantiza
+                id_transferencia: numSolGarantiza
             })
         }).then((response) => response.json())
         .then((data) => {
@@ -114,7 +114,7 @@
         let numSolRC = $(this).data('numsol');
         let numSolGarantiza = $(this).data('garantizasol');
 
-        fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteRVM", {
+        fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteTransferencia", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

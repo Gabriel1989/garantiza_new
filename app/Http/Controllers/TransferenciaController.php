@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use stdClass;
 
 class TransferenciaController extends Controller{
@@ -1111,6 +1112,74 @@ class TransferenciaController extends Controller{
         }
 
         //return redirect()->route(Funciones::FlujoRevision(1, $id), ['id' => $id]);
+    }
+
+    public function descargaComprobanteTransferencia(Request $request, $id){
+        $solicitud_rc_id = $request->get('id_transferencia_rc');
+        if($solicitud_rc_id != null){
+            $solicitud_rc = TransferenciaRC::where('transferencia_id',$id)->first();
+            $parametro = [
+                'consumidor' => 'ACOBRO',
+                'servicio' => 'CONSULTA TRANSFERENCIA',
+                'ppu' => $solicitud_rc->ppu,
+                'nroSolicitud' => $request->get('id_transferencia_rc'),
+                'anho' => substr($solicitud_rc->fecha,0,4)
+            ];
+
+            //dd($parametro);
+
+
+            $data = RegistroCivil::consultaTransferencia($parametro);
+
+            $salida = json_decode($data, true);
+            $docdata = '';
+
+            foreach($salida as $index => $detalle){
+                if($index == "documento"){
+                    $docdata = $detalle;
+                    break;
+                }
+            }
+            if($docdata != ''){
+                // Decodificar la cadena en base64 a bytes
+                $data = base64_decode($docdata);
+
+                // Definir el nombre del archivo de salida
+                $filename = 'comprobante_rc.pdf';
+
+                // Enviar encabezados al navegador para forzar la descarga
+                header('Content-Description: File Transfer');
+                header('Content-Type: application/pdf');
+                header('Content-Disposition: attachment; filename="' . basename($filename) . '"');
+                header('Expires: 0');
+                header('Cache-Control: must-revalidate');
+                header('Pragma: public');
+                header('Content-Length: ' . strlen($data));
+
+                // Enviar el contenido del archivo PDF al navegador
+                echo $data;
+                exit;
+            }
+            else{
+                // Enviar un mensaje de error en formato JSON
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'El comprobante de la inscripción no se encuentra disponible aún']);
+                exit;
+            }
+        }
+        else{
+            $transferencia = Transferencia::with(['vehiculo','propietario','notaria','documentos','comprador','vendedor',
+            'estipulante','data_transferencia','limitacion','limitacion_rc','transferencia_rc','usuario'])->where('id',$id)->first();
+  
+            $pdf = PDF::loadView('transferencia.pdf', ['transferencia' => $transferencia]);
+            $fileName = 'transferencia'.$id.'.pdf';
+
+            Storage::put('public/'.$fileName, $pdf->output());
+
+            return response()->json([
+                'file' => asset('storage/' . $fileName),
+            ]);
+        }
     }
 
 

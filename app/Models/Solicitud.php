@@ -50,6 +50,10 @@ class Solicitud extends Model
         return $this->hasOne(Limitacion::class,'solicitud_id','id');
     }
 
+    public function limitacion_rc(){
+        return $this->hasOne(LimitacionRC::class,'solicitud_id','id');
+    }
+
     public static function Tramites($id){
         return DB::table('tipo_tramites_solicitudes')
             ->join('tipo_tramites', 'tipo_tramites.id', '=', 'tipo_tramites_solicitudes.tipoTramite_id')

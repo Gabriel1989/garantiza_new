@@ -3229,7 +3229,7 @@ class SolicitudController extends Controller
             }
         }
         else{
-            $solicitud = Solicitud::with(['region','tipo_vehiculo','usuario','datos_factura','sucursal','adquiriente','adquiriente.comunas','paras','solicitud_rc','documentos','limitacion', 'limitacion.acreedor'])->where('id',$id)->first();
+            $solicitud = Solicitud::with(['region','tipo_vehiculo','usuario','datos_factura','sucursal','adquiriente','adquiriente.comunas','paras','solicitud_rc','documentos','limitacion','limitacion_rc', 'limitacion.acreedor'])->where('id',$id)->first();
   
             $pdf = PDF::loadView('solicitud.pdf', ['solicitud' => $solicitud]);
             $fileName = 'solicitud'.$id.'.pdf';

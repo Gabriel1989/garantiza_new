@@ -289,6 +289,7 @@ Route::group(["middleware"=>["auth","ejecut.notaria"]],function(){
 
     Route::get('transferencia/verSolicitudes', 'TransferenciaController@verSolicitudes')->name('transferencia.verSolicitudes');
     Route::get('transferencia/sinTerminar', 'TransferenciaController@sinTerminar')->name('transferencia.sinTerminar');
+    Route::post('transferencia/{id}/descargaComprobanteTransferencia','TransferenciaController@descargaComprobanteTransferencia')->name('transferencia.descargaComprobanteTransferencia');
 
     //Documentos Transferencias STEV
     Route::post('documentoTransferencia/destroy', 'DocumentoController@destroyDocTransf')->name('transferencia.documento.destroy');
