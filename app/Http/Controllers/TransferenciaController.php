@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\RegistroCivil;
+use App\Helpers\Funciones;
 use Exception;
 use App\Models\Transferencia;
 use App\Models\TransferenciaRC;
@@ -31,6 +32,7 @@ use Illuminate\Support\MessageBag;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use stdClass;
+use SimpleXMLElement;
 
 class TransferenciaController extends Controller{
     public function __construct(){
@@ -47,8 +49,9 @@ class TransferenciaController extends Controller{
         $id_transferencia_rc = 0;
         $id_estipulante = 0;
         $acceso = 'ingreso';
+        $transferencia_rc = null;
         
-        return view('transferencia.index',compact('acceso','solicita_data','salida','id_estipulante','id_transferencia_rc','id_comprador','id_vendedor','id_transferencia','solicitud_data'));
+        return view('transferencia.index',compact('acceso','solicita_data','salida','id_estipulante','id_transferencia_rc','transferencia_rc','id_comprador','id_vendedor','id_transferencia','solicitud_data'));
     }
 
     public function consultaDataVehiculo(Request $request){
@@ -175,7 +178,7 @@ class TransferenciaController extends Controller{
         $solicitud_data = Transferencia::find($id);
 
         $reingreso = Reingreso::where('transferencia_id',$id_transferencia)->whereIn('estado_id',[0,2,3])->first();
-        $documento_rc = EnvioDocumentoRC::where('solicitud_id',$id_transferencia)->first();
+        $documento_rc = EnvioDocumentoRC::where('transferencia_id',$id_transferencia)->first();
 
         $region = Region::all();
         $solicita_data = true;
@@ -184,7 +187,7 @@ class TransferenciaController extends Controller{
 
         if($reingresa){
             if($reingreso == null){
-                $transferencia_rc = TransferenciaRC::where('solicitud_id',$id)->first();
+                $transferencia_rc = TransferenciaRC::where('transferencia_id',$id)->first();
                 if($transferencia_rc != null){
                     $new_reingreso = new Reingreso();
                     $new_reingreso->ppu = explode('-',str_replace('.','',$transferencia_rc->ppu))[0];
@@ -694,7 +697,7 @@ class TransferenciaController extends Controller{
             }
         }
         
-
+        
         $datosEstipulante = null;
         if($estipulante != null){
             $datosEstipulante = array(
@@ -825,7 +828,7 @@ class TransferenciaController extends Controller{
                 'Total' => $transferencia_data->total_venta,
                 'Moneda' => $transferencia_data->moneda,
                 'Kilometraje' => $transferencia_data->kilometraje,
-                'RutEmisor' => $transferencia_data->rut_emisor,
+                'RutEmisor' => '',
                 'codigoNotaria' => $transferencia_data->codigoNotaria
             ],
             'ImpuestoTransferencia' => [
@@ -840,7 +843,7 @@ class TransferenciaController extends Controller{
         ];
 
         $solicitanteDTO = null;
-
+        
         if($estipulante != null){
             $solicitanteDTO = array(
                 'persona' => [
@@ -884,14 +887,175 @@ class TransferenciaController extends Controller{
             );
         }
 
+        /*
+        $solicitanteDTO = array(
+            'persona' => [
+                'calidad' => 'N',
+                'runRut' => 15617960,
+                'nombresRazon' => 'TOMÁS MIGUEL',
+                'aPaterno' => 'MIGUELES',
+                'aMaterno' => 'MORA',
+                'Email' => 'TMIGUELE@GMAIL.COM',
+            ],
+            'direccion' => array(
+                'calle' => 'HUERFANOS',
+                'ltrDomicilio' => '',
+                'nroDomicilio' => '1570',
+                'rDomicilio' => '',
+                'telefono' => '3324-0156',
+                'comuna' => 81,
+                'cPostal' => '',
+            )
+        );*/
+
         $parametros['Solicitante'] = $solicitanteDTO;
         $parametros['Estipulante'] = $datosEstipulante;
         $parametros['ReIngreso'] = $datosReingreso;
+        /*
+        $parametros = '<root><vehiculo>
+                            <PPU>CF4561</PPU>
+                            <DV>5</DV>
+                            <TipoVehiculo>STATION WAGON</TipoVehiculo>
+                            <Marca>FORD</Marca>
+                            <Modelo>E 150</Modelo>
+                            <AnoFabric>1991</AnoFabric>
+                            <Color>BLANCO</Color>
+                            <nroMotor>NO REGISTRA</nroMotor>
+                            <nroChasis>1FMEE11Y5-MHA40871</nroChasis>
+                            <nroSerie/>
+                            <nroVin/>
+                    </vehiculo>           
+                    <Vendedor>        
+                        <comunidad>
+                            <cantidad>0</cantidad>
+                            <esComunidad>NO</esComunidad>
+                        </comunidad>
+                        <persona>
+                            <calidad>N</calidad>
+                            <runRut>13828977</runRut>
+                            <nombresRazon>PATRICIO ANDRÉS</nombresRazon>
+                            <aPaterno>ACHONDO</aPaterno>
+                            <aMaterno>LAGOS</aMaterno>
+                            <Email>OJEDA@OJEDA.cl</Email>
+                        </persona>
+                    </Vendedor>
+                    <Comprador>        
+                        <comunidad>
+                            <esComunidad>NO</esComunidad>
+                            <cantidad>0</cantidad>
+                        </comunidad>               
+                        <compran>                 
+                            <persona>
+                                <calidad>J</calidad>
+                                <runRut>78000110</runRut>
+                                <nombresRazon>SOC INDUSTRIAL CARCARSI LIMITADA</nombresRazon>
+                                <aPaterno/>
+                                <aMaterno/>
+                                <Email>TMIGUELE@SRCEI.CL</Email>
+                            </persona>                 
+                            <direccion>
+                                <calle>HUERFANOS</calle>
+                                <ltrDomicilio/>
+                                <nroDomicilio>1570</nroDomicilio>
+                                <rDomicilio/>
+                                <telefono>22611-0000</telefono>
+                                <comuna>81</comuna>
+                                <cPostal/>
+                            </direccion>
+                        </compran>
+                    </Comprador>
+                    <Estipulante>              
+                        <persona>
+                        <calidad/>
+                        <runRut/>
+                        <nombresRazon/>
+                        <aPaterno/>
+                        <aMaterno/>
+                        <Email/>
+                        </persona>               
+                        <direccion>
+                        <calle/>
+                        <ltrDomicilio/>
+                        <nroDomicilio/>
+                        <rDomicilio/>
+                        <telefono/>
+                        <comuna/>
+                        <cPostal/>
+                        </direccion>               
+                        <Prohibicion/>
+                    </Estipulante>  
+                    <documento>
+                        <TipoDocumento>CONTRATO PRIVADO ELECTRONICO</TipoDocumento>
+                        <Naturaleza>COMPRAVENTA</Naturaleza>
+                        <Numero>1026</Numero>
+                        <Fecha>20190323</Fecha>
+                        <Lugar>81</Lugar>
+                        <Total>5000000</Total>
+                        <Moneda>$</Moneda>
+                        <Kilometraje>5000</Kilometraje>
+                        <RutEmisor/>
+                        <codigoNotaria>1</codigoNotaria>
+                    </documento>  
+                    <ImpuestoTransferencia>
+                        <CodigoCID>03122710075922123102313404</CodigoCID>
+                        <MontoPagado>25000</MontoPagado>
+                    </ImpuestoTransferencia> 
+                    <operador>
+                        <region>13</region>
+                        <runUsuario>10544207</runUsuario>
+                        <rutEmpresa>77880510</rutEmpresa>
+                    </operador>
+                    <Solicitante>               
+                        <persona>
+                            <calidad>N</calidad>
+                            <runRut>15617960</runRut>
+                            <nombresRazon>TOMÁS MIGUEL</nombresRazon>
+                            <aPaterno>MIGUELES</aPaterno>
+                            <aMaterno>MORA</aMaterno>
+                            <Email>TMIGUELE@GMAIL.COM</Email>
+                        </persona>               
+                        <direccion>
+                            <calle>HUERFANOS</calle>
+                            <ltrDomicilio/>
+                            <nroDomicilio>1570</nroDomicilio>
+                            <rDomicilio/>
+                            <telefono>3324-0156</telefono>
+                            <comuna>81</comuna>
+                            <cPostal/>
+                        </direccion>
+                    </Solicitante>                                              
+                    <ReIngreso>              
+                        <PPU/>               
+                        <NroSolicitud/>               
+                        <FechaSolRech/>               
+                        <NroResExenta/>               
+                        <FechaResExenta/>
+                    </ReIngreso></root>';
+        try {
+            libxml_use_internal_errors(true);
+            $xml = new SimpleXMLElement($parametros);
+            if ($xml === false) {
+                echo "Failed loading XML: ";
+                foreach(libxml_get_errors() as $error) {
+                    echo "<br>", $error->message;
+                }
+            } else {
+                $json = json_encode($xml);
+                $array = json_decode($json, true);
+                $newArray = Funciones::emptyArrayToString($array);
+                $parametros = $newArray;
+            }
+        } catch (Exception $e) {
+            echo 'ERROR: '.$e->getMessage();
+        }
+        */                      
 
         //dd($parametros);
 
         $data = RegistroCivil::creaStev(json_encode($parametros));
         $salida = json_decode($data, true);
+
+        
 
         //dd($salida);
 
@@ -919,7 +1083,7 @@ class TransferenciaController extends Controller{
                         $transferencia_rc->oficina = $oficina;
                         $transferencia_rc->ppu = $ppu_rc;
                         $transferencia_rc->tipoSol = $tipo_sol;
-                        $transferencia_rc->solicitud_id = $id;
+                        $transferencia_rc->transferencia_id = $id;
                         $transferencia_rc->save();
                     }
                     else{
@@ -930,7 +1094,7 @@ class TransferenciaController extends Controller{
                         $transferencia_rc->oficina = $oficina;
                         $transferencia_rc->ppu = $ppu_rc;
                         $transferencia_rc->tipoSol = $tipo_sol;
-                        $transferencia_rc->solicitud_id = $id;
+                        $transferencia_rc->transferencia_id = $id;
                         $transferencia_rc->save();
 
                     }
@@ -970,7 +1134,8 @@ class TransferenciaController extends Controller{
 
                     sleep(4);
                     $transferencia_rc = TransferenciaRC::getSolicitud($id);
-                    $html = view('transferencia.menuDocs', compact('id', 'nro_solicitud_transf_rc', 'ppu_rc','transferencia_rc'))->render();
+                    $solicitud_data = Transferencia::find($id);
+                    $html = view('transferencia.menuDocs', compact('id','solicitud_data', 'nro_solicitud_transf_rc', 'ppu_rc','transferencia_rc'))->render();
                     return response()->json(['status' => "OK","html" => $html],200);
 
                 }
@@ -1180,6 +1345,99 @@ class TransferenciaController extends Controller{
                 'file' => asset('storage/' . $fileName),
             ]);
         }
+    }
+
+    public function verEstado(Request $request, $id){
+
+        $solicitud_rc = TransferenciaRC::where('transferencia_id',$id)->first();
+
+        //dd($solicitud_rc);
+
+        $parametro = [
+            'PPU' => str_replace(".","",explode("-",$solicitud_rc->ppu)[0]),
+            'Oficina' => $solicitud_rc->oficina,
+            'NumeroSolicitud' => $request->get('id_transferencia_rc'),
+            'Ano' => substr($solicitud_rc->fecha,0,4)
+        ];
+
+        //dd($parametro);
+
+
+        $data = RegistroCivil::consultaSolicitudStev($parametro);
+
+        $salida = json_decode($data, true);
+
+        //dd($salida);
+        foreach($salida as $index => $detalle){
+            if($index != "Solicitud"){
+                if(!is_array($detalle)){
+                    echo '<label>'.$index.': </label> '.$detalle."<br>";
+                }
+                else{
+                    foreach($detalle as $index2 => $detalle_sol){
+                        if($index2 != "Rechazos"){
+                            echo '<label>'.$index2.': </label> '.$detalle_sol."<br>";
+                        }
+                        else{
+                            foreach($detalle_sol as $index3 => $rechazo){
+                                echo '<label>'.$index3.': </label> '.$rechazo."<br>";
+                            }
+                        }
+                    }
+                }
+            }
+            else{
+                foreach($detalle as $index2 => $detalle_sol){
+                    if($index2 != "Rechazos"){
+                        echo '<label>'.$index2.': </label> '.$detalle_sol."<br>";
+                    }
+                    else{
+                        foreach($detalle_sol as $index3 => $rechazo){
+                            if(!is_array($rechazo)){
+                                echo '<label>'.$index3.': </label> '.$rechazo."<br>";
+                            }
+                            else{
+                                foreach($rechazo as $index4 => $rech){
+                                    echo '<label>'.($index4+1).': </label> '.$rech."<br>";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        echo '<h2>Datos Transferencia RC</h2>';
+
+        $parametro = [
+            'consumidor' => 'ACOBRO',
+            'servicio' => 'CONSULTA TRANSFERENCIA',
+            'tramite' => 'prueba',
+            'nroSolicitud' => $request->get('id_transferencia_rc'),
+            'anho' => substr($solicitud_rc->fecha,0,4),
+            'ppu' => str_replace(".","",explode("-",$solicitud_rc->ppu)[0]),
+        ];
+
+        //dd($parametro);
+
+
+        $data = RegistroCivil::consultaTransferencia($parametro);
+
+        $salida = json_decode($data, true);
+        $codigoresp = null;
+
+        foreach($salida as $index => $detalle){
+            if($index != "documento"){
+                if($index == "codigoresp"){
+                    $codigoresp = $detalle;
+                }
+                if($codigoresp != null){
+                    echo "<label>".$index.': </label> '.$detalle.'<br>';
+                }
+            }
+        }
+        echo '<button type="button" data-garantizaSol="'.$id.'" data-numsol="'.$solicitud_rc->numeroSol.'" class="btn btn-success btn-sm btnDescargaComprobante"><i class="fa fa-download"></i>  Descarga Comprobante</button>';
+        die;
     }
 
 

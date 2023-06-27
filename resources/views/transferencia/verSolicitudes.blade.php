@@ -130,10 +130,10 @@
             $(".modal-title").text('Estado Solicitud');
 
             $.ajax({
-                url: "/solicitud/"+numSolGarantiza+"/verEstadoSolicitud",
+                url: "/transferencia/"+numSolGarantiza+"/verEstadoSolicitud",
                 type: "post",
                 data: {
-                    id_solicitud_rc: numSolRC,
+                    id_transferencia_rc: numSolRC,
                     _token: "{{ csrf_token() }}"
                 },
                 success: function(data){
@@ -152,7 +152,7 @@
             $(".modal-title").text('Estado de Limitación/Prohibición');
 
             $.ajax({
-                url: "/solicitud/"+numSolGarantiza+"/limitacion/verEstadoSolicitud",
+                url: "/transferencia/"+numSolGarantiza+"/limitacion/verEstadoSolicitud",
                 type: "post",
                 data: {
                     id_solicitud_rc: numSolRC,
@@ -172,7 +172,7 @@
         let numSolRC = $(this).data('numsol');
         let numSolGarantiza = $(this).data('garantizasol');
 
-        fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteLimi", {
+        fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteLimi", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -221,7 +221,7 @@
             let numSolRC = $(this).data('numsol');
             let numSolGarantiza = $(this).data('garantizasol');
 
-            fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteRVM", {
+            fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteTransferencia", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

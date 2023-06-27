@@ -50,7 +50,7 @@
                                         active 
                                     @endif 
                                 @elseif($acceso == "ingreso") 
-                                    @if($estadoSolicitud != '' && $estadoSolicitud == 6)   
+                                    @if($estadoSolicitud != '' && ($estadoSolicitud == 5 || $estadoSolicitud == 12))   
                                         active
                                     @endif   
                                 @endif" role="presentation">
@@ -59,7 +59,7 @@
                     disabled 
                 @endif 
             @elseif($acceso == "ingreso") 
-                @if($estadoSolicitud != '' && $estadoSolicitud != 6)   
+                @if($estadoSolicitud != '' && $estadoSolicitud != 5)   
                     disabled
                 @endif   
             @endif" id="pills-docs-tab" data-toggle="pill"  
@@ -70,7 +70,7 @@
                                                             
                                                             @endif 
                                                         @elseif($acceso == "ingreso")
-                                                            @if($estadoSolicitud != '' && $estadoSolicitud == 6)
+                                                            @if($estadoSolicitud != '' && $estadoSolicitud == 5)
                                                                 href="#pills-docs"
                                                             @elseif($id_transferencia_rc != 0) 
                                                                 href="#pills-docs"
@@ -129,6 +129,9 @@
         <div class="tab-pane fade @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_transferencia_rc == 0 && $id_estipulante != 0) show  active in @endif" id="pills-invoice" role="tabpanel" aria-labelledby="pills-invoice-tab">
             @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_transferencia_rc == 0 && $id_estipulante != 0)
                 @include('transferencia.dataResumen')
+
+            @elseif($id_transferencia_rc != 0)    
+                @include('transferencia.dataResumen')
             @endif
         </div>
 
@@ -138,7 +141,7 @@
                         active show in 
                     @endif
                 @elseif($acceso == "ingreso")
-                    @if($estadoSolicitud == 6)
+                    @if($estadoSolicitud == 5 || $estadoSolicitud == 12)
                         show active in
                     @endif
                 @endif
@@ -148,7 +151,7 @@
                         @include('transferencia.menuDocs')
                     @endif
                 @elseif($acceso == "ingreso")
-                    @if($estadoSolicitud == 6)
+                    @if($estadoSolicitud == 5)
                         @include('transferencia.menuDocs')
                     @elseif($id_transferencia_rc != 0)
                         @include('transferencia.menuDocs')

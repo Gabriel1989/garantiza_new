@@ -22,7 +22,7 @@ use App\Models\TransferenciaRC;
 use App\Models\TransferenciaData;
 use App\Models\Comprador;
 use App\Models\Estipulante;
-
+use App\Models\Vendedor;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\MessageBag;
@@ -235,6 +235,7 @@ class LimitacionController extends Controller{
         }
 
         //Si no hay archivo adjunto en request, verifica si ya hay un archivo del mismo tipo guardado en bd y servidor
+        $base64_doc_limitacion = '';
         if(!$request->hasFile('Doc_Lim')){
             $base64_doc_limitacion = '';
             $doc_limitacion = Documento::where('solicitud_id', $id)->whereIn('tipo_documento_id',[6,7])->first();
@@ -489,11 +490,11 @@ class LimitacionController extends Controller{
     }
 
     public function ingresaLimitacionTransferencia(Request $request, $id){
+        $vendedor = Vendedor::where('transferencia_id',$id)->first();
         $comprador = Comprador::where('transferencia_id',$id)->first();
         $transferencia_rc = TransferenciaRC::getSolicitud($id);
         $get_limitacion_rc_rechazada = LimitacionRC::where('transferencia_id',$id)->first();
         $get_limitacion = Limitacion::where('transferencia_id',$id)->first();
-        $transferencia = Transferencia::where('id',$id)->first();
         $compraPara = Estipulante::where('transferencia_id',$id)->first();
         if($get_limitacion == null){
             $limitacion = new Limitacion();
@@ -506,6 +507,7 @@ class LimitacionController extends Controller{
             $limitacion->nro_motor = trim($request->get('nro_motor'));
             $limitacion->nro_serie = is_null($request->get('nro_serie')) ? '' : trim($request->get('nro_serie'));
             $limitacion->nro_chasis = trim($request->get('nro_chasis'));
+            $limitacion->lugar_id = is_null($request->get('lugar_limi')) ? 0 : trim($request->get('lugar_limi'));
             $limitacion->save();
         }
         else{
@@ -517,10 +519,12 @@ class LimitacionController extends Controller{
             $get_limitacion->nro_motor = trim($request->get('nro_motor'));
             $get_limitacion->nro_serie = is_null($request->get('nro_serie')) ? '' : trim($request->get('nro_serie'));
             $get_limitacion->nro_chasis = trim($request->get('nro_chasis'));
+            $get_limitacion->lugar_id = is_null($request->get('lugar_limi')) ? 0 : trim($request->get('lugar_limi'));
             $get_limitacion->save();
         }
 
         //Si no hay archivo adjunto en request, verifica si ya hay un archivo del mismo tipo guardado en bd y servidor
+        $base64_doc_limitacion = '';
         if(!$request->hasFile('Doc_Lim')){
             $base64_doc_limitacion = '';
             $doc_limitacion = Documento::where('transferencia_id', $id)->whereIn('tipo_documento_id',[9,10])->where('esProhibicion',1)->first();
@@ -569,12 +573,12 @@ class LimitacionController extends Controller{
             $parametro = [
                 'Propietario' => [
                     'titular' => [
-                        'calidad' => $comprador->tipo,
-                        'runRut' => str_replace('.', '', str_replace('-', '', substr($comprador->rut, 0, -1))),
-                        'nombresRazon' => $comprador->nombre,
-                        'aPaterno' => $comprador->aPaterno,
-                        'aMaterno' => $comprador->aMaterno,
-                        'email' => is_null($comprador->email) ? 'info@acobro.cl' : $comprador->email,
+                        'calidad' => $vendedor->tipo,
+                        'runRut' => str_replace('.', '', str_replace('-', '', substr($vendedor->rut, 0, -1))),
+                        'nombresRazon' => $vendedor->nombre,
+                        'aPaterno' => $vendedor->aPaterno,
+                        'aMaterno' => $vendedor->aMaterno,
+                        'Email' => is_null($vendedor->email) ? 'info@acobro.cl' : $vendedor->email,
                     ],
                     'comunidad' => [
                         'cantidad' => '0',
@@ -584,7 +588,7 @@ class LimitacionController extends Controller{
                 'operador' => array(
                     'region' => '13',
                     'runUsuario' => '10796553',
-                    'rEmpresa' => '77880510'
+                    'rutEmpresa' => '77880510'
                 ),
                 'Vehiculo' => array(
                     'patente' => isset($transferencia_rc[0]->ppu)? str_replace(".","",explode("-",$transferencia_rc[0]->ppu)[0]) : '',
@@ -599,7 +603,7 @@ class LimitacionController extends Controller{
                 ),
                 'documento' => [
                     'fecha' => date('Ymd'),
-                    'lugar' => $transferencia->sucursal->comuna, //Nro Comuna Sucursal -> Maipu
+                    'lugar' => is_null($request->get('lugar_limi')) ? 81 : trim($request->get('lugar_limi')), //Nro Comuna Sucursal -> Maipu
                     'numero' => $request->get('folio'),
                     'tipoDoc' => trim($request->get('tipoDoc')),
                     'autorizante' => trim($request->get('autorizante')),
@@ -614,11 +618,11 @@ class LimitacionController extends Controller{
                 $solicitanteDTO = array(
                     'persona' => [
                         'calidad' => $compraPara->tipo,
-                        'runRut' => str_replace('.', '', str_replace('-', '', substr($compraPara->rut, 0, -1))),
+                        'runRut' => /*str_replace('.', '', str_replace('-', '', substr($compraPara->rut, 0, -1)))*/'10796553',
                         'nombresRazon' => $compraPara->nombre,
                         'aPaterno' => $compraPara->aPaterno,
                         'aMaterno' => $compraPara->aMaterno,
-                        'email' => is_null($compraPara->email) ? 'info@acobro.cl' : $compraPara->email,
+                        'Email' => is_null($compraPara->email) ? 'info@acobro.cl' : $compraPara->email,
                     ],
                     'direccion' => array(
                         'calle' => $compraPara->calle,
@@ -635,11 +639,11 @@ class LimitacionController extends Controller{
                 $solicitanteDTO = array(
                     'persona' => [
                         'calidad' => $comprador->tipo,
-                        'runRut' => str_replace('.', '', str_replace('-', '', substr($comprador->rut, 0, -1))),
+                        'runRut' => /*str_replace('.', '', str_replace('-', '', substr($comprador->rut, 0, -1)))*/'10796553',
                         'nombresRazon' => $comprador->nombre,
                         'aPaterno' => $comprador->aPaterno,
                         'aMaterno' => $comprador->aMaterno,
-                        'email' => is_null($comprador->email) ? 'info@acobro.cl' : $comprador->email,
+                        'Email' => is_null($comprador->email) ? 'info@acobro.cl' : $comprador->email,
                     ],
                     'direccion' => array(
                         'calle' => $comprador->calle,
@@ -653,6 +657,27 @@ class LimitacionController extends Controller{
                 );
             }
 
+            /*
+            $solicitanteDTO = array(
+                'persona' => [
+                    'calidad' => 'N',
+                    'runRut' => 15617960,
+                    'nombresRazon' => 'TOMÁS MIGUEL',
+                    'aPaterno' => 'MIGUELES',
+                    'aMaterno' => 'MORA',
+                    'Email' => 'TMIGUELE@GMAIL.COM',
+                ],
+                'direccion' => array(
+                    'calle' => 'HUERFANOS',
+                    'ltrDomicilio' => '',
+                    'nroDomicilio' => '1570',
+                    'rDomicilio' => '',
+                    'telefono' => '3324-0156',
+                    'comuna' => 81,
+                    'cPostal' => '',
+                )
+            );*/
+
             $parametro['Solicitante'] = $solicitanteDTO;
             $parametro['ReIngreso'] = $datosReingreso;
             $data = RegistroCivil::limTransf(json_encode($parametro));
@@ -663,7 +688,7 @@ class LimitacionController extends Controller{
             if(isset($salida['codigoresp'])){
                 //dd((int)$salida['codigoresp']);
                 $cod_salida_resp = $salida['codigoresp'];
-                if(trim($cod_salida_resp)=="OK"){
+                if(trim($cod_salida_resp)==0){
                     $nro_limitacion_rc = $salida['solicitud']['numeroSol'];
                     $ppu_rc = $salida['solicitud']['ppu'];
                     $fecha = $salida['solicitud']['fecha'];

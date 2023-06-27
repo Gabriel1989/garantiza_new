@@ -56,7 +56,7 @@ use App\Models\ErrorEnvioDoc;
                         </select>
 
 
-                        <input type="hidden" name="nombreRazon" id="nombreRazon" class="form-control" required>
+                        <input type="hidden" name="nombreRazon" id="nombreRazon" class="form-control" required value="{{ ($limitacion != null)? $limitacion->acreedor->nombre: '' }}">>
                     </label>
                 </div>
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Vehiculo</h4></div></div>
@@ -75,7 +75,7 @@ use App\Models\ErrorEnvioDoc;
                 <div class="row">
                     <label for="nro_vin" class="col-lg-3 control-label ">Nro Vin:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_vin" id="nro_vin" value="{{ ($limitacion == null)? $factura->nro_vin : $limitacion->nro_vin}}" class="form-control" required>
+                        <input type="text" name="nro_vin" id="nro_vin" value="{{ ($limitacion == null)? $factura->nro_vin : $limitacion->nro_vin}}" class="form-control" >
                     </label>
                 </div>
                 <div class="row">
@@ -318,6 +318,8 @@ use App\Models\ErrorEnvioDoc;
         $('#Doc_Lim2').on('change', function() {
             $('#lbl_Doc_Lim2').text($('#Doc_Lim2').val());
         });
+
+        $("#runAcreedor").change();
     });
 
     $(document).on("change","#runAcreedor",function(){

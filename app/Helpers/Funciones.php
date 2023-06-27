@@ -95,4 +95,21 @@ class Funciones{
             return $dv;
         }
     }
+
+    public static function emptyArrayToString($array)
+    {
+        $newArray = [];
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                if(empty($value)){
+                    $newArray[$key] = '';
+                } else {
+                    $newArray[$key] = self::emptyArrayToString($value);
+                }
+            } else {
+                $newArray[$key] = $value;
+            }
+        }
+        return $newArray;
+    }
 }

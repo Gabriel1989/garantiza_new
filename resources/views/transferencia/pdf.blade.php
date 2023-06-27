@@ -262,11 +262,13 @@ use App\Helpers\Funciones;
                             {{ $transferencia->data_transferencia->num_doc }}
                         </div>
 
+                        @if($transferencia->data_transferencia->rut_emisor != '')
                         <div class="form-group">
                             <label>RUT emisor:</label>
+
                             {{ number_format($transferencia->data_transferencia->rut_emisor,0,',','.') }}-{{ Funciones::calcularDigitoVerificador($transferencia->data_transferencia->rut_emisor) }}
                         </div>
-
+                        @endif
                         <div class="form-group">
                             <label>Fecha emisión documento:</label>
                             {{ date('d-m-Y', strtotime($transferencia->data_transferencia->fecha_emision)) }}

@@ -57,7 +57,7 @@ use App\Models\Transferencia;
                         </select>
 
 
-                        <input type="hidden" name="nombreRazon" id="nombreRazon" class="form-control" required>
+                        <input type="hidden" name="nombreRazon" id="nombreRazon" class="form-control" required value="{{ ($limitacion != null)? $limitacion->acreedor->nombre: '' }}">
                     </label>
                 </div>
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Vehiculo</h4></div></div>
@@ -76,7 +76,7 @@ use App\Models\Transferencia;
                 <div class="row">
                     <label for="nro_vin" class="col-lg-3 control-label ">Nro Vin:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_vin" id="nro_vin" value="{{ ($limitacion == null)? $transferencia->vehiculo->vin : $limitacion->nro_vin}}" class="form-control" required>
+                        <input type="text" name="nro_vin" id="nro_vin" value="{{ ($limitacion == null)? $transferencia->vehiculo->vin : $limitacion->nro_vin}}" class="form-control" >
                     </label>
                 </div>
                 <div class="row">
@@ -104,6 +104,17 @@ use App\Models\Transferencia;
                     </label>
                 </div>
                 <div class="row">
+                    <label for="comuna3" class="col-lg-3 control-label">Lugar :</label>
+                        <label class="col-lg-4">
+                            <select class="col-sm-12 form-select comuna" name="lugar_limi" id="lugar_limi">
+                                <option value="0">Seleccione Comuna...</option>
+                                @foreach ($comunas as $item)
+                                    <option value="{{ $item->Codigo }}" @if($limitacion != null) @if($limitacion->lugar_id == $item->Codigo)  selected @endif @endif>{{ $item->Nombre }}</option>
+                                @endforeach
+                            </select>
+                        </label>
+                </div>
+                <div class="row">
                     <label for="autorizante" class="col-lg-3 control-label ">Autorizante:</label>
                     <label class="col-lg-3">
                         <input type="input" name="autorizante" id="autorizante" value="{{ ($limitacion != null)? $limitacion->autorizante : '' }}" class="form-control">
@@ -129,7 +140,11 @@ use App\Models\Transferencia;
 
 
         <div class="panel-footer">
-            <button type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Grabar y Continuar Revisión </button>
+            @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3)
+                <button type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Enviar solicitud a RC y Continuar Revisión </button>
+            @else
+                <button type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Grabar limitación/prohibición y Continuar</button>
+            @endif
         </div>
         @else
             @if($error_envio_doc != null)
@@ -319,6 +334,8 @@ use App\Models\Transferencia;
         $('#Doc_Lim2').on('change', function() {
             $('#lbl_Doc_Lim2').text($('#Doc_Lim2').val());
         });
+
+        $("#runAcreedor").trigger('change');
     });
 
     $(document).on("change","#runAcreedor",function(){
@@ -328,8 +345,6 @@ use App\Models\Transferencia;
         else{
             $("#nombreRazon").val('');
         }
-
-
     });
 
     $(document).on("click",".btnRevisaLimitacion",function(e){
@@ -359,7 +374,7 @@ use App\Models\Transferencia;
         let numSolRC = $(this).data('numsol');
         let numSolGarantiza = $(this).data('garantizasol');
 
-        fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteLimi", {
+        fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteLimi", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -420,7 +435,7 @@ use App\Models\Transferencia;
         });
 
         $.ajax({
-            url: "{{route('solicitud.limitacion.reenviarArchivo',['id' => $id])}}",
+            url: "{{route('transferencia.limitacion.reenviarArchivo',['id' => $id])}}",
             type: "post",
             data: formData,
             processData: false,
@@ -532,12 +547,7 @@ use App\Models\Transferencia;
         });
 
         $.ajax({
-            url: "@php  if($acceso == 'ingreso'){ 
-                            echo '/solicitud/'.$id.'/limitacion/new';
-                        }elseif($acceso == 'revision'){ 
-                            echo '/solicitud/'.$id.'/limitacion/new/revision';
-                        }
-                  @endphp",
+            url: "/transferencia/{{ $id }}/limitacion/new",
             type: "post",
             data: formData,
             processData: false,

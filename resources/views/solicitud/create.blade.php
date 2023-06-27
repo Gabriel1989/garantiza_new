@@ -78,7 +78,7 @@
                                         active 
                                     @endif 
                                 @elseif($acceso == "ingreso") 
-                                    @if($estadoSolicitud != '' && $estadoSolicitud == 6)   
+                                    @if($estadoSolicitud != '' && ($estadoSolicitud == 6 || $estadoSolicitud == 12))   
                                         active
                                     @endif   
                                 @endif" role="presentation">
@@ -191,7 +191,7 @@
                         active show in 
                     @endif
                 @elseif($acceso == "ingreso")
-                    @if($estadoSolicitud == 6)
+                    @if($estadoSolicitud == 6 || $estadoSolicitud == 12)
                         show active in
                     @endif
                 @endif

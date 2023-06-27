@@ -1,8 +1,8 @@
 <?php 
 
-use App\Models\CompraPara;
-use App\Models\Solicitud;
-$solicitud = Transferencia::find($id);
+use App\Models\Estipulante;
+use App\Models\Transferencia;
+$transferencia = Transferencia::find($id);
 
 ?>
 
@@ -34,7 +34,7 @@ $solicitud = Transferencia::find($id);
                 <div class="col-sm-6 col-lg-6 mb5">
                     <div class="col-lg-6">
                         <span style="white-space:normal;" class="btn btn-warning fileinput-button col-sm-12" name="CedulaPDF" id="CedulaPDF">
-                            Seleccionar Cédula PDF</span>
+                            Seleccionar Cédula Comprador PDF</span>
                     </div>
                     <div class="col-lg-6">
                         <input id="Cedula_PDF" name="Cedula_PDF" type="file" style="display:none" accept="application/pdf" />
@@ -42,11 +42,22 @@ $solicitud = Transferencia::find($id);
                     </div>
                 </div>
 
-                @if(count(CompraPara::getSolicitud($id)) > 0)
+                <div class="col-sm-6 col-lg-6 mb5">
+                    <div class="col-lg-6">
+                        <span style="white-space:normal;" class="btn btn-warning fileinput-button col-sm-12" name="CedulaVendePDF" id="CedulaVendePDF">
+                            Seleccionar Cédula Vendedor PDF</span>
+                    </div>
+                    <div class="col-lg-6">
+                        <input id="Cedula_Vende_PDF" name="Cedula_Vende_PDF" type="file" style="display:none" accept="application/pdf" />
+                        <label id="lbl_Cedula_Vende_PDF"></label>
+                    </div>
+                </div>
+
+                @if(count(Estipulante::getSolicitud($id)) > 0)
                 <div class="col-sm-6 col-lg-6 mb5">
                     <div class="col-lg-6">
                         <span style="white-space:normal;" class="btn btn-warning fileinput-button col-sm-12" name="CedulaParaPDF" id="CedulaParaPDF" style="white-space: normal;">
-                            Seleccionar Cédula Para PDF</span>
+                            Seleccionar Cédula Estipulante PDF</span>
                     </div>
                     <div class="col-lg-6">
                         <input id="Cedula_Para_PDF" name="Cedula_Para_PDF" type="file" style="display:none" accept="application/pdf" />
@@ -55,7 +66,7 @@ $solicitud = Transferencia::find($id);
                 </div>
                 @endif
 
-                @if ($solicitud->empresa==1)
+                @if ($transferencia->empresa==1)
                 
                     <div class="col-sm-6 col-lg-6 mb5">
                         <div class="col-lg-6">
@@ -115,7 +126,11 @@ $solicitud = Transferencia::find($id);
         </div>    
 
         <div class="panel-footer">
-            <button type="submit" class="btn btn-system"> <li class="fa fa-save"></li> Grabar y Continuar</button>
+            @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3)
+                <button type="submit" class="btn btn-system"> <li class="fa fa-save"></li> Enviar Archivos a RC y continuar</button>
+            @else
+            <button type="submit" class="btn btn-system"> <li class="fa fa-save"></li> Guardar Archivos y continuar</button>
+            @endif
         </div>
     </div>
 
@@ -127,16 +142,24 @@ $solicitud = Transferencia::find($id);
 $(document).ready(function(){
 
     $('#CedulaPDF').on('click', function() {
-            $('#Cedula_PDF').trigger('click');
+        $('#Cedula_PDF').trigger('click');
     });
 
     $('#Cedula_PDF').on('change', function() {
         $('#lbl_Cedula_PDF').text($('#Cedula_PDF').val());
     });
 
+    $('#CedulaVendePDF').on('click', function() {
+        $('#Cedula_Vende_PDF').trigger('click');
+    });
+
+    $('#Cedula_Vende_PDF').on('change', function() {
+        $('#lbl_Cedula_Vende_PDF').text($('#Cedula_Vende_PDF').val());
+    });
+
 
     $('#CedulaParaPDF').on('click', function() {
-            $('#Cedula_Para_PDF').trigger('click');
+        $('#Cedula_Para_PDF').trigger('click');
     });
 
     $('#Cedula_Para_PDF').on('change', function() {
@@ -260,6 +283,7 @@ $(document).on("submit","#form_subeDocs",function(e){
                         $("#pills-voucher").html(json.html2);
                         $("#pills-pay").toggleClass('show');
                         $("#pills-docs").removeClass('show');
+                        $("#pills-docs").addClass('hide');
                         $("#pills-home").removeClass('show');
                         $("#pills-contact").removeClass('show');
                         $("#pills-profile").removeClass('show');

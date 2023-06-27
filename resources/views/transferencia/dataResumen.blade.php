@@ -147,7 +147,11 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
             </div>
         </div>
         <div class="panel-footer">
-            <button id="enviaSolicitud1" type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Enviar Solicitud RC </button>
+            @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3)
+                <button id="enviaSolicitud1" type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Enviar Solicitud a RC y Continuar</button>
+            @else
+                <button id="enviaSolicitud1" type="submit" class="btn btn-system"><li class="fa fa-save"></li>  Grabar datos y continuar </button>
+            @endif
         </div>
     </div>
 
@@ -315,6 +319,7 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                         $("#pills-docs").toggleClass('show');
                         $("#pills-docs").removeClass('hide');
                         $("#pills-invoice").toggleClass('show');
+                        $("#pills-invoice").removeClass('show');
                         $("#pills-invoice").addClass('hide');
                         $("#pills-docs-tab").attr("href","#pills-docs");
                         $("#pills-docs-tab").toggleClass('disabled');
@@ -341,6 +346,7 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                     $("#pills-docs").toggleClass('show');
                     $("#pills-docs").removeClass('hide');
                     $("#pills-invoice").toggleClass('show');
+                    $("#pills-invoice").removeClass('show');
                     $("#pills-invoice").addClass('hide');
                     $("#pills-docs-tab").attr("href","#pills-docs");
                     $("#pills-docs-tab").toggleClass('disabled');
