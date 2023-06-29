@@ -56,7 +56,7 @@ use App\Models\ErrorEnvioDoc;
                         </select>
 
 
-                        <input type="hidden" name="nombreRazon" id="nombreRazon" class="form-control" required value="{{ ($limitacion != null)? $limitacion->acreedor->nombre: '' }}">>
+                        <input type="hidden" name="nombreRazon" id="nombreRazon" class="form-control" required value="{{ ($limitacion != null)? $limitacion->acreedor->nombre: '' }}">
                     </label>
                 </div>
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Vehiculo</h4></div></div>
