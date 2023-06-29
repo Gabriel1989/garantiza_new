@@ -46,7 +46,7 @@
                                     <button type="button" data-toggle="tooltip" data-placement="top" title="Reingresar solicitud" onclick="location.href='{{route('solicitud.continuarSolicitud', ['id' => $item->id,'reingresa'=> true,'acceso'=>'ingreso'])}} '" class="btn btn-success"><i class="fa fa-refresh"></i> Reingresar</button>
                                     <br>
                                     <br>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger btnDescargaPdfGarantiza" data-garantizaSol="{{ $item->id }}"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -121,6 +121,26 @@
                     "url": "/json/datatable.spanish.json"
                 }
             });
+        });
+
+        $(document).on("click",".btnDescargaPdfGarantiza",function(e){
+          showOverlay();
+          e.preventDefault();
+          let numSolGarantiza = $(this).data('garantizasol');
+          fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteRVM", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRF-TOKEN": "{{ csrf_token() }}"
+              },
+              body: JSON.stringify({
+                  id_solicitud: numSolGarantiza
+              })
+          }).then((response) => response.json())
+          .then((data) => {
+              hideOverlay();
+              window.open(data.file);
+          });
         });
     </script>
     <script>
