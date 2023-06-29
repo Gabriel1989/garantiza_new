@@ -56,8 +56,14 @@
                 </label>
 
                 <label for="region" class="col-lg-1 control-label">Región</label>
-                <label class="col-lg-1">
-                    <input type="text" name="region" id="region" class="form-control" placeholder="Región" value="{{$sucursal->region}}">
+                <label class="col-lg-5">
+                    <!--<input type="text" name="region" id="region" class="form-control" placeholder="Región" value="{{$sucursal->region}}">-->
+                    <select class="col-sm-12 form-select" name="region" id="region" >
+                        <option>Seleccione Región...</option>
+                        @foreach ($regiones as $item)
+                            <option value="{{$item->id}}" @if($sucursal->region == $item->id) selected    @endif>{{$item->nombre}}</option>    
+                        @endforeach
+                    </select>
                 </label>
             </div>
             
@@ -86,6 +92,11 @@
             formatOn: 'keyup',
             minimumLength: 8, 
             validateOn: 'change' 
+        });
+
+        $('#region').multiselect({
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
         });
 
         $("input#rut").rut().on('rutInvalido', function(e) {

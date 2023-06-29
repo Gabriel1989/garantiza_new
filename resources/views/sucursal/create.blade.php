@@ -48,8 +48,14 @@
                 </label>
 
                 <label for="region" class="col-lg-1 control-label">Región</label>
-                <label class="col-lg-1">
-                    <input type="text" name="region" id="region" class="form-control" placeholder="Región" value="{{old('region')}}">
+                <label class="col-lg-5">
+                    <!--<input type="text" name="region" id="region" class="form-control" placeholder="Región" value="{{old('region')}}">-->
+                    <select class="col-sm-12 form-select" name="region" id="region" >
+                        <option selected>Seleccione Región...</option>
+                        @foreach ($regiones as $item)
+                            <option value="{{$item->id}}">{{$item->nombre}}</option>    
+                        @endforeach
+                    </select>
                 </label>
             </div>
         </div>
@@ -67,6 +73,10 @@
     $(document).ready(function() {
         $('#concesionaria_id').multiselect();
         $('#comuna').multiselect({
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
+        });
+        $('#region').multiselect({
             enableCaseInsensitiveFiltering: true,
             enableFiltering: true
         });

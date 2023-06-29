@@ -1050,18 +1050,10 @@ class TransferenciaController extends Controller{
         }
         */                      
 
-        //dd($parametros);
-
-        $data = RegistroCivil::creaStev(json_encode($parametros));
-        $salida = json_decode($data, true);
-
-        
-
-        //dd($salida);
-
-        //if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3){
+        if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3){
             
-            
+            $data = RegistroCivil::creaStev(json_encode($parametros));
+            $salida = json_decode($data, true);
             if(isset($salida['codigoresp'])){
                 //dd((int)$salida['codigoresp']);
                 $cod_salida_resp = (int)$salida['codigoresp'];
@@ -1153,7 +1145,7 @@ class TransferenciaController extends Controller{
                 $errors->add('Solicitud STEV', $salida['glosa']);
                 return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()],500);
             }
-        /*}
+        }
         else{
             $solicitud2 = Transferencia::find($id);
             $solicitud2->estado_id = 5;
@@ -1164,7 +1156,7 @@ class TransferenciaController extends Controller{
             $ppu_rc = null;
 
             return view('transferencia.menuDocs', compact('id', 'nro_solicitud_transf_rc', 'ppu_rc','transferencia_rc'));
-        }*/
+        }
     }
 
     public function verSolicitudes(){

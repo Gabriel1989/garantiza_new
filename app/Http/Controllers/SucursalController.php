@@ -6,6 +6,7 @@ use App\Http\Requests\SucursalRequest;
 use App\Models\Concesionaria;
 use App\Models\Sucursal;
 use App\Models\Comuna;
+use App\Models\Region;
 use Illuminate\Http\Request;
 
 class SucursalController extends Controller
@@ -25,7 +26,8 @@ class SucursalController extends Controller
     {
         $concesionarias = Concesionaria::all();
         $comunas = Comuna::allOrder();
-        return view('sucursal.create', compact('concesionarias', 'comunas'));
+        $regiones = Region::all();
+        return view('sucursal.create', compact('concesionarias', 'comunas','regiones'));
     }
 
     public function store(SucursalRequest $request)
@@ -39,7 +41,8 @@ class SucursalController extends Controller
         $concesionarias = Concesionaria::all();
         $comunas = Comuna::allOrder();
         $sucursal = Sucursal::findOrFail($id);
-        return view('sucursal.edit', compact('sucursal'), compact('concesionarias', 'comunas'));
+        $regiones = Region::all();
+        return view('sucursal.edit', compact('sucursal'), compact('concesionarias', 'comunas', 'regiones'));
     }
 
     public function update(Request $request, $id)
