@@ -78,7 +78,8 @@
     $(document).ready(function() {
         $('#concesionaria_id').multiselect();
         $('#comuna').multiselect({
-            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
         });
 
         $("input#rut").rut({

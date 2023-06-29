@@ -303,7 +303,8 @@
         }
 
         $('.comuna').multiselect({
-            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
         });
         $('#tipoPersona').multiselect();
 

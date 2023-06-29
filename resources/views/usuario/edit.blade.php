@@ -66,9 +66,18 @@
 @section('scripts')
 <script type="text/javascript">
     jQuery(document).ready(function() {
-        $('#rol_id').multiselect();
-        $('#concesionaria_id').multiselect();
-        $('#notaria_id').multiselect();
+        $('#rol_id').multiselect({
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
+        });
+        $('#concesionaria_id').multiselect({
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
+        });
+        $('#notaria_id').multiselect({
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
+        });
         $("#rol_id").trigger("change");
 
         $('#rol_id').change(function () {  

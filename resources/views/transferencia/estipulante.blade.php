@@ -132,7 +132,8 @@
         $("#rut_estipulante").val($.formatRut($("#rut_estipulante").val())); 
 
         $('.comuna').multiselect({
-            enableFiltering: true,
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
         });
         $('#tipoPersona_estipulante').multiselect();
 

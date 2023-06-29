@@ -118,6 +118,7 @@
 
         $('.comuna').multiselect({
             enableFiltering: true,
+            enableCaseInsensitiveFiltering: true
         });
         $('#tipoPersona2').multiselect();
 

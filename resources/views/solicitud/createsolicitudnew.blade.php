@@ -150,7 +150,10 @@
 <script type="text/javascript">
 $(document).ready(function() {
 
-    $('#sucursal_id').multiselect();
+    $('#sucursal_id').multiselect({
+        enableCaseInsensitiveFiltering: true,
+        enableFiltering: true
+    });
     $('#tipoVehiculos_id').multiselect();
 
     $.datepicker.regional['es'] = {

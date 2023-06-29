@@ -385,6 +385,8 @@ use App\Helpers\Funciones;
                 @endif
             </div>
 
+            @if($transferencia->transferencia_rc != null || sizeof($transferencia->documentos) > 0 || $transferencia->limitacion != null || 
+            $transferencia->limitacion_rc != null)
             <div class="page-break"></div>
             <div class="row">
                 @if($transferencia->transferencia_rc != null)
@@ -515,6 +517,40 @@ use App\Helpers\Funciones;
                 <br>
                 <span style="font-size:14px;text-align:center;margin-left:15px;font-weight:bold;white-space:pre;">CONVENIO STEV</span>
             </div>
+
+            <div style="float:right;position: absolute;top:650;">
+                MERCED N° 280, PISO 6
+                <br>
+                STGO. CENTRO
+                <br>
+                MESA CENTRAL (56 2) 2763 5000
+                <br>
+                www.garantiza.cl
+            </div>
+            @else
+
+            <div style="position:absolute;top:550;left:330;border: 3px solid #000;;width:165px;">
+                <span style="text-align:center;margin-left:15px;font-weight:bold;font-size:20px;white-space:nowrap;">GARANTIZA</span>
+                <br>
+                <span style="font-size:9px;text-align:center;margin-left:15px;font-weight:bold;">MERCED 280, PISO 6 SANTIAGO</span>
+                <br>
+                <span style="border: 2px solid #000;text-align:center;margin-left:15px;padding:0px 15px 0px 15px;font-weight:bold;font-size:20px;">{{date("d-m-Y")}}</span>
+                <br>
+                <span style="font-size:14px;text-align:center;margin-left:15px;font-weight:bold;white-space:pre;">CONVENIO STEV</span>
+            </div>
+
+            <div style="float:right;position: absolute;top:650;">
+                MERCED N° 280, PISO 6
+                <br>
+                STGO. CENTRO
+                <br>
+                MESA CENTRAL (56 2) 2763 5000
+                <br>
+                www.garantiza.cl
+            </div>
+
+
+            @endif
         </div>
     </div>
 </div>

@@ -228,8 +228,10 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
             });
         });
 
-
-
+        $('.comuna').multiselect({
+            enableCaseInsensitiveFiltering: true,
+            enableFiltering: true
+        });
 
         $('#tipoDocTransf').change(function() {
             var tipoDocTransf = $(this).val();
