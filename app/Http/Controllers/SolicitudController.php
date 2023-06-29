@@ -75,8 +75,9 @@ class SolicitudController extends Controller
         $tipo_carroceria = Tipo_Carroceria::all();
         $tipo_potencia = TipoPotencia::all();
         $acceso = 'ingreso';
+        $solicitud_rc = null;
 
-        return view('solicitud.create', compact('acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','header','id_adquiriente','id_comprapara','solicitud_rc','id_solicitud_rc'));
     }
 
     public function continuarSolicitud($id,$reingresa = false,$acceso = "ingreso"){
@@ -204,8 +205,11 @@ class SolicitudController extends Controller
             return view('solicitud.create', compact('acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
             'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
         }
+        else{
+            $solicitud_rc = null;
+        }
         //Menu adquiriente: solicitud recién creada
-        return view('solicitud.create', compact('acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','id_solicitud_rc'));
+        return view('solicitud.create', compact('acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','solicitud_rc','id_solicitud_rc'));
     }
 
 
@@ -348,8 +352,10 @@ class SolicitudController extends Controller
                         //return view('solicitud.create', compact('sucursales', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes'));
                     }
                     else{
+                        $solicitud_rc = null;
+                        $id_solicitud_rc = 0;
                         //Menu adquiriente: solicitud recién creada
-                        return view('solicitud.create', compact('acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo'));
+                        return view('solicitud.create', compact('acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','solicitud_rc','id_solicitud_rc'));
                     }
                     
                 }

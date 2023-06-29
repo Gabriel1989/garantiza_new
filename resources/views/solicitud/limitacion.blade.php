@@ -63,25 +63,25 @@ use App\Models\ErrorEnvioDoc;
                 <div class="row">
                     <label for="nro_chasis" class="col-lg-3 control-label ">Nro Chasis:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_chasis" id="nro_chasis" value="{{ ($limitacion == null)?  $factura->nro_chasis : $limitacion->nro_chasis}}" class="form-control" required>
+                        <input type="text" name="nro_chasis" id="nro_chasis" value="{{ ($limitacion == null)?  ((isset($factura->nro_chasis))? $factura->nro_chasis : ''): $limitacion->nro_chasis}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row">
                     <label for="nro_serie" class="col-lg-3 control-label ">Nro Serie:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_serie" id="nro_serie" value="{{ ($limitacion == null)?  $factura->nro_serie : $limitacion->nro_serie}}" class="form-control">
+                        <input type="text" name="nro_serie" id="nro_serie" value="{{ ($limitacion == null)?  ((isset($factura->nro_serie))? $factura->nro_serie : ''): $limitacion->nro_serie}}" class="form-control">
                     </label>
                 </div>
                 <div class="row">
                     <label for="nro_vin" class="col-lg-3 control-label ">Nro Vin:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_vin" id="nro_vin" value="{{ ($limitacion == null)? $factura->nro_vin : $limitacion->nro_vin}}" class="form-control" >
+                        <input type="text" name="nro_vin" id="nro_vin" value="{{ ($limitacion == null)? ((isset($factura->nro_vin))? $factura->nro_vin : ''): $limitacion->nro_vin}}" class="form-control" >
                     </label>
                 </div>
                 <div class="row">
                     <label for="nro_motor" class="col-lg-3 control-label ">Nro Motor:</label>
                     <label class="col-lg-3">
-                        <input type="text" name="nro_motor" id="nro_motor" value="{{ ($limitacion == null)? $factura->motor : $limitacion->nro_motor}}" class="form-control" required>
+                        <input type="text" name="nro_motor" id="nro_motor" value="{{ ($limitacion == null)? ((isset($factura->motor))? $factura->motor : ''): $limitacion->nro_motor}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Documento</h4></div></div>

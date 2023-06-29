@@ -12,13 +12,13 @@
                     <label for="rut" class="col-lg-2 control-label">Rut :</label>
                     <label class="col-lg-2">
                         <input type="hidden" name="adquiriente_1" id="adquiriente_1" value="{{ isset($adquirentes[0]->id)? $adquirentes[0]->id :  0}}">
-                        <input type="text" name="rut" id="rut" class="form-control rut" placeholder="99.999.999-9" value="{{ isset($adquirentes[0]->rut)? str_replace(".","",explode("-",$adquirentes[0]->rut)[0]) : $header->RUTRecep}}" required>
+                        <input type="text" name="rut" id="rut" class="form-control rut" placeholder="99.999.999-9" value="{{ isset($adquirentes[0]->rut)? str_replace(".","",explode("-",$adquirentes[0]->rut)[0]) : ((isset($header->RUTRecep))?  $header->RUTRecep : '')}}" required>
                     </label>
                     <label class="col-lg-2"></label>
                     
                     <label for="nombre" class="col-lg-2 control-label">Nombre :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Nombre del Adquirente" value="{{ isset($adquirentes[0]->nombre)? $adquirentes[0]->nombre :  $header->RznSocRecep}}" required>
+                        <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Nombre del Adquirente" value="{{ isset($adquirentes[0]->nombre)? $adquirentes[0]->nombre :  ((isset($header->RznSocRecep))?  $header->RznSocRecep : '')}}" required>
                     </label>
                 </div>
                 <div class="form-group">
@@ -35,7 +35,7 @@
                 <div class="form-group">
                     <label for="calle" class="col-lg-2 control-label">Dirección (calle) :</label>
                     <label class="col-lg-4">
-                        <input type="text" name="calle" id="calle" class="form-control" placeholder="Calle de la dirección" value="{{ isset($adquirentes[0]->calle)?  $adquirentes[0]->calle : $header->DirRecep}}" required>
+                        <input type="text" name="calle" id="calle" class="form-control" placeholder="Calle de la dirección" value="{{ isset($adquirentes[0]->calle)?  $adquirentes[0]->calle : ((isset($header->DirRecep))? $header->DirRecep : '')}}" required>
                     </label>
                     
                     <label for="numero" class="col-lg-2 control-label">Número :</label>
@@ -59,7 +59,9 @@
                                     @if(isset($adquirentes[0]->comuna))   
                                         @if ($adquirentes[0]->comuna==$item->id) selected @endif   
                                     @else 
-                                        @if ($header->CmnaRecep==$item->Nombre) selected @endif
+                                        @if(isset($header->CmnaRecep)) 
+                                            @if ($header->CmnaRecep==$item->Nombre) selected @endif 
+                                        @endif
                                     @endif>{{$item->Nombre}}</option>    
                             @endforeach
                         </select>
@@ -73,7 +75,7 @@
                     
                     <label for="telefono" class="col-lg-2 control-label">Teléfono :</label>
                     <label class="col-lg-2">
-                        <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Ej. 978653214" value="{{  isset($adquirentes[0]->telefono)? $adquirentes[0]->telefono : $header->Contacto}}" required>
+                        <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Ej. 978653214" value="{{  isset($adquirentes[0]->telefono)? $adquirentes[0]->telefono : ((isset($header->Contacto))?   $header->Contacto   :  ''   )}}" required>
                     </label>
                     <label class="col-lg-2"></label>
                 </div>
@@ -247,12 +249,10 @@
     $(document).ready(function() {
 
         var rut_format = $("#rut").val();
-        rut_format = rut_format + $.computeDv(rut_format);
-
-        
-
-
-        $("#rut").val($.formatRut(rut_format)); 
+        if(rut_format != ""){
+            rut_format = rut_format + $.computeDv(rut_format);
+            $("#rut").val($.formatRut(rut_format));
+        } 
 
         $('.comuna').multiselect({
             enableFiltering: true,
