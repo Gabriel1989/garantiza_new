@@ -30,7 +30,7 @@
         <div class="panel panel-primary heading-border col-lg-4">
             <div class="panel-heading">
                 {{-- <span class="panel-title"><i class="fa fa-sign-in"></i>Login</span> --}}
-                <img src="/img/LogoGarantiza.jpeg" width="500px" alt="">
+                <img src="/img/LogoGarantiza.jpeg" width="450px" alt="">
             </div>
             <!-- end .form-header section -->
 
