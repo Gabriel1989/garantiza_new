@@ -136,6 +136,9 @@
                     id_transferencia_rc: numSolRC,
                     _token: "{{ csrf_token() }}"
                 },
+                beforeSend: function() {
+                    $("#modal_solicitud_body").html('<div style="margin-left: auto;margin-right: auto;" class="loader"></div>');
+                },
                 success: function(data){
                     hideOverlay();
                     $("#modal_solicitud_body").html(data);
@@ -158,6 +161,9 @@
                     id_solicitud_rc: numSolRC,
                     _token: "{{ csrf_token() }}"
                 },
+                beforeSend: function() {
+                    $("#modal_solicitud_body").html('<div style="margin-left: auto;margin-right: auto;" class="loader"></div>');
+                },
                 success: function(data){
                     hideOverlay();
                     $("#modal_solicitud_body").html(data);
@@ -167,53 +173,53 @@
         });
         
         $(document).on("click", ".btnDescargaComprobanteLimi", function(e) {
-        showOverlay();
-        e.preventDefault();
-        let numSolRC = $(this).data('numsol');
-        let numSolGarantiza = $(this).data('garantizasol');
+            showOverlay();
+            e.preventDefault();
+            let numSolRC = $(this).data('numsol');
+            let numSolGarantiza = $(this).data('garantizasol');
 
-        fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteLimi", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}"
-            },
-            body: JSON.stringify({
-                id_solicitud_rc: numSolRC
+            fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteLimi", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    id_solicitud_rc: numSolRC
+                })
             })
-        })
-        .then(function(response) {
-            hideOverlay();
-            if (response.ok) {
-                if (response.headers.get('Content-Type') === 'application/pdf') {
-                    return response.blob();
+            .then(function(response) {
+                hideOverlay();
+                if (response.ok) {
+                    if (response.headers.get('Content-Type') === 'application/pdf') {
+                        return response.blob();
+                    } else {
+                        return response.json();
+                    }
                 } else {
-                    return response.json();
+                    throw new Error('Error en la petición');
                 }
-            } else {
-                throw new Error('Error en la petición');
-            }
-        })
-        .then(function(data) {
-            if (data instanceof Blob) {
-                var blob = new Blob([data], {
-                    type: 'application/pdf'
-                });
-                var link = document.createElement('a');
-                link.href = window.URL.createObjectURL(blob);
-                link.download = 'voucher.pdf';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            } else {
-                showErrorNotification(data.error);
-            }
-        })
-        .catch(function(error) {
-            hideOverlay();
-            showErrorNotification(error.message);
+            })
+            .then(function(data) {
+                if (data instanceof Blob) {
+                    var blob = new Blob([data], {
+                        type: 'application/pdf'
+                    });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'voucher.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    showErrorNotification(data.error);
+                }
+            })
+            .catch(function(error) {
+                hideOverlay();
+                showErrorNotification(error.message);
+            });
         });
-    });
 
         $(document).on("click", ".btnDescargaComprobante", function(e) {
             showOverlay();
@@ -305,7 +311,12 @@
                 contenedor.appendChild(document.createElement('br'));
 
                 const observacionesLabel = document.createElement('label');
-                observacionesLabel.textContent = `Observaciones: ${JSON.parse(dato.observaciones).descrp}`;
+                if(JSON.parse(dato.observaciones).descrp != undefined){
+                    observacionesLabel.textContent = `Observaciones: ${JSON.parse(dato.observaciones).descrp}`;
+                }
+                else{
+                    observacionesLabel.textContent = `Observaciones: ${JSON.parse(dato.observaciones).Observa}`;
+                }
                 contenedor.appendChild(observacionesLabel);
                 contenedor.appendChild(document.createElement('br'));
 

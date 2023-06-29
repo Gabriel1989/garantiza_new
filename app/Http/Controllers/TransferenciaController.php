@@ -1286,6 +1286,7 @@ class TransferenciaController extends Controller{
             $parametro = [
                 'consumidor' => 'ACOBRO',
                 'servicio' => 'CONSULTA TRANSFERENCIA',
+                'tramite' => 'prueba',
                 'ppu' => $solicitud_rc->ppu,
                 'nroSolicitud' => $request->get('id_transferencia_rc'),
                 'anho' => substr($solicitud_rc->fecha,0,4)
@@ -1407,6 +1408,7 @@ class TransferenciaController extends Controller{
             }
         }
 
+        sleep(4);
         echo '<h2>Datos Transferencia RC</h2>';
 
         $parametro = [
@@ -1425,6 +1427,8 @@ class TransferenciaController extends Controller{
 
         $salida = json_decode($data, true);
         $codigoresp = null;
+
+        //dd($salida);
 
         foreach($salida as $index => $detalle){
             if($index != "documento"){

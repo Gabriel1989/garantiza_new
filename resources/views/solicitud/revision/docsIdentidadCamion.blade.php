@@ -95,15 +95,23 @@ $solicitud = Solicitud::find($id);
                                         <tr>
                                             <th>Nombre Archivo</th>
                                             <th>Tipo</th>
+                                            <th>Enviado a RC</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead><tbody id="tableDocsBody2">';
                                 foreach($documentos_solicitud as $docs){
                                     echo '<tr id="'.$docs->name.'"><td>';
+                                    $status_doc_rc = '';
+                                    if($docs->documento_rc_coteja != null){
+                                        $status_doc_rc = '<div style="border-radius:30px;color:green;"><i class="fa fa-check"></i></div>';
+                                    }   
+                                    else{
+                                        $status_doc_rc = '<div style="border-radius:30px;color:#f00;"><i class="fa fa-times"></i></div>';
+                                    }    
                                     //if($docs->description== "Factura en PDF"){
                                         echo '<a target="_blank" href="'.url(str_replace("public/","storage/",$docs->name)).'">'.url(str_replace("public/","storage/",$docs->name)).'</a>';
                                     //}
-                                    echo '</td><td>'.$docs->description.'</td><td><button class="btn btn-danger eliminarArchivoDoc2" data-solicitudid="'.$solicitud_data->id.'" data-docname="'.$docs->name.'"><i class="fa fa-trash"></i></button></td></tr>';
+                                    echo '</td><td>'.$docs->description.'</td><td>'.$status_doc_rc.'</td><td><button class="btn btn-danger eliminarArchivoDoc2" data-solicitudid="'.$solicitud_data->id.'" data-docname="'.$docs->name.'"><i class="fa fa-trash"></i></button></td></tr>';
                                 }
                                 echo '</tbody></table>';
                             }

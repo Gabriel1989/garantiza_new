@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Documento;
+use App\Models\EnvioDocumentoCotejaRC;
 use App\Models\Para;
 use App\Models\Solicitud;
 use App\Models\SolicitudRC;
@@ -49,9 +50,16 @@ class DocumentoController extends Controller
         if(sizeof($documentos)> 0){
             ob_start();
             foreach($documentos as $docs){
+                $status_doc_rc = '';
+                if($docs->documento_rc_coteja != null){
+                    $status_doc_rc = '<div style="border-radius:30px;color:green;"><i class="fa fa-check"></i></div>';
+                }   
+                else{
+                    $status_doc_rc = '<div style="border-radius:30px;color:#f00;"><i class="fa fa-times"></i></div>';
+                }
                 echo '<tr id="'.$docs->name.'"><td>';
                 echo '<a target="_blank" href="'.url(str_replace("public/","storage/",$docs->name)).'">'.url(str_replace("public/","storage/",$docs->name)).'</a>';
-                echo '</td><td>'.$docs->description.'</td><td><button class="btn btn-danger eliminarArchivoDoc" data-solicitudid="'.$id.'" data-docname="'.$docs->name.'"><i class="fa fa-trash"></i></button></td></tr>';
+                echo '</td><td>'.$docs->description.'</td><td>'.$status_doc_rc.'</td><td><button class="btn btn-danger eliminarArchivoDoc" data-solicitudid="'.$id.'" data-docname="'.$docs->name.'"><i class="fa fa-trash"></i></button></td></tr>';
             }
             $data = ob_get_contents();
             ob_clean();
@@ -69,9 +77,16 @@ class DocumentoController extends Controller
         if(sizeof($documentos)> 0){
             ob_start();
             foreach($documentos as $docs){
+                $status_doc_rc = '';
+                if($docs->documento_rc_coteja != null){
+                    $status_doc_rc = '<div style="border-radius:30px;color:green;"><i class="fa fa-check"></i></div>';
+                }   
+                else{
+                    $status_doc_rc = '<div style="border-radius:30px;color:#f00;"><i class="fa fa-times"></i></div>';
+                } 
                 echo '<tr id="'.$docs->name.'"><td>';
                 echo '<a target="_blank" href="'.url(str_replace("public/","storage/",$docs->name)).'">'.url(str_replace("public/","storage/",$docs->name)).'</a>';
-                echo '</td><td>'.$docs->description.'</td><td><button class="btn btn-danger eliminarArchivoDoc" data-solicitudid="'.$id.'" data-docname="'.$docs->name.'"><i class="fa fa-trash"></i></button></td></tr>';
+                echo '</td><td>'.$docs->description.'</td><td>'.$status_doc_rc.'</td><td><button class="btn btn-danger eliminarArchivoDoc" data-solicitudid="'.$id.'" data-docname="'.$docs->name.'"><i class="fa fa-trash"></i></button></td></tr>';
             }
             $data = ob_get_contents();
             ob_clean();
@@ -535,6 +550,29 @@ class DocumentoController extends Controller
                 Log::error('Error al subir cédula de comprador 2');
                 return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de comprador. Inténtelo nuevamente.']);
             }
+
+            if($base64_cedula_comprador == ''){
+                $file = $request->file('Cedula_PDF');
+                $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+                $doc = new Documento();
+                $doc->name = 'public/'.$path;
+                $doc->type = 'pdf';
+                $doc->description = 'Cédula del Cliente';
+                $doc->transferencia_id = $id;
+                $doc->tipo_documento_id = 3;
+                $doc->added_at = Carbon::now()->toDateTimeString();
+                $doc->save();
+                sleep(1);
+                $doc_rc_coteja = new EnvioDocumentoCotejaRC();
+                $doc_rc_coteja->documento_id = $doc->id;
+                $doc_rc_coteja->save();
+            }
+            else{
+                $doc_rc_coteja = new EnvioDocumentoCotejaRC();
+                $doc_rc_coteja->documento_id = $cedula_comprador->id;
+                $doc_rc_coteja->save();
+            }
+
             sleep(4);
 
             //Cedula de vendedor
@@ -563,6 +601,29 @@ class DocumentoController extends Controller
                 Log::error('Error al subir cédula de vendedor 2');
                 return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de vendedor. Inténtelo nuevamente.']);
             }
+
+            if($base64_cedula_vendedor == ''){
+                $file = $request->file('Cedula_Vende_PDF');
+                $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+                $doc = new Documento();
+                $doc->name = 'public/'.$path;
+                $doc->type = 'pdf';
+                $doc->description = 'Cédula del Vendedor';
+                $doc->transferencia_id = $id;
+                $doc->tipo_documento_id = 15;
+                $doc->added_at = Carbon::now()->toDateTimeString();
+                $doc->save();
+                sleep(1);
+                $doc_rc_coteja = new EnvioDocumentoCotejaRC();
+                $doc_rc_coteja->documento_id = $doc->id;
+                $doc_rc_coteja->save();
+            }
+            else{
+                $doc_rc_coteja = new EnvioDocumentoCotejaRC();
+                $doc_rc_coteja->documento_id = $cedula_vendedor->id;
+                $doc_rc_coteja->save();
+            }
+
             sleep(4);
 
 
@@ -592,6 +653,28 @@ class DocumentoController extends Controller
                 else{
                     Log::error('Error al subir cédula de estipulante o compra para 2');
                     return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir cédula de estipulante o compra para. Inténtelo nuevamente']);
+                }
+
+                if($base64_cedula_para == ''){
+                    $file = $request->file('Cedula_Para_PDF');
+                    $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+                    $doc = new Documento();
+                    $doc->name = 'public/'.$path;
+                    $doc->type = 'pdf';
+                    $doc->description = 'Cédula de Compra Para';
+                    $doc->transferencia_id = $id;
+                    $doc->tipo_documento_id = 5;
+                    $doc->added_at = Carbon::now()->toDateTimeString();
+                    $doc->save();
+                    sleep(1);
+                    $doc_rc_coteja = new EnvioDocumentoCotejaRC();
+                    $doc_rc_coteja->documento_id = $doc->id;
+                    $doc_rc_coteja->save();
+                }
+                else{
+                    $doc_rc_coteja = new EnvioDocumentoCotejaRC();
+                    $doc_rc_coteja->documento_id = $cedula_para->id;
+                    $doc_rc_coteja->save();
                 }
             }
             sleep(4);
@@ -646,6 +729,28 @@ class DocumentoController extends Controller
                 else{
                     Log::error('Error al subir rol de empresa en PDF 2');
                     return json_encode(['status'=>'ERROR','esRevision'=>true,'msj'=>'Error al subir rol de empresa en PDF. Inténtelo nuevamente']);
+                }
+
+                if($base64_rol_empresa == ''){
+                    $file = $request->file('Rol_PDF');
+                    $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+                    $doc = new Documento();
+                    $doc->name = 'public/'.$path;
+                    $doc->type = 'pdf';
+                    $doc->description = 'Rol de Empresa';
+                    $doc->transferencia_id = $id;
+                    $doc->tipo_documento_id = 4;
+                    $doc->added_at = Carbon::now()->toDateTimeString();
+                    $doc->save();
+                    sleep(1);
+                    $doc_rc_coteja = new EnvioDocumentoCotejaRC();
+                    $doc_rc_coteja->documento_id = $doc->id;
+                    $doc_rc_coteja->save();
+                }
+                else{
+                    $doc_rc_coteja = new EnvioDocumentoCotejaRC();
+                    $doc_rc_coteja->documento_id = $rol_empresa->id;
+                    $doc_rc_coteja->save();
                 }
             }
 

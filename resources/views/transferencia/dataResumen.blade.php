@@ -145,6 +145,41 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                     </div>
                 </fieldset>
             </div>
+            @if($reingreso != null)
+                <div class="col-md-12 col-lg-12">
+                    <fieldset>
+                        <legend>Datos de reingreso</legend>
+                        <div class="row">
+                            <label for="nroResExenta" class="col-lg-3 control-label ">Número resolución exenta:</label>
+                            <label class="col-lg-4">
+                                <input type="input" value="" name="nroResExenta" id="nroResExenta" class="form-control" min="1" max="99999999">
+                            </label>
+                        </div>
+                        <div class="row">
+                            <label for="fechaResExenta" class="col-lg-3 control-label ">Fecha resolución exenta:</label>
+                            <label class="col-lg-4">
+                                <input type="input" value="" name="fechaResExenta" id="fechaResExenta" class="form-control fechaRechazos">
+                            </label>
+                        </div>
+
+                        <div class="row">
+                            <label for="fechaSolRech" class="col-lg-3 control-label ">Fecha solicitud rechazada:</label>
+                            <label class="col-lg-4">
+                                <input type="input" value="" name="fechaSolRech" id="fechaSolRech" class="form-control fechaRechazos">
+                            </label>
+                        </div>
+
+                        <script>
+                            $(".fechaRechazos").datepicker({
+                                language: 'es',
+                                dateFormat: 'yymmdd',
+                                changeMonth: true, 
+                                changeYear: true
+                            });
+                        </script>
+                    </fieldset>
+                </div>
+            @endif
         </div>
         <div class="panel-footer">
             @if(Auth::user()->rol_id == 1 || Auth::user()->rol_id == 3)
