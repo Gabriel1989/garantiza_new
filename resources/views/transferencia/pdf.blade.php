@@ -420,7 +420,7 @@ use App\Helpers\Funciones;
                     </div>
                 @endif
 
-                @if($transferencia->documentos != null)
+                @if(sizeof($transferencia->documentos) > 0)
                     <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
                         <fieldset>
                             <legend>DOCUMENTOS DE LA SOLICITUD</legend>
@@ -441,6 +441,7 @@ use App\Helpers\Funciones;
                 @endif
             </div>
 
+            @if ($transferencia->limitacion != null)
             <div class="row">
                 @if ($transferencia->limitacion != null)
                     <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
@@ -502,8 +503,8 @@ use App\Helpers\Funciones;
                         </fieldset>
                     </div>
                 @endif
-
             </div>
+            @endif
 
             <div style="position:absolute;top:550;left:330;border: 3px solid #000;;width:165px;">
                 <span style="text-align:center;margin-left:15px;font-weight:bold;font-size:20px;white-space:nowrap;">GARANTIZA</span>

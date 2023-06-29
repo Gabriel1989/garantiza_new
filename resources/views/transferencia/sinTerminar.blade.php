@@ -39,7 +39,11 @@
                                     <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('transferencia.continuarSolicitud', ['id' => $item->id,'reingresa'=> 0,'acceso'=>'ingreso'])}} '">
                                         <li class="fa fa-pencil"></li> Continuar Ingreso</button>
                                     <br>
+                                    <br>
                                     <button type="button" data-toggle="tooltip" data-placement="top" title="Reingresar transferencia" onclick="location.href='{{route('transferencia.continuarSolicitud', ['id' => $item->id,'reingresa'=> true,'acceso'=>'ingreso'])}} '" class="btn btn-success"><i class="fa fa-refresh"></i> Reingresar</button>
+                                    <br>
+                                    <br>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger btnDescargaPdfGarantiza" data-garantizaSol="{{ $item->id }}"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -106,6 +110,26 @@
                     "url": "/json/datatable.spanish.json"
                 }
             });
+        });
+
+        $(document).on("click",".btnDescargaPdfGarantiza",function(e){
+          showOverlay();
+          e.preventDefault();
+          let numSolGarantiza = $(this).data('garantizasol');
+          fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteTransferencia", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRF-TOKEN": "{{ csrf_token() }}"
+              },
+              body: JSON.stringify({
+                id_transferencia: numSolGarantiza
+              })
+          }).then((response) => response.json())
+          .then((data) => {
+              hideOverlay();
+              window.open(data.file);
+          });
         });
     </script>
     <script>

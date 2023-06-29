@@ -422,7 +422,7 @@ use App\Helpers\Funciones;
                     </div>
                 @endif
 
-                @if ($solicitud->documentos != null)
+                @if (sizeof($solicitud->documentos) > 0)
                     <div class="col-md-6" style="display: inline-block; width: 48%; vertical-align: top;">
                         <fieldset>
                             <legend>DOCUMENTOS DE LA SOLICITUD</legend>
