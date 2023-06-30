@@ -26,7 +26,7 @@
                         </thead>
                         <tbody>
                         @php
-                          $classes = ['active', 'success', 'warning', 'danger', 'info'];
+                          $classes = ['active', 'success', 'warning'];
                           $classesCount = count($classes);
                         @endphp   
                         @foreach ($solicitudes as $index => $item)
