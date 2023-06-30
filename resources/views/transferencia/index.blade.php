@@ -41,7 +41,7 @@
                 <a class="nav-link @if($id_transferencia == 0 && $id_comprador == 0 && $id_vendedor == 0)  disabled    @endif" id="pills-estipulante-tab" data-toggle="pill" @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0) href="#pills-estipulante" @else href="#" @endif role="tab" aria-controls="pills-estipulante" aria-selected="false" @if($id_transferencia == 0 && $id_comprador == 0 && $id_vendedor == 0) aria-disabled="true" @endif>Estipulante</a>
             </li>
 
-            <li class="nav-item @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_transferencia_rc == 0 && $id_estipulante != 0)  active    @endif" role="presentation">
+            <li class="nav-item @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_transferencia_rc == 0 && $id_estipulante != 0 && $estadoSolicitud == 4)  active    @endif" role="presentation">
                 <a class="nav-link @if($id_transferencia == 0 && $id_comprador == 0 && $id_vendedor == 0 && $id_transferencia_rc == 0 && $id_estipulante == 0)  disabled    @endif" id="pills-invoice-tab" data-toggle="pill" @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_estipulante != 0) href="#pills-invoice" @else href="#" @endif role="tab" aria-controls="pills-invoice" aria-selected="false" @if($id_transferencia == 0 && $id_comprador == 0 && $id_vendedor == 0 && $id_estipulante == 0) aria-disabled="true" @endif>Datos adicionales</a>
             </li>
 
@@ -126,7 +126,7 @@
             @endif
         </div>
 
-        <div class="tab-pane fade @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_transferencia_rc == 0 && $id_estipulante != 0) show  active in @endif" id="pills-invoice" role="tabpanel" aria-labelledby="pills-invoice-tab">
+        <div class="tab-pane fade @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_transferencia_rc == 0 && $id_estipulante != 0 && $estadoSolicitud == 4) show  active in @endif" id="pills-invoice" role="tabpanel" aria-labelledby="pills-invoice-tab">
             @if($id_transferencia != 0 && $id_comprador != 0 && $id_vendedor != 0 && $id_transferencia_rc == 0 && $id_estipulante != 0)
                 @include('transferencia.dataResumen')
 

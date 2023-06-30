@@ -355,6 +355,7 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                         $("#pills-docs").html(jsonData.html);
                         $("#pills-docs").toggleClass('show');
                         $("#pills-docs").removeClass('hide');
+                        $("#pills-docs").addClass('show');
                         $("#pills-invoice").toggleClass('show');
                         $("#pills-invoice").removeClass('show');
                         $("#pills-invoice").addClass('hide');
@@ -364,6 +365,7 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                         $("#pills-docs-tab").click();
                     }
                     else{
+                        console.log('2');
                         var errors = jsonData.errors;
                         for (var errorKey in errors) {
                             if (errors.hasOwnProperty(errorKey)) {
@@ -379,9 +381,11 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                     }
                     
                 } else {
+                    console.log('3');
                     $("#pills-docs").html(data);
                     $("#pills-docs").toggleClass('show');
                     $("#pills-docs").removeClass('hide');
+                    $("#pills-docs").addClass('show');
                     $("#pills-invoice").toggleClass('show');
                     $("#pills-invoice").removeClass('show');
                     $("#pills-invoice").addClass('hide');

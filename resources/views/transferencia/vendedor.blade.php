@@ -116,6 +116,13 @@
                         </select>
                     </label>
                 </div>
+                <div class="form-group" style="display: none" id="integrantesComunidad2">
+                    <label for="cantidad_integrantes_vende" class="col-lg-2 control-label">Cantidad Integrantes Comunidad :</label>
+                    <label class="col-lg-3">
+                        <input type="number" name="cantidad_integrantes_vende" id="cantidad_integrantes_vende" class="form-control"
+                            value="{{ isset($vendedor->cantidadIntegrantes) ? $vendedor->cantidadIntegrantes : old('cantidadIntegrantes') }}">
+                    </label>
+                </div>
                 <div class="form-group">
                     
                 </div>
@@ -145,6 +152,20 @@
             enableFiltering: true
         });
         $('#tipoPersona2').multiselect();
+
+        $("#tipoPersona2").on('change', function() {
+            if ($(this).val() == 'O') {
+                //$('#agregar').show();
+                $('#integrantesComunidad2').show();
+            } else {
+                /*$('#agregar').hide();
+                $('#comprador2').hide();
+                $('#comprador3').hide();
+                $('#rut2').val('');
+                $('#rut3').val('');*/
+                $('#integrantesComunidad2').hide();
+            };
+        });
 
         $(".rut2").rut({
             formatOn: 'keyup',
@@ -193,6 +214,8 @@
 
         });
 
+
+        $('#tipoPersona2').trigger('change');
     });
 
     $(document).on("submit", "#form-vendedor", function(e) {

@@ -1032,9 +1032,6 @@ class SolicitudController extends Controller
      * Se debe validar el largo de los datos
      */
     public function saveAdquirientes(Request $request, $id){
-        
-        //dd($request);
-        // Si tipo de persona es comunidad, se deben validar los otros adquirientes
         $errors = new MessageBag();
         if(is_null($request->input('rut'))) $errors->add('Garantiza', 'Debe Ingresar el Rut del Adquiriente.');
         if(is_null($request->input('nombre'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Adquiriente.');
@@ -1044,26 +1041,9 @@ class SolicitudController extends Controller
         if(is_null($request->input('email'))) $errors->add('Garantiza', 'Debe Ingresar el email del Adquiriente.');
         if(is_null($request->input('telefono'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Adquiriente.');
         if($request->input('tipoPersona')=='O'){
-            // Revisa los datos del segundo adquiriente
-            if(is_null($request->input('rut2'))) $errors->add('Garantiza', 'Debe Ingresar el Rut del Segundo Adquiriente.');
-            if(is_null($request->input('nombre2'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Segundo Adquiriente.');
-            if(is_null($request->input('calle2'))) $errors->add('Garantiza', 'Debe Ingresar la dirección del Segundo Adquiriente.');
-            if(is_null($request->input('numero2'))) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Segundo Adquiriente.');
-            if($request->input('comuna2')=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Segundo Adquiriente.');
-            if(is_null($request->input('email2'))) $errors->add('Garantiza', 'Debe Ingresar el email del Segundo Adquiriente.');
-            if(is_null($request->input('telefono2'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Segundo Adquiriente.');
-            // Revisa si viene un tercer adquiriente
-            if(!is_null($request->input('rut3'))){
-                if(is_null($request->input('nombre3'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Tercer Adquiriente.');
-                if(is_null($request->input('calle3'))) $errors->add('Garantiza', 'Debe Ingresar la dirección del Tercer Adquiriente.');
-                if(is_null($request->input('numero3'))) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Tercer Adquiriente.');
-                if($request->input('comuna3')=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Tercer Adquiriente.');
-                if(is_null($request->input('email3'))) $errors->add('Garantiza', 'Debe Ingresar el email del Tercer Adquiriente.');
-                if(is_null($request->input('telefono3'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Tercer Adquiriente.');
-            }
+            if(is_null($request->input('cantidad_integrantes'))) $errors->add('Garantiza', 'Debe Ingresar cantidad de integrantes de comunidad.');
         }
 
-        //dd($errors);
         if($errors->count()>0) return redirect()->route('solicitud.adquirientes', ['id' => $id])->withErrors($errors);
 
         DB::beginTransaction();
@@ -1082,7 +1062,10 @@ class SolicitudController extends Controller
             $adquiriente->comuna = $request->get('comuna');
             $adquiriente->telefono = $request->get('telefono');
             $adquiriente->email = $request->get('email');
-            $adquiriente->tipo = $request->get('tipoPersona')=='O' ? 'N' : $request->get('tipoPersona');
+            $adquiriente->tipo = $request->get('tipoPersona');
+            if($request->tipoPersona=='O'){
+                $adquiriente->cantidadIntegrantes = $request->get('cantidad_integrantes');
+            }
             $adquiriente->save();
             DB::commit();
 
@@ -1108,58 +1091,15 @@ class SolicitudController extends Controller
         $adquiriente->comuna = $request->get('comuna');
         $adquiriente->telefono = $request->get('telefono');
         $adquiriente->email = $request->get('email');
-        $adquiriente->tipo = $request->get('tipoPersona')=='O' ? 'N' : $request->get('tipoPersona');
+        $adquiriente->tipo = $request->get('tipoPersona');
+        if($request->tipoPersona=='O'){
+            $adquiriente->cantidadIntegrantes = $request->get('cantidad_integrantes');
+        }
 
         if(!$adquiriente->save()){
             DB::rollBack();
             $errors->add('Garantiza', 'Problemas al grabar Adquiriente.');
             return redirect()->route('solicitud.adquirientes', ['id' => $id])->withErrors($errors);
-        }
-
-        // Graba segundo adquiriente
-        if($request->tipoPersona=='O'){
-            $adquiriente = new Adquiriente();
-            $adquiriente->solicitud_id = $id;
-            $adquiriente->rut = $request->get('rut2');
-            $adquiriente->nombre = $request->get('nombre2');
-            $adquiriente->aPaterno = $request->get('aPaterno2');
-            $adquiriente->aMaterno = $request->get('aMaterno2');
-            $adquiriente->calle = $request->get('calle2');
-            $adquiriente->numero = $request->get('numero2');
-            $adquiriente->rDomicilio = $request->get('rDomicilio2');
-            $adquiriente->comuna = $request->get('comuna2');
-            $adquiriente->telefono = $request->get('telefono2');
-            $adquiriente->email = $request->get('email2');
-            $adquiriente->tipo = 'N';
-
-            if(!$adquiriente->save()){
-                DB::rollBack();
-                $errors->add('Garantiza', 'Problemas al grabar segundo Adquiriente.');
-                return redirect()->route('solicitud.adquirientes', ['id' => $id])->withErrors($errors);
-            }
-
-            // Graba tercer adquiriente
-            if(!is_null($request->rut3)){
-                $adquiriente = new Adquiriente();
-                $adquiriente->solicitud_id = $id;
-                $adquiriente->rut = $request->get('rut3');
-                $adquiriente->nombre = $request->get('nombre3');
-                $adquiriente->aPaterno = $request->get('aPaterno3');
-                $adquiriente->aMaterno = $request->get('aMaterno3');
-                $adquiriente->calle = $request->get('calle3');
-                $adquiriente->numero = $request->get('numero3');
-                $adquiriente->rDomicilio = $request->get('rDomicilio3');
-                $adquiriente->comuna = $request->get('comuna3');
-                $adquiriente->telefono = $request->get('telefono3');
-                $adquiriente->email = $request->get('email3');
-                $adquiriente->tipo = 'N';
-
-                if(!$adquiriente->save()){
-                    DB::rollBack();
-                    $errors->add('Garantiza', 'Problemas al grabar tercer Adquiriente.');
-                    return redirect()->route('solicitud.adquirientes', ['id' => $id])->withErrors($errors);
-                }
-            }
         }
 
         $solicitud = Solicitud::find($id);
@@ -1651,10 +1591,6 @@ class SolicitudController extends Controller
         
         return view('solicitud.revision.facturaAuto', compact('id', 'comunas', 'header', 'detalle'));
 
-
-
-        //return 'datos Auto';
-        //return view('solicitud.compraPara', compact('id', 'comunas'));
     }
 
     public function datosCamion($id){
@@ -2070,8 +2006,8 @@ class SolicitudController extends Controller
 
         $parametro = [
             'comunidadDTO' => [
-                'cantidad' => '0',
-                'esComunidad' => 'NO'
+                'cantidad' => ($adquiriente->cantidadIntegrantes == null)? 0 : $adquiriente->cantidadIntegrantes,
+                'esComunidad' => ($adquiriente->tipo=="O")? 'SI':'NO'
             ],
             'documentoDTO' => [
                 'emisor' => $header->RznSoc,
@@ -2463,8 +2399,8 @@ class SolicitudController extends Controller
         // Generar Json
         $parametro = [
             'comunidadDTO' => [
-                'cantidad' => '0',
-                'esComunidad' => 'NO'
+                'cantidad' => ($adquiriente->cantidadIntegrantes == null)? 0 : $adquiriente->cantidadIntegrantes,
+                'esComunidad' => ($adquiriente->tipo=="O")? 'SI':'NO'
             ],
             'documentoDTO' => [
                 'emisor' => $header->RznSoc,
@@ -2782,8 +2718,8 @@ class SolicitudController extends Controller
 
         $parametro = [
             'comunidadDTO' => [
-                'cantidad' => '0',
-                'esComunidad' => 'NO'
+                'cantidad' => ($adquiriente->cantidadIntegrantes == null)? 0 : $adquiriente->cantidadIntegrantes,
+                'esComunidad' => ($adquiriente->tipo=="O")? 'SI':'NO'
             ],
             'documentoDTO' => [
                 'emisor' => $header->RznSoc,

@@ -236,6 +236,13 @@
                 </div>
                 <hr>
             </div>
+            <div class="form-group" style="display: none" id="integrantesComunidad">
+                <label for="cantidad_integrantes" class="col-lg-2 control-label">Cantidad Integrantes Comunidad :</label>
+                <label class="col-lg-3">
+                    <input type="number" name="cantidad_integrantes" id="cantidad_integrantes" class="form-control"
+                        value="{{ isset($adquirentes[0]->cantidadIntegrantes) ? $adquirentes[0]->cantidadIntegrantes : old('cantidadIntegrantes') }}">
+                </label>
+            </div>
             <button type="button" id="agregar" name="agregar" class="btn btn-success" style="display: none"> <li class="fa fa-plus"></li> Agregar Adquirente</button>
         </div>
     <div class="panel-footer">
@@ -288,13 +295,15 @@
 
         $("#tipoPersona").on('change', function(){
             if($(this).val()=='O'){
-                $('#agregar').show();
+                //$('#agregar').show();
+                $('#integrantesComunidad').show();
             }else{
-                $('#agregar').hide();
+                /*$('#agregar').hide();
                 $('#adquiriente2').hide();
                 $('#adquiriente3').hide();
                 $('#rut2').val('');
-                $('#rut3').val('');
+                $('#rut3').val('');*/
+                $('#integrantesComunidad').hide();
             };
         });
 
@@ -337,7 +346,7 @@
 
         });
         
-
+        $('#tipoPersona').trigger('change');
     });
 
     $(document).on("submit","#form-adquirientes",function(e){

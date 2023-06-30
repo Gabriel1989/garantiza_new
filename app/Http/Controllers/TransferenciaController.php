@@ -251,7 +251,6 @@ class TransferenciaController extends Controller{
     }
 
     public function saveCompradores(Request $request, $id){
-        // Si tipo de persona es comunidad, se deben validar los otros compradores
         $errors = new MessageBag();
         if(is_null($request->input('rut'))) $errors->add('Garantiza', 'Debe Ingresar el Rut del Comprador.');
         if(is_null($request->input('nombre'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Comprador.');
@@ -261,23 +260,7 @@ class TransferenciaController extends Controller{
         if(is_null($request->input('email'))) $errors->add('Garantiza', 'Debe Ingresar el email del Comprador.');
         if(is_null($request->input('telefono'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Comprador.');
         if($request->input('tipoPersona')=='O'){
-            // Revisa los datos del segundo comprador
-            if(is_null($request->input('rut2'))) $errors->add('Garantiza', 'Debe Ingresar el Rut del Segundo Comprador.');
-            if(is_null($request->input('nombre2'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Segundo Comprador.');
-            if(is_null($request->input('calle2'))) $errors->add('Garantiza', 'Debe Ingresar la dirección del Segundo Comprador.');
-            if(is_null($request->input('numero2'))) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Segundo Comprador.');
-            if($request->input('comuna2')=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Segundo Comprador.');
-            if(is_null($request->input('email2'))) $errors->add('Garantiza', 'Debe Ingresar el email del Segundo Comprador.');
-            if(is_null($request->input('telefono2'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Segundo Comprador.');
-            // Revisa si viene un tercer comprador
-            if(!is_null($request->input('rut3'))){
-                if(is_null($request->input('nombre3'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Tercer Comprador.');
-                if(is_null($request->input('calle3'))) $errors->add('Garantiza', 'Debe Ingresar la dirección del Tercer Comprador.');
-                if(is_null($request->input('numero3'))) $errors->add('Garantiza', 'Debe Ingresar el número de la dirección del Tercer Comprador.');
-                if($request->input('comuna3')=="0") $errors->add('Garantiza', 'Debe Ingresar la comuna del Tercer Comprador.');
-                if(is_null($request->input('email3'))) $errors->add('Garantiza', 'Debe Ingresar el email del Tercer Comprador.');
-                if(is_null($request->input('telefono3'))) $errors->add('Garantiza', 'Debe Ingresar el teléfono del Tercer Comprador.');
-            }
+            if(is_null($request->input('cantidad_integrantes'))) $errors->add('Garantiza', 'Debe Ingresar cantidad de integrantes de comunidad.');
         }
 
         if($errors->count()>0) return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
@@ -298,7 +281,10 @@ class TransferenciaController extends Controller{
             $comprador->comuna = $request->get('comuna');
             $comprador->telefono = $request->get('telefono');
             $comprador->email = $request->get('email');
-            $comprador->tipo = $request->get('tipoPersona')=='O' ? 'N' : $request->get('tipoPersona');
+            $comprador->tipo = $request->get('tipoPersona');
+            if($request->tipoPersona=='O'){
+                $comprador->cantidadIntegrantes = $request->get('cantidad_integrantes');
+            }
             $comprador->save();
             DB::commit();
 
@@ -324,58 +310,16 @@ class TransferenciaController extends Controller{
         $comprador->comuna = $request->get('comuna');
         $comprador->telefono = $request->get('telefono');
         $comprador->email = $request->get('email');
-        $comprador->tipo = $request->get('tipoPersona')=='O' ? 'N' : $request->get('tipoPersona');
+        $comprador->tipo = $request->get('tipoPersona');
+        if($request->tipoPersona=='O'){
+            $comprador->cantidadIntegrantes = $request->get('cantidad_integrantes');
+        }
+
 
         if(!$comprador->save()){
             DB::rollBack();
             $errors->add('Garantiza', 'Problemas al grabar Comprador.');
             return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
-        }
-
-        // Graba segundo comprador
-        if($request->tipoPersona=='O'){
-            $comprador = new Comprador();
-            $comprador->transferencia_id = $id;
-            $comprador->rut = $request->get('rut2');
-            $comprador->nombre = $request->get('nombre2');
-            $comprador->aPaterno = $request->get('aPaterno2');
-            $comprador->aMaterno = $request->get('aMaterno2');
-            $comprador->calle = $request->get('calle2');
-            $comprador->numero = $request->get('numero2');
-            $comprador->rDomicilio = $request->get('rDomicilio2');
-            $comprador->comuna = $request->get('comuna2');
-            $comprador->telefono = $request->get('telefono2');
-            $comprador->email = $request->get('email2');
-            $comprador->tipo = 'N';
-
-            if(!$comprador->save()){
-                DB::rollBack();
-                $errors->add('Garantiza', 'Problemas al grabar segundo Comprador.');
-                return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
-            }
-
-            // Graba tercer comprador
-            if(!is_null($request->rut3)){
-                $comprador = new Comprador();
-                $comprador->solicitud_id = $id;
-                $comprador->rut = $request->get('rut3');
-                $comprador->nombre = $request->get('nombre3');
-                $comprador->aPaterno = $request->get('aPaterno3');
-                $comprador->aMaterno = $request->get('aMaterno3');
-                $comprador->calle = $request->get('calle3');
-                $comprador->numero = $request->get('numero3');
-                $comprador->rDomicilio = $request->get('rDomicilio3');
-                $comprador->comuna = $request->get('comuna3');
-                $comprador->telefono = $request->get('telefono3');
-                $comprador->email = $request->get('email3');
-                $comprador->tipo = 'N';
-
-                if(!$comprador->save()){
-                    DB::rollBack();
-                    $errors->add('Garantiza', 'Problemas al grabar tercer Comprador.');
-                    return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
-                }
-            }
         }
 
         $solicitud = Transferencia::find($id);
@@ -412,6 +356,9 @@ class TransferenciaController extends Controller{
         if(is_null($request->input('rut'))) $errors->add('Garantiza', 'Debe Ingresar el Rut del Vendedor.');
         if(is_null($request->input('nombre'))) $errors->add('Garantiza', 'Debe Ingresar el Nombre del Vendedor.');
         if(is_null($request->input('email'))) $errors->add('Garantiza', 'Debe Ingresar el email del Vendedor.');
+        if($request->input('tipoPersona')=='O'){
+            if(is_null($request->input('cantidad_integrantes_vende'))) $errors->add('Garantiza', 'Debe Ingresar cantidad de integrantes de comunidad.');
+        }
 
         if($errors->count()>0) return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
         DB::beginTransaction();
@@ -430,7 +377,10 @@ class TransferenciaController extends Controller{
             $vendedor->comuna = $request->get('comuna');
             $vendedor->telefono = $request->get('telefono');
             $vendedor->email = $request->get('email');
-            $vendedor->tipo = $request->get('tipoPersona')=='O' ? 'N' : $request->get('tipoPersona');
+            $vendedor->tipo = $request->get('tipoPersona');
+            if($request->tipoPersona=='O'){
+                $vendedor->cantidadIntegrantes = $request->get('cantidad_integrantes_vende');
+            }
             $vendedor->save();
             DB::commit();
 
@@ -450,7 +400,10 @@ class TransferenciaController extends Controller{
         $vendedor->comuna = $request->get('comuna');
         $vendedor->telefono = $request->get('telefono');
         $vendedor->email = $request->get('email');
-        $vendedor->tipo = $request->get('tipoPersona')=='O' ? 'N' : $request->get('tipoPersona');
+        $vendedor->tipo = $request->get('tipoPersona');
+        if($request->tipoPersona=='O'){
+            $vendedor->cantidadIntegrantes = $request->get('cantidad_integrantes_vende');
+        }
 
         if(!$vendedor->save()){
             DB::rollBack();
@@ -782,8 +735,8 @@ class TransferenciaController extends Controller{
             ],
             'Vendedor' => [
                 'comunidad' => [
-                    'esComunidad' => 'NO',
-                    'cantidad' => 0
+                    'esComunidad' => ($vendedor->tipo == "O")? 'SI':'NO',
+                    'cantidad' => ($vendedor->cantidadIntegrantes == null)? 0 : $vendedor->cantidadIntegrantes
                 ],
                 'persona' => [
                     'calidad' => $vendedor->tipo,
@@ -796,8 +749,8 @@ class TransferenciaController extends Controller{
             ],
             'Comprador' => [
                 'comunidad' => [
-                    'esComunidad' => 'NO',
-                    'cantidad' => 0
+                    'esComunidad' => ($comprador->tipo == "O")? 'SI':'NO',
+                    'cantidad' => ($comprador->cantidadIntegrantes == null)? 0 : $comprador->cantidadIntegrantes
                 ],
                 'compran' => [
                     'persona' => [
@@ -1155,7 +1108,9 @@ class TransferenciaController extends Controller{
             $nro_solicitud_transf_rc = null;
             $ppu_rc = null;
 
-            return view('transferencia.menuDocs', compact('id', 'nro_solicitud_transf_rc', 'ppu_rc','transferencia_rc'));
+            $html = view('transferencia.menuDocs', compact('id', 'nro_solicitud_transf_rc', 'ppu_rc','transferencia_rc'))->render();
+
+            return response()->json(['status' => "OK","html" => $html],200);
         }
     }
 
