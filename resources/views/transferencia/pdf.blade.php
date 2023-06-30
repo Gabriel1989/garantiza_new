@@ -183,6 +183,13 @@ use App\Helpers\Funciones;
                             <label>Teléfono:</label>
                             {{ $transferencia->comprador->telefono }}
                         </div>
+
+                        @if($transferencia->comprador->tipo == 'O')
+                            <div class="form-group">
+                                <label>Número de integrantes de la comunidad:</label>
+                                {{ $transferencia->comprador->cantidadIntegrantes }}
+                            </div>
+                        @endif
                     </fieldset>
                 </div>
                 @endif
@@ -236,6 +243,13 @@ use App\Helpers\Funciones;
                             <label>Email:</label>
                             {{ $transferencia->vendedor->email }}
                         </div>
+
+                        @if($transferencia->vendedor->tipo == 'O')
+                            <div class="form-group">
+                                <label>Número de integrantes de la comunidad:</label>
+                                {{ $transferencia->vendedor->cantidadIntegrantes }}
+                            </div>
+                        @endif
                     </fieldset>
 
                 </div>

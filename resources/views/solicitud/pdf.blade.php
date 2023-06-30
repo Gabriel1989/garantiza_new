@@ -281,6 +281,13 @@ use App\Helpers\Funciones;
                                 <label>Teléfono:</label>
                                 {{ $solicitud->adquiriente->telefono }}
                             </div>
+
+                            @if($solicitud->adquiriente->tipo == 'O')
+                            <div class="form-group">
+                                <label>Número de integrantes de la comunidad:</label>
+                                {{ $solicitud->adquiriente->cantidadIntegrantes }}
+                            </div>
+                            @endif
                         </fieldset>
                     </div>
                 @endif

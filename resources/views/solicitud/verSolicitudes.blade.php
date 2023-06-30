@@ -30,8 +30,15 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($solicitudes as $item)
-                            <tr>
+                        @php
+                            $classes = ['active', 'success', 'warning', 'danger', 'info'];
+                            $classesCount = count($classes);
+                        @endphp 
+                        @foreach ($solicitudes as $index => $item)
+                            @php 
+                                $class = $classes[$index % $classesCount];   
+                                echo "<tr class=\"$class\">";
+                            @endphp
                                 <td scope="row">{{$item->id}}</td>
                                 <td>{{date('d-m-Y h:i A', strtotime($item->created_at))}}</td>
                                 <td>{{$item->sucursales}}</td>
