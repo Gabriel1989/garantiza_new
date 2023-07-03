@@ -70,6 +70,9 @@ $(document).on("click",".btnRevisaSolicitud",function(e){
             id_solicitud_rc: numSolRC,
             _token: "{{ csrf_token() }}"
         },
+        beforeSend: function() {
+            $("#modal_solicitud_body").html('<div style="margin-left: auto;margin-right: auto;" class="loader"></div>');
+        },
         success: function(data){
             hideOverlay();
             $("#modal_solicitud_body").html(data);

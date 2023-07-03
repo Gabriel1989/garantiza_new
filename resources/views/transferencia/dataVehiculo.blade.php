@@ -15,7 +15,7 @@
                 <div class="col-lg-6">
                     <fieldset>
                         <legend>Datos del vehículo</legend>
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>PPU</label>
                             <input type="text" class="form-control" name="ppu_transf" id="ppu_transf" value="<?php 
                                 if($solicitud_data == null){
@@ -25,7 +25,7 @@
                                 }?>">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>Tipo Vehículo</label>
                             <input type="text" class="form-control" name="tipo_transf" id="tipo_transf" value="<?php 
                             if($solicitud_data == null){
@@ -35,7 +35,7 @@
                             }?>">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>Año</label>
                             <input type="text" class="form-control" name="anio_transf" id="anio_transf" value="<?php 
                             if($solicitud_data == null){
@@ -45,7 +45,7 @@
                             }?>">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>Marca</label>
                             <input type="text" class="form-control" name="marca_transf" id="marca_transf" value="<?php 
                             if($solicitud_data == null){
@@ -56,7 +56,7 @@
                                 ?>">
                         </div>
                         
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>Modelo</label>
                             <input type="text" class="form-control" name="modelo_transf" id="modelo_transf" value="<?php 
                             if($solicitud_data == null){
@@ -66,7 +66,7 @@
                             }?>">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>Chasis</label>
                             <input type="text" class="form-control" name="chasis_transf" id="chasis_transf" value="<?php 
                             if($solicitud_data == null){
@@ -78,7 +78,7 @@
                                 ?>">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>Motor</label>
                             <input type="text" class="form-control" name="motor_transf" id="motor_transf" value="<?php 
                             if($solicitud_data == null){
@@ -89,7 +89,7 @@
                                 ?>">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>N° de serie</label>
                             <input type="text" class="form-control" name="serie_transf" id="serie_transf" value="<?php 
                             if($solicitud_data == null){    
@@ -99,7 +99,7 @@
                             }?>">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>N° VIN</label>
                             <input type="text" class="form-control" name="vin_transf" id="vin_transf" value="<?php 
                             if($solicitud_data == null){
@@ -109,7 +109,7 @@
                             }?>">
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" style="margin-right: 3px">
                             <label>Color</label>
                             <input type="text" class="form-control" name="color_transf" id="color_transf" value="<?php 
                             if($solicitud_data == null){

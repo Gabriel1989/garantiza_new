@@ -24,7 +24,14 @@ use App\Models\Transferencia;
 ?>
 
 @include('includes.form-error-message')
-
+<?php        
+    $tipo_documento = Tipo_Documento::whereIn('id',[9,10])->get();
+    $acreedores = Acreedor::all();
+    $limitacion_rc = LimitacionRC::getSolicitudTransferencia($id);
+    $limitacion = Limitacion::where('transferencia_id',$id)->first();
+    $error_envio_doc = ErrorEnvioDoc::where('transferencia_id',$id)->first();
+    $transferencia = Transferencia::find($id);
+?>
 <form method="post" id="formLimitacion" role="form" class="form-horizontal form-revision" >
     @csrf
     @method('post')
@@ -32,17 +39,9 @@ use App\Models\Transferencia;
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
             <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de Prohibición y/o Limitación de Transferencia (opcional)</span>
-            <br><span class="panel-title" style="color:#f00">(*) Datos obligatorios</span> 
+            @if(count($limitacion_rc) == 0) <br><span class="panel-title" style="color:#f00">(*) Datos obligatorios</span> @endif
         </div>
-        <?php
-            
-            $tipo_documento = Tipo_Documento::whereIn('id',[9,10])->get();
-            $acreedores = Acreedor::all();
-            $limitacion_rc = LimitacionRC::getSolicitudTransferencia($id);
-            $limitacion = Limitacion::where('transferencia_id',$id)->first();
-            $error_envio_doc = ErrorEnvioDoc::where('transferencia_id',$id)->first();
-            $transferencia = Transferencia::find($id);
-        ?>
+        
         @if(count($limitacion_rc) == 0)
         <div class="panel-body">
             <div class="form-group">
@@ -360,6 +359,9 @@ use App\Models\Transferencia;
             data: {
                 id_solicitud_rc: numSolRC,
                 _token: "{{ csrf_token() }}"
+            },
+            beforeSend: function() {
+                $("#modal_limitacion_body").html('<div style="margin-left: auto;margin-right: auto;" class="loader"></div>');
             },
             success: function(data){
                 hideOverlay();

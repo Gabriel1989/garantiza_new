@@ -1613,27 +1613,145 @@ class SolicitudController extends Controller
         $header = new stdClass;
         //Obtengo listado de rechazos
         $rechazos = Rechazo::all();
-        //Obtengo datos de la solicitud
-        $data_solicitud = $this->continuarSolicitud($id,false,"revision");
-        $data_solicitud = $data_solicitud->render();
         //Obtengo los documentos de la solicitud
         $documentos = Solicitud::DocumentosSolicitud($id);
-        //Obtengo el nombre de archivo de la factura subida en pdf
-        $file = $documentos->where('tipo_documento_id', '2')->first()->name;
+        
         //Obtengo la cédula subida del cliente en pdf
         $cedula_cliente = $documentos->where('tipo_documento_id', '3')->where('solicitud_id',$id)->first();
         $cedula_compra_para = $documentos->where('tipo_documento_id', '5')->where('solicitud_id',$id)->first();
         $factura_cliente = $documentos->where('tipo_documento_id', '2')->where('solicitud_id',$id)->first();
         $rol_empresa = $documentos->where('tipo_documento_id', '4')->where('solicitud_id',$id)->first();
         $doc_limitacion = $documentos->whereIn('tipo_documento_id', [6,7])->where('solicitud_id',$id)->first();
-        if (Storage::exists($file)) {
-            //Obtenemos los datos de la factura guardada en la BD
-            $factura_data = Factura::where('id_solicitud',$id)->first();
-            $header->RUTRecep = (string)$factura_data->rut_receptor;
-            $header->RznSocRecep = (string)$factura_data->razon_social_recep;
+
+        $id_solicitud = $id;
+        $comunas = Comuna::allOrder();
+        $reingresa = false;
+        $acceso = "revision";
+        $header = new stdClass;
+        $factura = Factura::where('id_solicitud',$id_solicitud)->first();
+        $solicitud_data = Solicitud::find($id);
+        $reingreso = Reingreso::where('solicitud_id',$id_solicitud)->whereIn('estado_id',[0,2,3])->first();
+        $documento_rc = EnvioDocumentoRC::where('solicitud_id',$id_solicitud)->first();
+        if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 5 || Auth::user()->rol_id == 6){
+            $sucursales = Sucursal::where('concesionaria_id',Auth::user()->concesionaria_id)->get();
         }
+        else{
+            $sucursales = Sucursal::all();
+        }
+        $tipo_vehiculos = Tipo_Vehiculo::all();
+        $tipo_potencia = TipoPotencia::all();
+        $ppu = array();
+        $region = Region::all();
+        $tipo_carroceria = Tipo_Carroceria::all();
+        $solicita_ppu = true;
+
+        if($reingresa){
+            if($reingreso == null){
+                $solicitud_rc = SolicitudRC::where('solicitud_id',$id)->first();
+                if($solicitud_rc != null){
+                    $new_reingreso = new Reingreso();
+                    $new_reingreso->ppu = explode('-',str_replace('.','',$solicitud_rc->ppu))[0];
+                    $new_reingreso->nroSolicitud = $solicitud_rc->numeroSol;
+                    $new_reingreso->solicitud_id = $id;
+                    $new_reingreso->estado_id = 0; //Pendiente de reingreso
+                    //$new_reingreso->observaciones = json_encode($observaciones);
+                    $new_reingreso->save();
+                }
+            }
+        }
+
+        if($factura != null){
+            $header->RUTRecep = (string)$factura->rut_receptor;
+            $header->RznSocRecep = (string)$factura->razon_social_recep;
+            $header->GiroRecep = (string)$factura->giro;
+            $header->Contacto = (string)$factura->contacto;
+            $header->DirRecep = (string)$factura->direccion;
+            $header->CmnaRecep = (string)strtoupper($factura->comuna);
+            $header->CiudadRecep = (string)$factura->ciudad;
+            $header->DirPostal = (string)$factura->direccion;
+
+            $header->AnnioFabricacion = (string)$factura->agno_fabricacion;
+            $header->Color = (string)$factura->color;
+            $header->TipoCombustible = (string)$factura->tipo_combustible;
+            $header->Marca = (string)$factura->marca;
+            $header->Modelo = (string)$factura->modelo;
+            $header->NroChasis = (string)$factura->nro_chasis;
+            $header->NroMotor = (string)$factura->motor;
+            $header->NroVin  = (string)$factura->nro_vin;
+            $header->NroSerie  = (string)$factura->nro_serie;
+            $header->PesoBrutoVehi = (string)$factura->peso_bruto_vehicular;
+            $header->TipoVehiculo = (string)$factura->tipo_vehiculo;
+            $header->Asientos = (string) $factura->asientos;
+            $header->Puertas = (string) $factura->puertas;
+            $header->CitModelo = (string) $factura->codigo_cit;
+            $header->TipoPBV = (string) $factura->tipo_pbv;
+            $header->TipoCarga = (string) $factura->tipo_carga;
+
+            $header->FchEmis = (string)$factura->fecha_emision;
+            $header->RUTEmisor = (string)$factura->rut_emisor;
+            $header->RznSoc = (string)$factura->razon_social_emisor;
+            $header->MntTotal = (string)$factura->monto_total_factura;
+
+            $header->MntNeto = '';
+            $header->MntExe = '';
+            $header->TasaIVA = '';
+            $header->IVA = '';
+            
+        }
+
+        $id_adquiriente = 0;
+        $id_comprapara = 0;
+        $id_tipo_vehiculo = 0;
+        $id_solicitud_rc = 0;
+        $detalle = array();
+        $adquirientes = Adquiriente::where('solicitud_id',$id_solicitud)->first();
+        if($adquirientes != null){
+            //Menu compra para
+            $id_adquiriente = $adquirientes->id;
+            $adquirentes = Adquiriente::getSolicitud($id_solicitud);
+            $tipo_vehiculo = Solicitud::getTipoVehiculo($id_solicitud);
+            $solicitud_rc = SolicitudRC::getSolicitud($id_solicitud);
+            //dd($solicitud_rc);
+            $id_solicitud_rc = @isset($solicitud_rc[0]->numeroSol)? $solicitud_rc[0]->numeroSol : 0;
+            //dd($id_solicitud_rc);
+            $comprapara = CompraPara::where('solicitud_id', $id_solicitud)->first();
+            if ($comprapara != null) {
+                $id_comprapara = $comprapara->id;
+            }
+            else{
+                $no_para = NoPara::where('solicitud_id', $id_solicitud)->first();
+                if($no_para != null){
+                    $id_comprapara = $no_para->id;
+                }
+                else{
+                    $id_comprapara = 0;
+                }
+            }
+            Log::info('tipo vehiculo: '.$tipo_vehiculo);
+            if ($tipo_vehiculo != null) {
+                switch ($tipo_vehiculo[0]->tipo) {
+                    case 1:
+                        $id_tipo_vehiculo = 1;
+                        break;
+
+                    case 2:
+                        $id_tipo_vehiculo = 2;
+                        break;
+                    case 3:
+                        $id_tipo_vehiculo = 3;
+                        break;
+                }
+            }
+            return view('solicitud.revision.cedula', compact('rechazos','header','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para','acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+            'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
+        }
+        else{
+            $solicitud_rc = null;
+        }
+        //Menu adquiriente: solicitud recién creada
+        return view('solicitud.revision.cedula', compact('rechazos','header','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para','acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','solicitud_rc','id_solicitud_rc'));
        
-        return view('solicitud.revision.cedula', compact('data_solicitud','rechazos','header','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para', 'id'));
+        //return view('solicitud.revision.cedula', compact('rechazos','header','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para', 'id'));
     }
 
     public function updateRevisionCedula(Request $request, $id)

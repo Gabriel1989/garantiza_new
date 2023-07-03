@@ -1174,13 +1174,11 @@ class TransferenciaController extends Controller{
         $header = new stdClass;
         //Obtengo listado de rechazos
         $rechazos = Rechazo::all();
-        //Obtengo datos de la solicitud
-        $data_solicitud = $this->continuarSolicitud($id,false,"revision");
-        $data_solicitud = $data_solicitud->render();
+        $acceso = "revision";
         //Obtengo los documentos de la solicitud
         $documentos = Transferencia::DocumentosSolicitud($id);
         //Obtengo el nombre de archivo de la factura subida en pdf
-        $file = $documentos->whereIn('tipo_documento_id', [9,10,11,12,13,14])->first()->name;
+        //@$file = $documentos->whereIn('tipo_documento_id', [9,10,11,12,13,14])->where('esProhibicion','!=',1)->first()->name;
         //Obtengo la cédula subida del cliente en pdf
         $cedula_comprador = $documentos->where('tipo_documento_id', '3')->where('transferencia_id',$id)->first();
         $cedula_estipulante = $documentos->where('tipo_documento_id', '5')->where('transferencia_id',$id)->first();
@@ -1188,14 +1186,96 @@ class TransferenciaController extends Controller{
         $doc_transferencia = $documentos->whereIn('tipo_documento_id', [9,10,11,12,13,14])->where('transferencia_id',$id)->first();
         $rol_empresa = $documentos->where('tipo_documento_id', '4')->where('transferencia_id',$id)->first();
         $doc_limitacion = $documentos->whereIn('tipo_documento_id', [9,10])->where('transferencia_id',$id)->where('esProhibicion',1)->first();
-        if (Storage::exists($file)) {
-            //Obtenemos los datos de la factura guardada en la BD
-            $factura_data = Comprador::where('transferencia_id',$id)->first();
+            
+        $factura_data = Comprador::where('transferencia_id',$id)->first();
+        if(!empty(@$factura_data)){
             $header->RUTRecep = (string)$factura_data->rut;
             $header->RznSocRecep = (string)$factura_data->nombre.' '.$factura_data->aPaterno.' '.$factura_data->aMaterno;
         }
+        else{
+            $header->RUTRecep = "";
+            $header->RznSocRecep = "";
+        }
+
+        $reingresa = false;
+
+        $id_transferencia = $id;
+        $comunas = Comuna::allOrder();
+        $solicitud_data = Transferencia::find($id);
+
+        $reingreso = Reingreso::where('transferencia_id',$id_transferencia)->whereIn('estado_id',[0,2,3])->first();
+        $documento_rc = EnvioDocumentoRC::where('transferencia_id',$id_transferencia)->first();
+
+        $region = Region::all();
+        $solicita_data = true;
+
+        session(['solicitud_id_transf' => $id]);
+
+        if($reingresa){
+            if($reingreso == null){
+                $transferencia_rc = TransferenciaRC::where('transferencia_id',$id)->first();
+                if($transferencia_rc != null){
+                    $new_reingreso = new Reingreso();
+                    $new_reingreso->ppu = explode('-',str_replace('.','',$transferencia_rc->ppu))[0];
+                    $new_reingreso->nroSolicitud = $transferencia_rc->numeroSol;
+                    $new_reingreso->transferencia_id = $id;
+                    $new_reingreso->estado_id = 0; //Pendiente de reingreso
+                    $new_reingreso->save();
+                }
+            }
+        }
+
+        $id_comprador = 0;
+        $id_vendedor = 0;
+        $id_estipulante = 0;
+        $id_transferencia_rc = 0;
+        $compradores = Comprador::where('transferencia_id',$id_transferencia)->first();
+        $propietario_data = null;
+        if($solicitud_data != null){
+            $propietario_data = Propietario::where('transferencia_id',$id_transferencia)->where('vehiculo_id',$solicitud_data->vehiculo->id)->first();
+        }
+        
+
+        if($compradores != null){
+            //Menu vendedor
+            $id_comprador = $compradores->id;
+            $compradores = Comprador::getSolicitud($id_transferencia);
+            $transferencia_rc = TransferenciaRC::getSolicitud($id_transferencia);
+            
+            $id_transferencia_rc = @isset($transferencia_rc[0]->numeroSol)? $transferencia_rc[0]->numeroSol : 0;
+            
+
+            $vendedor = Vendedor::where('transferencia_id',$id_transferencia)->first();
+            if ($vendedor != null) {
+                $id_vendedor = $vendedor->id;
+            }
+
+
+            $estipulante = Estipulante::where('transferencia_id', $id_transferencia)->first();
+            if ($estipulante != null) {
+                $id_estipulante = $estipulante->id;
+            }
+            else{
+                $no_estipulante = NoEstipulante::where('transferencia_id', $id_transferencia)->first();
+                if($no_estipulante != null){
+                    $id_estipulante = $no_estipulante->id;
+                }
+                else{
+                    $id_estipulante = 0;
+                }
+            }
+            return view('transferencia.revision.cedula', compact('rechazos','header','doc_limitacion','rol_empresa','cedula_vendedor','cedula_comprador','doc_transferencia','cedula_estipulante','acceso','estipulante','compradores','vendedor','propietario_data','documento_rc','reingreso','region','solicita_data','solicitud_data','comunas','id_transferencia','id','id_comprador','id_estipulante','id_vendedor','id_transferencia_rc','transferencia_rc'));
+        }
+        else{
+            $estipulante = null;
+            $compradores = null;
+            $vendedor = null;
+            $transferencia_rc = null;
+        }
+        //Menu comprador: solicitud recién creada
+        return view('transferencia.revision.cedula', compact('rechazos','header','doc_limitacion','rol_empresa','cedula_vendedor','cedula_comprador','doc_transferencia','cedula_estipulante','acceso','estipulante','compradores','vendedor','propietario_data','documento_rc','reingreso','region','solicita_data','solicitud_data','comunas','id_transferencia','id','id_comprador','id_estipulante','id_vendedor','id_transferencia_rc','transferencia_rc'));
        
-        return view('transferencia.revision.cedula', compact('data_solicitud','rechazos','header','doc_limitacion','rol_empresa','cedula_vendedor','cedula_comprador','doc_transferencia','cedula_estipulante', 'id'));
+        //return view('transferencia.revision.cedula', compact('data_solicitud','rechazos','header','doc_limitacion','rol_empresa','cedula_vendedor','cedula_comprador','doc_transferencia','cedula_estipulante', 'id'));
     }
 
     public function updateRevisionCedula(Request $request, $id)
@@ -1276,7 +1356,7 @@ class TransferenciaController extends Controller{
             else{
                 // Enviar un mensaje de error en formato JSON
                 header('Content-Type: application/json');
-                echo json_encode(['error' => 'El comprobante de la inscripción no se encuentra disponible aún']);
+                echo json_encode(['error' => 'El comprobante de la transferencia no se encuentra disponible aún']);
                 exit;
             }
         }
