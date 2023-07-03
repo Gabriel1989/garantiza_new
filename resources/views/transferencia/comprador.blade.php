@@ -4,12 +4,12 @@
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
             <span class="panel-title">Ingreso de Solicitud Transferencia N° {{ $id }} - Datos del
-                Comprador</span>
+                Comprador <br><span style="color:#f00">(*)</span> Datos obligatorios</span> 
         </div>
         <div class="panel-body">
             <div id="comprador">
                 <div class="form-group">
-                    <label for="rut" class="col-lg-2 control-label">Rut :</label>
+                    <label for="rut" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Rut :</label>
                     <label class="col-lg-2">
                         <input type="hidden" name="comprador_1" id="comprador_1"
                             value="{{ isset($compradores[0]->id) ? $compradores[0]->id : 0 }}">
@@ -20,7 +20,7 @@
                     </label>
                     <label class="col-lg-2"></label>
 
-                    <label for="nombre" class="col-lg-2 control-label">Nombre :</label>
+                    <label for="nombre" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Nombre :</label>
                     <label class="col-lg-4">
                         <input type="text" name="nombre" id="nombre" class="form-control"
                             placeholder="Nombre del Comprador"
@@ -43,14 +43,14 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="calle" class="col-lg-2 control-label">Dirección (calle) :</label>
+                    <label for="calle" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Dirección (calle) :</label>
                     <label class="col-lg-4">
                         <input type="text" name="calle" id="calle" class="form-control"
                             placeholder="Calle de la dirección"
                             value="{{ isset($compradores[0]->calle) ? $compradores[0]->calle : '' }}" required>
                     </label>
 
-                    <label for="numero" class="col-lg-2 control-label">Número :</label>
+                    <label for="numero" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Número :</label>
                     <label class="col-lg-2">
                         <input type="text" name="numero" id="numero" class="form-control"
                             placeholder="Número de la dirección"
@@ -66,7 +66,7 @@
                             value="{{ isset($compradores[0]->rDomicilio) ? $compradores[0]->rDomicilio : old('rDireccion') }}">
                     </label>
 
-                    <label for="comuna" class="col-lg-2 control-label">Comuna :</label>
+                    <label for="comuna" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Comuna :</label>
                     <label class="col-lg-4">
                         <select class="col-sm-12 form-select comuna" name="comuna" id="comuna">
                             <option value="0" selected>Seleccione Comuna...</option>
@@ -79,13 +79,13 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="email" class="col-lg-2 control-label">Email :</label>
+                    <label for="email" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Email :</label>
                     <label class="col-lg-4">
                         <input type="email" name="email" id="email" class="form-control" placeholder="Email"
                             value="{{ isset($compradores[0]->email) ? $compradores[0]->email : '' }}" required>
                     </label>
 
-                    <label for="telefono" class="col-lg-2 control-label">Teléfono :</label>
+                    <label for="telefono" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Teléfono :</label>
                     <label class="col-lg-2">
                         <input type="text" name="telefono" id="telefono" class="form-control"
                             placeholder="Ej. 978653214"
@@ -94,7 +94,7 @@
                     <label class="col-lg-2"></label>
                 </div>
                 <div class="form-group">
-                    <label for="tipoPersona" class="col-lg-2 control-label">Tipo de Persona :</label>
+                    <label for="tipoPersona" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Tipo de Persona :</label>
                     <label class="col-lg-4">
                         <select class="col-sm-12 form-select" name="tipoPersona" id="tipoPersona">
                             @if (!isset($compradores[0]->tipo))

@@ -31,7 +31,8 @@ use App\Models\ErrorEnvioDoc;
 
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
-            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de Prohibición y/o Limitación de Vehículo</span>
+            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de Prohibición y/o Limitación de Vehículo (opcional)</span>
+            <br><span class="panel-title" style="color:#f00">(*) Datos obligatorios</span> 
         </div>
         <?php
             $factura = Factura::where('id_solicitud',$id)->first();
@@ -46,7 +47,7 @@ use App\Models\ErrorEnvioDoc;
             <div class="form-group">
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Acreedor</h4></div></div>
                 <div class="row">
-                    <label for="runAcreedor" class="col-lg-3 control-label ">Seleccione Acreedor:</label>
+                    <label for="runAcreedor" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Seleccione Acreedor:</label>
                     <label class="col-lg-3">
                         <select name="runAcreedor" id="runAcreedor" class="form-control" required>
                             <option value="0">Seleccione Acreedor</option>
@@ -61,7 +62,7 @@ use App\Models\ErrorEnvioDoc;
                 </div>
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Vehiculo</h4></div></div>
                 <div class="row">
-                    <label for="nro_chasis" class="col-lg-3 control-label ">Nro Chasis:</label>
+                    <label for="nro_chasis" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Nro Chasis:</label>
                     <label class="col-lg-3">
                         <input type="text" name="nro_chasis" id="nro_chasis" value="{{ ($limitacion == null)?  ((isset($factura->nro_chasis))? $factura->nro_chasis : ''): $limitacion->nro_chasis}}" class="form-control" required>
                     </label>
@@ -79,20 +80,20 @@ use App\Models\ErrorEnvioDoc;
                     </label>
                 </div>
                 <div class="row">
-                    <label for="nro_motor" class="col-lg-3 control-label ">Nro Motor:</label>
+                    <label for="nro_motor" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Nro Motor:</label>
                     <label class="col-lg-3">
                         <input type="text" name="nro_motor" id="nro_motor" value="{{ ($limitacion == null)? ((isset($factura->motor))? $factura->motor : ''): $limitacion->nro_motor}}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row"><div class="col-lg-4"></div><div class="col-lg-4"><h4>Datos Documento</h4></div></div>
                 <div class="row">
-                    <label for="folio" class="col-lg-3 control-label ">Folio:</label>
+                    <label for="folio" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Folio:</label>
                     <label class="col-lg-3">
                         <input type="number" min="1" max="99999999" name="folio" id="folio" value="{{ ($limitacion != null)? $limitacion->folio : '' }}" class="form-control" required>
                     </label>
                 </div>
                 <div class="row">
-                    <label for="folio" class="col-lg-3 control-label ">Tipo Documento:</label>
+                    <label for="folio" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Tipo Documento:</label>
                     <label class="col-lg-3">
                         <select name="tipoDoc" id="tipoDoc2" class="form-control" required>
                             @foreach($tipo_documento as $tipo)
@@ -103,7 +104,7 @@ use App\Models\ErrorEnvioDoc;
                     </label>
                 </div>
                 <div class="row">
-                    <label for="autorizante" class="col-lg-3 control-label ">Autorizante:</label>
+                    <label for="autorizante" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Autorizante:</label>
                     <label class="col-lg-3">
                         <input type="input" name="autorizante" id="autorizante" value="{{ ($limitacion != null)? $limitacion->autorizante : '' }}" class="form-control">
                     </label>
@@ -114,7 +115,7 @@ use App\Models\ErrorEnvioDoc;
                     <div class="col-lg-3"></div>
                     <div class="col-lg-3">
                         <span class="btn btn-warning fileinput-button col-sm-12" name="DocLim" id="DocLim">
-                            Seleccionar Documento</span>
+                            <span class="panel-title" style="color:#f00">(*) </span>Seleccionar Documento</span>
                     </div>
                     <div class="col-lg-3">
                         <input id="Doc_Lim" name="Doc_Lim" type="file" style="display:none" accept="application/pdf" />

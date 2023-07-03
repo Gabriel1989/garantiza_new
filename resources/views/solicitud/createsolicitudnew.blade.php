@@ -7,6 +7,7 @@
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
             <span class="panel-title">Crear Nueva Solicitud</span>
+            <br><span class="panel-title" style="color:#f00">(*) Datos obligatorios</span>
         </div>
         <div class="panel-body">
             <div class="form-group">
@@ -19,7 +20,7 @@
                     $user = User::with('concesionaria')->find(Auth::id());
                 @endphp
 
-                <label for="sucursal_id" class="col-lg-1 control-label">Sucursal: </label>
+                <label for="sucursal_id" class="col-lg-1 control-label"><span class="panel-title" style="color:#f00">(*) </span>Sucursal: </label>
                 <div class="col-lg-5">
                     <select name="sucursal_id" id="sucursal_id">
                         <option value="0" selected>Seleccione Sucursal ...</option>
@@ -30,7 +31,7 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="tipoVehiculos_id" class="col-lg-1 control-label">Tipo de Vehículo: </label>
+                <label for="tipoVehiculos_id" class="col-lg-1 control-label"><span class="panel-title" style="color:#f00">(*) </span>Tipo de Vehículo: </label>
                 <div class="col-lg-5">
                     <select name="tipoVehiculos_id" id="tipoVehiculos_id">
                         <option value="0" selected>Seleccione Tipo de Vehículo ...</option>
@@ -55,7 +56,7 @@
                 
             </div>
             <div class="form-group">
-                <label for="ppu_terminacion" class="col-lg-1 control-label">PPU Disponibles:</label>
+                <label for="ppu_terminacion" class="col-lg-1 control-label"><span class="panel-title" style="color:#f00">(*) </span>PPU Disponibles:</label>
                 <label class="col-lg-5">
                     <select name="ppu_terminacion" id="ppu_terminacion">
                         @if(@is_null($solicitud_data->termino_1)) 
@@ -114,21 +115,21 @@
                     <div class="row">
 
                         <div class="col-lg-3">
-                            <label>Nombre o Razón Social Emisor</label>
+                            <label><span class="panel-title" style="color:#f00">(*) </span>Nombre o Razón Social Emisor</label>
                             <input class="form-control" name="razon_soc_emisor" id="razon_soc_emisor" maxlength="35" value="{{ !@is_null($header->RznSoc)? $header->RznSoc : $user->concesionaria->razon_social}}">
                         </div>
 
                         <div class="col-lg-3">
-                            <label>Rut emisor</label>
+                            <label><span class="panel-title" style="color:#f00">(*) </span>Rut emisor</label>
                             <input type="number" min="1" max="99999999" class="form-control" name="rut_emisor" id="rut_emisor" value="{{!@is_null($header->RUTEmisor)? $header->RUTEmisor : $user->concesionaria->rut}}">
                         </div>
 
                         <div class="col-lg-3">
-                            <label>Fecha Emisión</label>
+                            <label><span class="panel-title" style="color:#f00">(*) </span>Fecha Emisión</label>
                             <input class="form-control" maxlength="8" name="fecha_emision_fac" id="fecha_emision_fac" value="{{!@is_null($header->FchEmis)? $header->FchEmis : ''}}">
                         </div>
                         <div class="col-lg-3">
-                            <label>Monto Total Factura</label>
+                            <label><span class="panel-title" style="color:#f00">(*) </span>Monto Total Factura</label>
                             <input type="number" max="999999999" class="form-control" name="monto_factura" id="monto_factura" value="{{!@is_null($header->MntTotal)? $header->MntTotal : ''}}">
                         </div>
                     </div>

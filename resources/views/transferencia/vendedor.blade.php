@@ -5,12 +5,12 @@
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
             <span class="panel-title">Ingreso de Solicitud Transferencia N° {{ $id }} - Datos del
-                Vendedor</span>
+                Vendedor <br><span style="color:#f00">(*)</span> Datos obligatorios</span></span>
         </div>
         <div class="panel-body">
             <div id="vendedor">
                 <div class="form-group">
-                    <label for="rut" class="col-lg-2 control-label">Rut :</label>
+                    <label for="rut" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Rut :</label>
                     <label class="col-lg-2">
                         <input type="hidden" name="vendedor_1" id="vendedor_1"
                             value="{{ isset($vendedor->id) ? $vendedor->id : 0 }}">
@@ -21,7 +21,7 @@
                     </label>
                     <label class="col-lg-2"></label>
 
-                    <label for="nombre" class="col-lg-2 control-label">Nombre :</label>
+                    <label for="nombre" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Nombre :</label>
                     <label class="col-lg-4">
                         <input type="text" name="nombre" id="nombre" class="form-control"
                             placeholder="Nombre del Vendedor"
@@ -82,7 +82,7 @@
                     </label>
                 </div>-->
                 <div class="form-group">
-                    <label for="email" class="col-lg-2 control-label">Email :</label>
+                    <label for="email" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Email :</label>
                     <label class="col-lg-4">
                         <input type="email" name="email" id="email" class="form-control" placeholder="Email"
                             value="{{ isset($vendedor->email) ? $vendedor->email : '' }}">
@@ -95,7 +95,7 @@
                             value="{{ isset($vendedor->telefono) ? $vendedor->telefono : '' }}" >
                     </label>
                     <label class="col-lg-2"></label>-->
-                    <label for="tipoPersona2" class="col-lg-2 control-label">Tipo de Persona :</label>
+                    <label for="tipoPersona2" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Tipo de Persona :</label>
                     <label class="col-lg-4">
                         <select class="col-sm-12 form-select" name="tipoPersona" id="tipoPersona2" required>
                             @if (!isset($vendedor->tipo))
@@ -117,7 +117,7 @@
                     </label>
                 </div>
                 <div class="form-group" style="display: none" id="integrantesComunidad2">
-                    <label for="cantidad_integrantes_vende" class="col-lg-2 control-label">Cantidad Integrantes Comunidad :</label>
+                    <label for="cantidad_integrantes_vende" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Cantidad Integrantes Comunidad :</label>
                     <label class="col-lg-3">
                         <input type="number" name="cantidad_integrantes_vende" id="cantidad_integrantes_vende" class="form-control"
                             value="{{ isset($vendedor->cantidadIntegrantes) ? $vendedor->cantidadIntegrantes : old('cantidadIntegrantes') }}">

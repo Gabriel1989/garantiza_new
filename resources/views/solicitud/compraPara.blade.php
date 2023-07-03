@@ -4,19 +4,21 @@
     
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
-            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de CompraPara</span>
+            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de CompraPara (opcional en caso de ingresar una inscripción con Compra Para)</span>
+            <br>
+            <span class="panel-title" style="color:#f00">(*) Datos obligatorios</span>
         </div>
         <div class="panel-body">
             
                 <div class="form-group">
-                    <label for="rut" class="col-lg-2 control-label">Rut :</label>
+                    <label for="rut" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Rut :</label>
                     <label class="col-lg-2">
                         <input type="hidden" data-comprapara="{{$comprapara}}" name="id_comprapara" id="id_comprapara" value="{{ !is_null($comprapara)? $comprapara->id :  0}}">
                         <input type="text" name="rut" id="rut_comprapara" class="form-control rut2" placeholder="99.999.999-9" value="{{ !is_null($comprapara)?  $comprapara->rut : ''}}" >
                     </label>
                     <label class="col-lg-2"></label>
                     
-                    <label for="nombre" class="col-lg-2 control-label">Nombre :</label>
+                    <label for="nombre" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Nombre :</label>
                     <label class="col-lg-4">
                         <input type="text" name="nombre" id="nombre_comprapara" class="form-control" placeholder="Nombre del Compra Para" value="{{!is_null($comprapara)?  $comprapara->nombre : ''}}" >
                     </label>
@@ -33,12 +35,12 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="calle" class="col-lg-2 control-label">Dirección (calle) :</label>
+                    <label for="calle" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Dirección (calle) :</label>
                     <label class="col-lg-4">
                         <input type="text" name="calle" id="calle_comprapara" class="form-control" placeholder="Calle de la dirección" value="{{!is_null($comprapara)?  $comprapara->calle : ''}}" >
                     </label>
                     
-                    <label for="numero" class="col-lg-2 control-label">Número :</label>
+                    <label for="numero" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Número :</label>
                     <label class="col-lg-2">
                         <input type="text" name="numero" id="numero_comprapara" class="form-control" placeholder="Número de la dirección" value="{{!is_null($comprapara)?  $comprapara->numero :''}}" >
                     </label>
@@ -50,7 +52,7 @@
                         <input type="text" name="rDireccion" id="rDireccion_comprapara" class="form-control" placeholder="Complemento de la dirección" value="{{!is_null($comprapara)?  $comprapara->rDomicilio : ''}}">
                     </label>
                     
-                    <label for="comuna" class="col-lg-2 control-label">Comuna :</label>
+                    <label for="comuna" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Comuna :</label>
                     <label class="col-lg-4">
                         <select class="col-sm-12 form-select comuna" name="comuna" id="comuna_comprapara" >
                             <option value="0" selected>Seleccione Comuna...</option>
@@ -73,31 +75,29 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="email" class="col-lg-2 control-label">Email :</label>
+                    <label for="email" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Email :</label>
                     <label class="col-lg-4">
                         <input type="email" name="email" id="email_comprapara" class="form-control" placeholder="Email" value="{{!is_null($comprapara)?  $comprapara->email :''}}" >
                     </label>
                     
-                    <label for="telefono" class="col-lg-2 control-label">Teléfono :</label>
+                    <label for="telefono" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Teléfono :</label>
                     <label class="col-lg-2">
                         <input type="text" name="telefono" id="telefono_comprapara" class="form-control" placeholder="Ej. 978653214" value="{{!is_null($comprapara)?  $comprapara->telefono :''}}" >
                     </label>
                     <label class="col-lg-2"></label>
                 </div>
                 <div class="form-group">
-                    <label for="tipoPersona" class="col-lg-2 control-label">Tipo de Persona :</label>
+                    <label for="tipoPersona" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Tipo de Persona :</label>
                     <label class="col-lg-4">
                         <select class="col-sm-12 form-select" name="tipoPersona" id="tipoPersona2" >
                         @if(is_null($comprapara))    
                             <option value="N" @if ($adquirentes[0]->tipo=='N') selected @endif>NATURAL</option>
                             <option value="J" @if ($adquirentes[0]->tipo=='J') selected @endif>JURÍDICO</option>
                             <option value="E" @if ($adquirentes[0]->tipo=='E') selected @endif>EXTRANJERO</option>
-                            <option value="O" @if ($adquirentes[0]->tipo=='O') selected @endif>COMUNIDAD</option>
                         @else
                             <option data-poto value="N" @if ($comprapara->tipo=='N') selected @endif>NATURAL</option>
                             <option data-poto value="J" @if ($comprapara->tipo=='J') selected @endif>JURÍDICO</option>
                             <option data-poto value="E" @if ($comprapara->tipo=='E') selected @endif>EXTRANJERO</option>
-                            <option data-poto value="O" @if ($comprapara->tipo=='O') selected @endif>COMUNIDAD</option>
                         @endif
                         </select>
                     </label>

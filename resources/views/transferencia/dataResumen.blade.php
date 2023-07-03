@@ -27,18 +27,20 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
     @method('post')
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
-            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos adicionales para transferencia</span>
+            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos adicionales para transferencia
+                <br><span style="color:#f00">(*)</span> Datos obligatorios</span>
+            </span>
         </div>
         <div class="panel-body">
             <div class="col-lg-6 col-md-6">
                 <div class="form-group">
-                    <label for="digitoVerificadorPPU" class="col-lg-3 control-label ">Digito verificador PPU:</label>
+                    <label for="digitoVerificadorPPU" class="col-lg-3 control-label "><span style="color:#f00">(*)</span>Digito verificador PPU:</label>
                     <label class="col-lg-4">
                         <input value="{{ ($transferencia_data != null)? $transferencia_data->dv_ppu : '' }}" type="text" name="digitoVerificadorPPU" id="digitoVerificadorPPU" class="form-control" maxlength="1">
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="tipoDocTransf" class="col-lg-3 control-label ">Tipo Documento:</label>
+                    <label for="tipoDocTransf" class="col-lg-3 control-label "><span style="color:#f00">(*)</span>Tipo Documento:</label>
                     <label class="col-lg-4">
                         <select name="tipoDocTransf" id="tipoDocTransf" class="form-control"  required>
                             @foreach ($tipoDocs as $doc)
@@ -48,14 +50,14 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="naturalezaTransf" class="col-lg-3 control-label ">Naturaleza del acto:</label>
+                    <label for="naturalezaTransf" class="col-lg-3 control-label "><span style="color:#f00">(*)</span>Naturaleza del acto:</label>
                     <label class="col-lg-4">
                         <select name="naturalezaTransf" id="naturalezaTransf" class="form-control"  required>
                         </select>
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for=" numDocTransf" class="col-lg-3 control-label ">Número de documento:</label>
+                    <label for=" numDocTransf" class="col-lg-3 control-label "><span style="color:#f00">(*)</span>Número de documento:</label>
                     <label class="col-lg-4">
                         <input value="{{ ($transferencia_data != null)? $transferencia_data->num_doc : 0 }}" type="number" name="numDocTransf" id="numDocTransf" class="form-control"  required>
                         
@@ -65,7 +67,7 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                     <div class="col-sm-12 col-lg-12 mb5">
                         <div class="col-lg-7">
                             <span class="btn btn-warning fileinput-button col-sm-12" name="pic" id="DocumentoTransferencia">
-                                Seleccionar Documento PDF</span>
+                                <span style="color:#f00">(*)</span>Seleccionar Documento PDF</span>
                         </div>
                         <div class="col-lg-5">
                             <input id="Documento_Transferencia" name="Documento_Transferencia" type="file" style="display:none" accept="text/xml,application/pdf" />
@@ -74,14 +76,14 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="fechaEmisionTransf" class="col-lg-3 control-label ">Fecha emisión documento o factura:</label>
+                    <label for="fechaEmisionTransf" class="col-lg-3 control-label "><span style="color:#f00">(*)</span>Fecha emisión documento o factura:</label>
                     <label class="col-lg-4">
                         <input value="{{ ($transferencia_data != null)? $transferencia_data->fecha_emision : 0 }}" type="text" name="fechaEmisionTransf" id="fechaEmisionTransf" class="form-control datepicker"  required>
                     </label>
                 </div>
 
                 <div class="form-group ml50">
-                    <label for="comuna3" class="col-lg-2 control-label">Lugar :</label>
+                    <label for="comuna3" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Lugar :</label>
                         <label class="col-lg-4">
                             <select class="col-sm-12 form-select comuna" name="lugarTransf" id="comuna3">
                                 <option value="0">Seleccione Comuna...</option>
@@ -94,7 +96,7 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
             </div>
             <div class="col-lg-6 col-md-6">
                 <div class="form-group">
-                    <label for="totalTransf" class="col-lg-3 control-label ">Total Venta:</label>
+                    <label for="totalTransf" class="col-lg-3 control-label "><span style="color:#f00">(*)</span>Total Venta:</label>
                     <label class="col-lg-4">
                         <input value="{{ ($transferencia_data != null)? $transferencia_data->total_venta : 0 }}" type="number" name="totalTransf" id="totalTransf" class="form-control"  required>
                         
@@ -102,7 +104,7 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                 </div>
 
                 <div class="form-group ml50">
-                    <label for="monedaTransf" class="col-lg-2 control-label">Moneda :</label>
+                    <label for="monedaTransf" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Moneda :</label>
                         <label class="col-lg-5">
                             <select class="col-sm-12 form-select" name="monedaTransf" id="monedaTransf">
                                 <option value="0" >Seleccione Moneda...</option>
@@ -131,14 +133,14 @@ $transferencia_data = TransferenciaData::where('transferencia_id',$id)->first();
                     <legend>Datos del impuesto a la transferencia</legend>
 
                     <div class="form-group">
-                        <label for="codigoCID" class="col-lg-3 control-label ">Código CID del pago:</label>
+                        <label for="codigoCID" class="col-lg-3 control-label "><span style="color:#f00">(*)</span>Código CID del pago:</label>
                         <label class="col-lg-4">
                             <input value="{{ ($transferencia_data != null)? $transferencia_data->codigo_cid : 0 }}" type="text" name="codigoCID" id="codigoCID" class="form-control">
                         </label>
                     </div>
 
                     <div class="form-group">
-                        <label for="montoPagadoImpuesto" class="col-lg-3 control-label ">Monto pagado:</label>
+                        <label for="montoPagadoImpuesto" class="col-lg-3 control-label "><span style="color:#f00">(*)</span>Monto pagado:</label>
                         <label class="col-lg-4">
                             <input value="{{ ($transferencia_data != null)? $transferencia_data->monto_impuesto : 0 }}" type="number" name="montoPagadoImpuesto" id="montoPagadoImpuesto" class="form-control">
                         </label>

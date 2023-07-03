@@ -5,18 +5,19 @@
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
             <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de Adquirentes</span>
+            <br><span class="panel-title" style="color:#f00">(*) Datos obligatorios</span>
         </div>
         <div class="panel-body">
             <div id="adquiriente">
                 <div class="form-group">
-                    <label for="rut" class="col-lg-2 control-label">Rut :</label>
+                    <label for="rut" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Rut :</label>
                     <label class="col-lg-2">
                         <input type="hidden" name="adquiriente_1" id="adquiriente_1" value="{{ isset($adquirentes[0]->id)? $adquirentes[0]->id :  0}}">
                         <input type="text" name="rut" id="rut" class="form-control rut" placeholder="99.999.999-9" value="{{ isset($adquirentes[0]->rut)? str_replace(".","",explode("-",$adquirentes[0]->rut)[0]) : ((isset($header->RUTRecep))?  $header->RUTRecep : '')}}" required>
                     </label>
                     <label class="col-lg-2"></label>
                     
-                    <label for="nombre" class="col-lg-2 control-label">Nombre :</label>
+                    <label for="nombre" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Nombre :</label>
                     <label class="col-lg-4">
                         <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Nombre del Adquirente" value="{{ isset($adquirentes[0]->nombre)? $adquirentes[0]->nombre :  ((isset($header->RznSocRecep))?  $header->RznSocRecep : '')}}" required>
                     </label>
@@ -33,12 +34,12 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="calle" class="col-lg-2 control-label">Dirección (calle) :</label>
+                    <label for="calle" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Dirección (calle) :</label>
                     <label class="col-lg-4">
                         <input type="text" name="calle" id="calle" class="form-control" placeholder="Calle de la dirección" value="{{ isset($adquirentes[0]->calle)?  $adquirentes[0]->calle : ((isset($header->DirRecep))? $header->DirRecep : '')}}" required>
                     </label>
                     
-                    <label for="numero" class="col-lg-2 control-label">Número :</label>
+                    <label for="numero" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Número :</label>
                     <label class="col-lg-2">
                         <input type="text" name="numero" id="numero" class="form-control" placeholder="Número de la dirección" value="{{ isset($adquirentes[0]->numero)? $adquirentes[0]->numero : old('numero')}}" required>
                     </label>
@@ -50,7 +51,7 @@
                         <input type="text" name="rDireccion" id="rDireccion" class="form-control" placeholder="Complemento de la dirección" value="{{ isset($adquirentes[0]->rDomicilio)? $adquirentes[0]->rDomicilio : old('rDireccion') }}">
                     </label>
                     
-                    <label for="comuna" class="col-lg-2 control-label">Comuna :</label>
+                    <label for="comuna" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Comuna :</label>
                     <label class="col-lg-4">
                         <select class="col-sm-12 form-select comuna" name="comuna" id="comuna" >
                             <option value="0" selected>Seleccione Comuna...</option>
@@ -68,19 +69,19 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="email" class="col-lg-2 control-label">Email :</label>
+                    <label for="email" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Email :</label>
                     <label class="col-lg-4">
                         <input type="email" name="email" id="email" class="form-control" placeholder="Email" value="{{ isset($adquirentes[0]->email)? $adquirentes[0]->email : '' }}" required>
                     </label>
                     
-                    <label for="telefono" class="col-lg-2 control-label">Teléfono :</label>
+                    <label for="telefono" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Teléfono :</label>
                     <label class="col-lg-2">
                         <input type="text" name="telefono" id="telefono" class="form-control" placeholder="Ej. 978653214" value="{{  isset($adquirentes[0]->telefono)? $adquirentes[0]->telefono : ((isset($header->Contacto))?   $header->Contacto   :  ''   )}}" required>
                     </label>
                     <label class="col-lg-2"></label>
                 </div>
                 <div class="form-group">
-                    <label for="tipoPersona" class="col-lg-2 control-label">Tipo de Persona :</label>
+                    <label for="tipoPersona" class="col-lg-2 control-label"><span class="panel-title" style="color:#f00">(*) </span>Tipo de Persona :</label>
                     <label class="col-lg-4">
                         <select class="col-sm-12 form-select" name="tipoPersona" id="tipoPersona" >
                             @if(!isset($adquirentes[0]->tipo))

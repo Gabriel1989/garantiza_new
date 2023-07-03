@@ -16,10 +16,11 @@ $tipo_placa_patente = TipoPlacaPatente::all();
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
             <span class="panel-title">Solicitar nueva PPU</span>
+            <span class="panel-title" style="color:#f00">(*) Datos obligatorios</span>
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label for="name" class="col-lg-1">Región: </label>
+                <label for="name" class="col-lg-1"><span class="panel-title" style="color:#f00">(*) </span>Región: </label>
                 <label class="col-lg-5">
                     <select name="region" id="region">
                         <option value="0" selected>Seleccione Región ...</option>
@@ -30,7 +31,7 @@ $tipo_placa_patente = TipoPlacaPatente::all();
                 </label>
 
                 
-                <label for="placa_patente_id" class="col-lg-1">Tipo Placa Patente: </label>
+                <label for="placa_patente_id" class="col-lg-1"><span class="panel-title" style="color:#f00">(*) </span>Tipo Placa Patente: </label>
                 <div class="col-lg-5">
                     <select name="placa_patente_id" id="placa_patente_id">
                         <option value="0" selected>Seleccione Tipo Placa ...</option>

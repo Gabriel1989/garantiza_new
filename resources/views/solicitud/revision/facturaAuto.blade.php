@@ -34,23 +34,25 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
                             <span class="panel-title">
                                 <span class="glyphicon glyphicon-cog hidden"></span>Información del Auto
                             </span>
+                            <br>
+                            <span class="panel-title" style="color:#f00">(*) Datos obligatorios</span>
                         </div>
                         <div class="panel-body" >
                             <div class="form-group">
                                 <div class="row">
-                                    <label for="agnoFabricacion" class="col-lg-3 control-label ">Año Fabricación:</label>
+                                    <label for="agnoFabricacion" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Año Fabricación:</label>
                                     <label class="col-lg-2">
                                         <input type="input" name="agnoFabricacion" id="agnoFabricacion" value="{{ $header->AnnioFabricacion}}" class="form-control" placeholder="{{ now()->year }}" required>
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="asientos" class="col-lg-3 control-label ">Asientos:</label>
+                                    <label for="asientos" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Asientos:</label>
                                     <label class="col-lg-2">
                                         <input type="input" name="asientos" id="asientos" value="{{ $header->Asientos}}" class="form-control" placeholder="5" required>
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="carga" class="col-lg-3 control-label ">Carga:</label>
+                                    <label for="carga" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Carga:</label>
                                     <label class="col-lg-2">
                                         <input type="input" name="carga" id="carga" class="form-control" placeholder="1600" value="0" required>
                                     </label>
@@ -60,44 +62,44 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
                                 </div>
 
                                 <div class="row">
-                                    <label for="tipo_carga" class="col-lg-3 control-label ">Tipo Carga:</label>
+                                    <label for="tipo_carga" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Tipo Carga:</label>
                                     <label class="col-lg-2">
                                         <input type="input" name="tCarga" id="tipo_carga" value="{{ $header->TipoCarga}}" class="form-control" placeholder="K" required>
                                     </label>
                                 </div>
 
                                 <div class="row">
-                                    <label for="color" class="col-lg-3 control-label ">Color:</label>
+                                    <label for="color" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Color:</label>
                                     <label class="col-lg-9">
                                         <input type="input" name="color" id="color" value="{{ $header->Color}}" class="form-control" placeholder="ROJO" required>
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="combustible" class="col-lg-3 control-label ">Combustible:</label>
+                                    <label for="combustible" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Combustible:</label>
                                     <label class="col-lg-9">
                                         <input type="input" name="combustible" id="combustible" value="{{ $header->TipoCombustible}}" class="form-control" placeholder="DIESEL" required>
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="marca" class="col-lg-3 control-label ">Marca:</label>
+                                    <label for="marca" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Marca:</label>
                                     <label class="col-lg-9">
                                         <input type="input" name="marca" id="marca" value="{{ $header->Marca}}" class="form-control" placeholder="CITROEN" required>
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="modelo" class="col-lg-3 control-label ">Modelo:</label>
+                                    <label for="modelo" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Modelo:</label>
                                     <label class="col-lg-9">
                                         <input type="input" name="modelo" id="modelo" value="{{ $header->Modelo}}" class="form-control" placeholder="C-ELYSSE" required>
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="nroChasis" class="col-lg-3 control-label ">N° de Chasis:</label>
+                                    <label for="nroChasis" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>N° de Chasis:</label>
                                     <label class="col-lg-9">
                                         <input type="input" name="nroChasis" id="nroChasis" value="{{ $header->NroChasis}}" class="form-control" placeholder="LZSNJDZC2G8024057" required>
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="nroMotor" class="col-lg-3 control-label ">N° de Motor:</label>
+                                    <label for="nroMotor" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>N° de Motor:</label>
                                     <label class="col-lg-9">
                                         <input type="input" name="nroMotor" value="{{ $header->NroMotor}}" id="nroMotor" class="form-control" placeholder="60V1200WL1612084866" required>
                                     </label>
@@ -115,26 +117,26 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="pbv" class="col-lg-3 control-label ">Peso Bruto Vehicular:</label>
+                                    <label for="pbv" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Peso Bruto Vehicular:</label>
                                     <label class="col-lg-3">
                                         <input type="input" name="pbv" id="pbv" value="{{ $header->PesoBrutoVehi}}" class="form-control" placeholder="2200" required>
                                     </label>
                                 </div>
 
                                 <div class="row">
-                                    <label for="tpbv" class="col-lg-3 control-label ">Tipo Peso Bruto Vehicular:</label>
+                                    <label for="tpbv" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Tipo Peso Bruto Vehicular:</label>
                                     <label class="col-lg-3">
                                         <input type="input" name="tpbv" id="tpbv" value="{{ $header->TipoPBV}}" class="form-control" placeholder="K" required>
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="puertas" class="col-lg-3 control-label ">Puertas:</label>
+                                    <label for="puertas" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Puertas:</label>
                                     <label class="col-lg-3">
                                         <input type="input" name="puertas" id="puertas" value="{{ $header->Puertas}}" class="form-control" placeholder="4" required> 
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="tipoVehiculo" class="col-lg-3 control-label ">Tipo Vehículo:</label>
+                                    <label for="tipoVehiculo" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Tipo Vehículo:</label>
                                     <label class="col-lg-9">
                                         <input type="input" name="tipoVehiculo" id="tipoVehiculo" value="{{ $header->TipoVehiculo}}" class="form-control" placeholder="AUTOMOVIL" required>
                                     </label>
@@ -160,20 +162,20 @@ $reingreso = Reingreso::where('solicitud_id',$id)->first();
                                 </div>
                                 @if($reingreso != null)
                                 <div class="row">
-                                    <label for="nroResExenta" class="col-lg-3 control-label ">Número resolución exenta:</label>
+                                    <label for="nroResExenta" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Número resolución exenta:</label>
                                     <label class="col-lg-9">
                                         <input type="input" value="" name="nroResExenta" id="nroResExenta" class="form-control" min="1" max="99999999">
                                     </label>
                                 </div>
                                 <div class="row">
-                                    <label for="fechaResExenta" class="col-lg-3 control-label ">Fecha resolución exenta:</label>
+                                    <label for="fechaResExenta" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Fecha resolución exenta:</label>
                                     <label class="col-lg-9">
                                         <input type="input" value="" name="fechaResExenta" id="fechaResExenta" class="form-control fechaRechazos">
                                     </label>
                                 </div>
 
                                 <div class="row">
-                                    <label for="fechaSolRech" class="col-lg-3 control-label ">Fecha solicitud rechazada:</label>
+                                    <label for="fechaSolRech" class="col-lg-3 control-label "><span class="panel-title" style="color:#f00">(*) </span>Fecha solicitud rechazada:</label>
                                     <label class="col-lg-9">
                                         <input type="input" value="" name="fechaSolRech" id="fechaSolRech" class="form-control fechaRechazos">
                                     </label>
