@@ -1622,6 +1622,7 @@ class SolicitudController extends Controller
         $factura_cliente = $documentos->where('tipo_documento_id', '2')->where('solicitud_id',$id)->first();
         $rol_empresa = $documentos->where('tipo_documento_id', '4')->where('solicitud_id',$id)->first();
         $doc_limitacion = $documentos->whereIn('tipo_documento_id', [6,7])->where('solicitud_id',$id)->first();
+        $doc_primera_inscri = $documentos->where('tipo_documento_id', '8')->where('solicitud_id',$id)->first();
 
         $id_solicitud = $id;
         $comunas = Comuna::allOrder();
@@ -1742,14 +1743,14 @@ class SolicitudController extends Controller
                         break;
                 }
             }
-            return view('solicitud.revision.cedula', compact('rechazos','header','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para','acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
+            return view('solicitud.revision.cedula', compact('rechazos','header','doc_primera_inscri','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para','acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','adquirentes',
             'id_tipo_vehiculo','id_comprapara','detalle','comprapara','solicitud_rc','id_solicitud_rc'));
         }
         else{
             $solicitud_rc = null;
         }
         //Menu adquiriente: solicitud recién creada
-        return view('solicitud.revision.cedula', compact('rechazos','header','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para','acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','solicitud_rc','id_solicitud_rc'));
+        return view('solicitud.revision.cedula', compact('rechazos','header','doc_primera_inscri','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para','acceso','documento_rc','reingreso','tipo_potencia','tipo_carroceria','solicita_ppu','region','sucursales','solicitud_data', 'tipo_vehiculos','ppu','comunas','id_solicitud','id','header','id_adquiriente','id_tipo_vehiculo','id_comprapara','solicitud_rc','id_solicitud_rc'));
        
         //return view('solicitud.revision.cedula', compact('rechazos','header','doc_limitacion','rol_empresa', 'cedula_cliente','factura_cliente','cedula_compra_para', 'id'));
     }

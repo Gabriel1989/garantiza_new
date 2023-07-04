@@ -295,6 +295,14 @@
                             @endif
                         </div>
                         <div class="col-lg-4">
+                            @if($doc_primera_inscri != null)
+                            <label>Documento de primera inscripción</label>
+                            <div class="flex-container">
+                                <div class="responsive-iframe">
+                                    <iframe width="400" height="400" src="/{{str_replace('public/', 'storage/', $doc_primera_inscri->name)}}" frameborder="0"></iframe>
+                                </div>
+                            </div>
+                            @endif
                         </div>
                         <div class="col-lg-3">
                             @if($doc_limitacion != null)
