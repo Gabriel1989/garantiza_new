@@ -57,6 +57,10 @@ class DocumentoController extends Controller
                 else{
                     $status_doc_rc = '<div style="border-radius:30px;color:#f00;"><i class="fa fa-times"></i></div>';
                 }
+
+                if($docs->tipo_documento_id == 8){
+                    $status_doc_rc = '<div style="border-radius:30px;color:green;"><i class="fa fa-check"></i></div>';
+                }
                 echo '<tr id="'.$docs->name.'"><td>';
                 echo '<a target="_blank" href="'.url(str_replace("public/","storage/",$docs->name)).'">'.url(str_replace("public/","storage/",$docs->name)).'</a>';
                 echo '</td><td>'.$docs->description.'</td><td>'.$status_doc_rc.'</td><td><button class="btn btn-danger eliminarArchivoDoc" data-solicitudid="'.$id.'" data-docname="'.$docs->name.'"><i class="fa fa-trash"></i></button></td></tr>';
