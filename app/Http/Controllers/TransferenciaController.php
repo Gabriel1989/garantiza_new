@@ -1482,5 +1482,36 @@ class TransferenciaController extends Controller{
         die;
     }
 
+    public function registrarPago(Request $request, $id){
+        $transferencia = Transferencia::find($id);
+
+        if(trim($request->get('monto_pago_form')) == "" || trim($request->get('monto_pago_form')) == 0){
+            return json_encode(["status"=> "ERROR","msj" => "El monto a pagar no puede estar vacio o cero"]);
+        }
+
+        if($request->hasFile('Comprobante_PDF')){
+            $file = $request->file('Comprobante_PDF');
+            $path = Storage::disk('public')->putFileAs('', $file, $file->getClientOriginalName());
+            $doc = new Documento();
+            $doc->name = 'public/'.$path;
+            $doc->type = 'pdf';
+            $doc->description = 'Comprobante de Transferencia RVM';
+            $doc->transferencia_id = $transferencia->id;
+            $doc->tipo_documento_id = 16;
+            $doc->added_at = Carbon::now()->toDateTimeString();
+            $doc->save();
+            $transferencia->pagada = 1;
+            $transferencia->monto_inscripcion = $request->get('monto_pago_form');
+            $transferencia->save();
+
+            return json_encode(["status"=> "OK","msj" => "Registro de pago realizado exitosamente"]);
+
+        }
+        else{
+            return json_encode(["status"=> "ERROR","msj" => "No hay archivo adjunto"]);
+        }
+        
+    }
+
 
 }

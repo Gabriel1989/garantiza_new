@@ -77,7 +77,7 @@
                     </div>
                     <div class="form-group">
                         <span class="btn btn-warning fileinput-button col-sm-12" name="ComprobantePDF" id="ComprobantePDF">
-                            Comprobante de inscripción Pagada</span>
+                            Comprobante de transferencia RC Pagada</span>
                         <input id="Comprobante_PDF" name="Comprobante_PDF" type="file" style="display:none" accept="application/pdf" />
                         <label id="lbl_Comprobante_PDF"></label>
                     </div>
@@ -192,7 +192,7 @@
             });
 
             $.ajax({
-                url: "/administrador/documento/"+formData.get('registra_pago_sol_id')+"/cargapago",
+                url: "/administrador/documento/transferencia/"+formData.get('registra_pago_sol_id')+"/cargapago",
                 type: "post",
                 processData: false,
                 contentType: false,

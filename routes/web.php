@@ -149,6 +149,9 @@ Route::group(['prefix' => 'administrador', 'middleware' => ['auth', 'admin']], f
 
     //Registrar Pago
     Route::post('/documento/{id}/cargapago', 'SolicitudController@registrarPago')->name('pago.registrar.revision');
+
+    //Registrar Pago STEV
+    Route::post('/documento/transferencia/{id}/cargapago', 'TransferenciaController@registrarPago')->name('pago.transferencia.registrar.revision');
 });
 
 
@@ -271,6 +274,9 @@ Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {
     Route::post('documento/destroy/revision', 'DocumentoController@destroy')->name('documento.destroy.revision');
     //Registrar Pago
     Route::post('/documento/{id}/cargapago', 'SolicitudController@registrarPago')->name('pago.registrar.revision');
+
+    //Registrar Pago STEV
+    Route::post('/documento/transferencia/{id}/cargapago', 'TransferenciaController@registrarPago')->name('pago.transferencia.registrar.revision');
 });
 
 Route::group(["middleware"=>["auth","ejecut.notaria"]],function(){
