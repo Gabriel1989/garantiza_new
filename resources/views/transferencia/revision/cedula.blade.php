@@ -46,6 +46,8 @@
                 <li class="nav-item @if($acceso == "revision") 
                                         @if($id_transferencia_rc != 0 && $documento_rc == null)  
                                             active 
+                                        @elseif($id_transferencia_rc != 0 && $documento_rc != null)
+
                                         @elseif($estadoSolicitud == 5 || $estadoSolicitud == 12)
                                             active
                                         @endif 
@@ -141,6 +143,8 @@
                     @if($acceso == "revision") 
                         @if($id_transferencia_rc != 0 && $documento_rc == null)  
                             active show in 
+                        @elseif($id_transferencia_rc != 0 && $documento_rc != null)
+                            
                         @elseif($estadoSolicitud == 5 || $estadoSolicitud == 12)
                             active show in
                         @endif
