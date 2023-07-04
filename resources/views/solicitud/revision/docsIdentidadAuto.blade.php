@@ -106,6 +106,9 @@ $solicitud = Solicitud::find($id);
                                     }   
                                     else{
                                         $status_doc_rc = '<div style="border-radius:30px;color:#f00;"><i class="fa fa-times"></i></div>';
+                                    }
+                                    if($docs->tipo_documento_id == 8){
+                                        $status_doc_rc = '<div style="border-radius:30px;color:green;"><i class="fa fa-check"></i></div>';
                                     } 
                                     //if($docs->description== "Factura en PDF"){
                                         echo '<a target="_blank" href="'.url(str_replace("public/","storage/",$docs->name)).'">'.url(str_replace("public/","storage/",$docs->name)).'</a>';
