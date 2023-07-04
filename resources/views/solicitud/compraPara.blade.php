@@ -182,17 +182,75 @@
             processData: false,
             contentType: false,
             type: "POST",
+            error: function(jqXHR, textStatus, errorThrown) {
+                hideOverlay();
+                if (jqXHR.status == 400) { // Verificar el código de estado
+                    var errors = JSON.parse(jqXHR.responseText).errors;
+                    for (var errorKey in errors) {
+                        if (errors.hasOwnProperty(errorKey)) {
+                            var messages = errors[errorKey];
+                            for (var i = 0; i < messages.length; i++) {
+                                new PNotify({
+                                    title: 'Error',
+                                    text: messages[i],
+                                });
+                            }
+                        }
+                    }
+                } else {
+                    // Acción cuando hay un error.
+                    new PNotify({
+                        title: 'Error',
+                        text: "Error: " + textStatus + ' : ' + errorThrown,
+                        shadow: true,
+                        opacity: '1',
+                        addclass: 'stack_top_right',
+                        type: 'danger',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '500px'
+                    });
+                }
+
+            },
             success: function(data){
                 hideOverlay();
-                $("#pills-invoice").html(data);
-                $("#pills-invoice").toggleClass('show');
-                $("#pills-home").removeClass('show');
-                $("#pills-contact").removeClass('show');
-                $("#pills-profile").removeClass('show');
-                $("#pills-invoice-tab").attr("href","#pills-invoice");
-                $("#pills-invoice-tab").toggleClass('disabled');
-                $("#pills-invoice-tab").attr("aria-disabled",false);
-                $("#pills-invoice-tab").click();
+                var jsonString = JSON.stringify(data);
+                let json = JSON.parse(jsonString);
+                if (json.status == "OK") {
+                    $("#pills-invoice").html(json.html);
+                    $("#pills-invoice").toggleClass('show');
+                    $("#pills-home").removeClass('show');
+                    $("#pills-contact").removeClass('show');
+                    $("#pills-profile").removeClass('show');
+                    $("#pills-invoice-tab").attr("href","#pills-invoice");
+                    $("#pills-invoice-tab").toggleClass('disabled');
+                    $("#pills-invoice-tab").attr("aria-disabled",false);
+                    $("#pills-invoice-tab").click();
+                }
+                else{
+                    new PNotify({
+                        title: 'Error',
+                        text: "Error: " + json.msj,
+                        shadow: true,
+                        opacity: '1',
+                        addclass: 'stack_top_right',
+                        type: 'danger',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '500px'
+                    });
+                }
                 
             }
         });
@@ -257,25 +315,49 @@
             },
             success: function(data){
                 hideOverlay();
-                if(parseFloat($("#id_comprapara").val()) == 0){
-                    $("#pills-invoice").html(data);
-                    $("#pills-invoice").toggleClass('show');
-                    $("#pills-home").removeClass('show');
-                    $("#pills-contact").removeClass('show');
-                    $("#pills-profile").removeClass('show');
-                    $("#pills-invoice-tab").attr("href","#pills-invoice");
-                    $("#pills-invoice-tab").toggleClass('disabled');
-                    $("#pills-invoice-tab").attr("aria-disabled",false);
-                    $("#pills-invoice-tab").click();
+                var jsonString = JSON.stringify(data);
+                let json = JSON.parse(jsonString);
+                if (json.status == "OK") {
+                    if(parseFloat($("#id_comprapara").val()) == 0){
+                        $("#pills-invoice").html(json.html);
+                        $("#pills-invoice").toggleClass('show');
+                        $("#pills-home").removeClass('show');
+                        $("#pills-contact").removeClass('show');
+                        $("#pills-profile").removeClass('show');
+                        $("#pills-invoice-tab").attr("href","#pills-invoice");
+                        $("#pills-invoice-tab").toggleClass('disabled');
+                        $("#pills-invoice-tab").attr("aria-disabled",false);
+                        $("#pills-invoice-tab").click();
+                        $("#id_comprapara").val(json.id_para);
+                    }
+                    else{
+                        new PNotify({
+                            title: 'Editar Compra Para',
+                            text: 'Datos de Compra Para editados correctamente',
+                            shadow: true,
+                            opacity: '0.75',
+                            addclass: 'stack_top_right',
+                            type: 'success',
+                            stack: {
+                                "dir1": "down",
+                                "dir2": "left",
+                                "push": "top",
+                                "spacing1": 10,
+                                "spacing2": 10
+                            },
+                            width: '290px',
+                            delay: 2000
+                        });
+                    }
                 }
                 else{
                     new PNotify({
-                        title: 'Editar Compra Para',
-                        text: 'Datos de Compra Para editados correctamente',
+                        title: 'Error',
+                        text: "Error: " + json.msj,
                         shadow: true,
-                        opacity: '0.75',
+                        opacity: '1',
                         addclass: 'stack_top_right',
-                        type: 'success',
+                        type: 'danger',
                         stack: {
                             "dir1": "down",
                             "dir2": "left",
@@ -283,8 +365,7 @@
                             "spacing1": 10,
                             "spacing2": 10
                         },
-                        width: '290px',
-                        delay: 2000
+                        width: '500px'
                     });
                 }
 

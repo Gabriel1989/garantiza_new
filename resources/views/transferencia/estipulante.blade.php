@@ -4,19 +4,20 @@
     
     <div class="panel panel-info panel-border top">
         <div class="panel-heading">
-            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de Estipulante</span>
+            <span class="panel-title">Ingreso de Solicitud N° {{$id}} - Datos de Estipulante (opcional en caso de comprar para otra persona)<br><span style="color:#f00">(*) Datos obligatorios</span> <br> </span>
+            
         </div>
         <div class="panel-body">
             
                 <div class="form-group">
-                    <label for="rut" class="col-lg-2 control-label">Rut :</label>
+                    <label for="rut" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Rut :</label>
                     <label class="col-lg-2">
                         <input type="hidden" data-estipulante="{{$estipulante}}" name="id_estipulante" id="id_estipulante" value="{{ !is_null($estipulante)? $estipulante->id :  0}}">
                         <input type="text" name="rut" id="rut_estipulante" class="form-control rut3" placeholder="99.999.999-9" value="{{ !is_null($estipulante)?  $estipulante->rut : ''}}" >
                     </label>
                     <label class="col-lg-2"></label>
                     
-                    <label for="nombre" class="col-lg-2 control-label">Nombre :</label>
+                    <label for="nombre" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Nombre :</label>
                     <label class="col-lg-4">
                         <input type="text" name="nombre" id="nombre_estipulante" class="form-control" placeholder="Nombre del Estipulante" value="{{!is_null($estipulante)?  $estipulante->nombre : ''}}" >
                     </label>
@@ -33,12 +34,12 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="calle" class="col-lg-2 control-label">Dirección (calle) :</label>
+                    <label for="calle" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Dirección (calle) :</label>
                     <label class="col-lg-4">
                         <input type="text" name="calle" id="calle_estipulante" class="form-control" placeholder="Calle de la dirección" value="{{!is_null($estipulante)?  $estipulante->calle : ''}}" >
                     </label>
                     
-                    <label for="numero" class="col-lg-2 control-label">Número :</label>
+                    <label for="numero" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Número :</label>
                     <label class="col-lg-2">
                         <input type="text" name="numero" id="numero_estipulante" class="form-control" placeholder="Número de la dirección" value="{{!is_null($estipulante)?  $estipulante->numero :''}}" >
                     </label>
@@ -50,7 +51,7 @@
                         <input type="text" name="rDireccion" id="rDireccion_estipulante" class="form-control" placeholder="Complemento de la dirección" value="{{!is_null($estipulante)?  $estipulante->rDomicilio : ''}}">
                     </label>
                     
-                    <label for="comuna" class="col-lg-2 control-label">Comuna :</label>
+                    <label for="comuna" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Comuna :</label>
                     <label class="col-lg-4">
                         <select class="col-sm-12 form-select comuna" name="comuna" id="comuna_estipulante" >
                             <option value="0" selected>Seleccione Comuna...</option>
@@ -73,19 +74,19 @@
                     </label>
                 </div>
                 <div class="form-group">
-                    <label for="email" class="col-lg-2 control-label">Email :</label>
+                    <label for="email" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Email :</label>
                     <label class="col-lg-4">
                         <input type="email" name="email" id="email_estipulante" class="form-control" placeholder="Email" value="{{!is_null($estipulante)?  $estipulante->email :''}}" >
                     </label>
                     
-                    <label for="telefono" class="col-lg-2 control-label">Teléfono :</label>
+                    <label for="telefono" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Teléfono :</label>
                     <label class="col-lg-2">
                         <input type="text" name="telefono" id="telefono_estipulante" class="form-control" placeholder="Ej. 978653214" value="{{!is_null($estipulante)?  $estipulante->telefono :''}}" >
                     </label>
                     <label class="col-lg-2"></label>
                 </div>
                 <div class="form-group">
-                    <label for="tipoPersona" class="col-lg-2 control-label">Tipo de Persona :</label>
+                    <label for="tipoPersona" class="col-lg-2 control-label"><span style="color:#f00">(*)</span>Tipo de Persona :</label>
                     <label class="col-lg-4">
                         <select class="col-sm-12 form-select" name="tipoPersona" id="tipoPersona_estipulante" >
                         @if(is_null($estipulante))    

@@ -454,6 +454,9 @@ class TransferenciaController extends Controller{
                 if (is_null($request->telefono))
                     $errors->add('Garantiza', 'Debe Ingresar el teléfono del Estipulante');
             }
+            else{
+                $errors->add('Garantiza','El RUT es requerido para agregar o editar estipulante');
+            }
             if ($errors->count() > 0){
                 return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
             }
@@ -517,9 +520,17 @@ class TransferenciaController extends Controller{
             if ($para_get != null) {
                 $para_get->delete();
             }
-            $no_estipulante = new NoEstipulante();
-            $no_estipulante->transferencia_id = $id;
-            $no_estipulante->save();
+            $no_estipulante = NoEStipulante::where('transferencia_id',$id)->first();
+
+            if($no_estipulante == null){
+                $no_estipulante = new NoEstipulante();
+                $no_estipulante->transferencia_id = $id;
+                $no_estipulante->save();
+            }
+            else{
+                $no_estipulante->transferencia_id = $id;
+                $no_estipulante->save();
+            }
         }
 
         $solicitud = Transferencia::find($id);

@@ -1154,8 +1154,12 @@ class SolicitudController extends Controller
                 if (is_null($request->telefono))
                     $errors->add('Garantiza', 'Debe Ingresar el teléfono del Compra/Para.');
             }
+            else{
+                $errors->add('Garantiza','El RUT es requerido para agregar o editar Compra/Para.');
+            }
             if ($errors->count() > 0){
-                return redirect()->route('solicitud.compraPara', ['id' => $id])->withErrors($errors);
+                //return redirect()->route('solicitud.compraPara', ['id' => $id])->withErrors($errors);
+                return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
             }
 
             $no_para = NoPara::where('solicitud_id',$id)->first();
@@ -1183,7 +1187,8 @@ class SolicitudController extends Controller
                 $para->save();
                 DB::commit();
 
-                return true;
+                //return true;
+                return response()->json(['status' => "OK","id_para" => $para->id], 200);
             }
 
             // Graba adquiriente principal
@@ -1205,19 +1210,29 @@ class SolicitudController extends Controller
                 if (!$para->save()) {
                     DB::rollBack();
                     $errors->add('Garantiza', 'Problemas al grabar CompraPara.');
-                    return redirect()->route('solicitud.compraPara', ['id' => $id])->withErrors($errors);
+                    return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
+                    //return redirect()->route('solicitud.compraPara', ['id' => $id])->withErrors($errors);
                 }
             }
         }
         else{
             Log::info('NO guardamos compra para');
+            //Si existe compra para guardado anteriormente, éste es borrado
             $para_get = CompraPara::where('solicitud_id',$id)->first();
             if ($para_get != null) {
                 $para_get->delete();
             }
-            $no_para = new NoPara();
-            $no_para->solicitud_id = $id;
-            $no_para->save();
+            $no_para = NoPara::where('solicitud_id',$id)->first();
+            //Si no hay nopara, se crea uno, sino, se actualiza
+            if($no_para == null){
+                $no_para = new NoPara();
+                $no_para->solicitud_id = $id;
+                $no_para->save();
+            }
+            else{
+                $no_para->solicitud_id = $id;
+                $no_para->save();
+            }
         }
         if(Auth::user()->rol_id == 4 || Auth::user()->rol_id == 5 || Auth::user()->rol_id == 6){
             $solicitud = Solicitud::find($id);
@@ -1225,7 +1240,8 @@ class SolicitudController extends Controller
             if(!$solicitud->save()){
                 DB::rollBack();
                 $errors->add('Garantiza', 'Problemas al actualizar estado de Solicitud.');
-                return redirect()->route('solicitud.adquirientes', ['id' => $id])->withErrors($errors);
+                return response()->json(['status' => "ERROR",'errors' => $errors->getMessages()], 400);
+                //return redirect()->route('solicitud.adquirientes', ['id' => $id])->withErrors($errors);
             }
         }
         DB::commit();
@@ -1284,7 +1300,13 @@ class SolicitudController extends Controller
                     $header->MntTotal = '';
                 }
                 $comunas = Comuna::allOrder();
-                return view('solicitud.revision.facturaAuto', compact('id', 'comunas', 'header', 'detalle'));
+                $html = view('solicitud.revision.facturaAuto', compact('id', 'comunas', 'header', 'detalle'))->render();
+                if ($guardacomprapara == "SI") {
+                    return response()->json(['status' => "OK","id_para" => $para->id, "html" => $html], 200);
+                }
+                else{
+                    return response()->json(['status' => "OK","html" => $html, "id_para" => $no_para->id]);
+                }
                 break;
             case 2:
                 $ruta = 'solicitud.datosMoto';
@@ -1336,7 +1358,13 @@ class SolicitudController extends Controller
                     $header->MntTotal = '';
                 }
                 $comunas = Comuna::allOrder();
-                return view('solicitud.revision.facturaMoto', compact('id', 'comunas', 'header', 'detalle'));
+                $html = view('solicitud.revision.facturaMoto', compact('id', 'comunas', 'header', 'detalle'))->render();
+                if ($guardacomprapara == "SI") {
+                    return response()->json(['status' => "OK","id_para" => $para->id, "html" => $html], 200);
+                }
+                else{
+                    return response()->json(['status' => "OK","html" => $html, "id_para" => $no_para->id]);
+                }
                 break;
             case 3:
                 $ruta = 'solicitud.datosCamion';
@@ -1390,7 +1418,13 @@ class SolicitudController extends Controller
                 $comunas = Comuna::allOrder();
                 $tipo_carroceria = Tipo_Carroceria::all();
                 $tipo_potencia = TipoPotencia::all();
-                return view('solicitud.revision.facturaCamion', compact('id','tipo_potencia','tipo_carroceria', 'comunas', 'header', 'detalle'));
+                $html = view('solicitud.revision.facturaCamion', compact('id','tipo_potencia','tipo_carroceria', 'comunas', 'header', 'detalle'))->render();
+                if ($guardacomprapara == "SI") {
+                    return response()->json(['status' => "OK","id_para" => $para->id, "html" => $html], 200);
+                }
+                else{
+                    return response()->json(['status' => "OK","html" => $html, "id_para" => $no_para->id]);
+                }
                 break;
         }
 
