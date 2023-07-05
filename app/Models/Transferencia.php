@@ -98,21 +98,47 @@ class Transferencia extends Model
     public static function getSolicitudesUser($user){
         return DB::table('transferencias')
             ->join('notarias', 'notarias.id', '=', 'transferencias.notaria_id')
+            ->leftjoin('transferencias_rc', 'transferencias_rc.transferencia_id', '=', 'transferencias.id')
+            ->leftjoin('reingresos','reingresos.transferencia_id','=','transferencias.id')
+            ->leftjoin('documentos_rc','documentos_rc.transferencia_id','=','transferencias.id')
+            ->leftjoin('limitaciones','limitaciones.transferencia_id','=','transferencias.id')
+            ->leftjoin('limitaciones_rc', 'limitaciones_rc.transferencia_id','=','transferencias.id')
             ->where('transferencias.user_id', '=', $user)
             ->select('transferencias.id', 
                      'transferencias.created_at', 
-                     'notarias.name as notarias')
+                     'transferencias.estado_id',
+                     'transferencias.pagada',
+                     'transferencias.monto_inscripcion', 
+                     'notarias.name as notarias',
+                     'transferencias_rc.numeroSol',
+                     'reingresos.nroSolicitud',
+                     'documentos_rc.numeroSol as numeroSolDocrc',
+                     'limitaciones.id as id_limitacion', 
+                     'limitaciones_rc.id as id_limitacion_rc')
             ->get();
     }
 
     public static function sinTerminar($user){
         return DB::table('transferencias')
             ->join('notarias', 'notarias.id', '=', 'transferencias.notaria_id')
+            ->leftjoin('transferencias_rc', 'transferencias_rc.transferencia_id', '=', 'transferencias.id')
+            ->leftjoin('reingresos','reingresos.transferencia_id','=','transferencias.id')
+            ->leftjoin('documentos_rc','documentos_rc.transferencia_id','=','transferencias.id')
+            ->leftjoin('limitaciones','limitaciones.transferencia_id','=','transferencias.id')
+            ->leftjoin('limitaciones_rc', 'limitaciones_rc.transferencia_id','=','transferencias.id')
             ->whereIn('transferencias.estado_id', [1,2,3,4,5,6,7,11,12])
             ->where('transferencias.user_id', '=', $user)
             ->select('transferencias.id', 
-                     'transferencias.created_at', 
-                     'notarias.name as notarias')
+                     'transferencias.created_at',
+                     'transferencias.estado_id',
+                     'transferencias.pagada',
+                     'transferencias.monto_inscripcion', 
+                     'notarias.name as notarias',
+                     'transferencias_rc.numeroSol',
+                     'reingresos.nroSolicitud',
+                     'documentos_rc.numeroSol as numeroSolDocrc',
+                     'limitaciones.id as id_limitacion', 
+                     'limitaciones_rc.id as id_limitacion_rc')
             ->get();
     }
 

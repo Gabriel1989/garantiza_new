@@ -25,6 +25,7 @@
                             <th scope="col">Solicitud N°</th>
                             <th scope="col">Fecha</th>
                             <th scope="col">Notaria</th>
+                            <th scope="col">Etapas de solicitud</th>
                             <th scope="col">Cliente</th>
                             <th scope="col" style="width:250px">Acciones</th>
                         </tr>
@@ -42,6 +43,169 @@
                                 <td scope="row">{{$item->id}}</td>
                                 <td>{{date('d-m-Y h:i A', strtotime($item->created_at))}}</td>
                                 <td>{{$item->notarias}}</td>
+                                <td>
+                                    @if($item->estado_id == 1)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar comprador
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar vendedor
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar estipulante o no
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar resumen transferencia
+                                        <br>
+                                        <i class="fa fa-times red"></i>Adjuntar documentación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar limitación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Proceso finalizado
+                                    @elseif($item->estado_id == 2)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar comprador
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar vendedor
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar estipulante o no
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar resumen transferencia
+                                        <br>
+                                        <i class="fa fa-times red"></i>Adjuntar documentación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar limitación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Proceso finalizado
+                                    @elseif($item->estado_id == 3)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar comprador
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar vendedor
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar estipulante o no
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar resumen transferencia
+                                        <br>
+                                        <i class="fa fa-times red"></i>Adjuntar documentación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar limitación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Proceso finalizado
+                                    @elseif($item->estado_id == 4)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar comprador
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar vendedor
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar estipulante o no
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar resumen transferencia
+                                        <br>
+                                        <i class="fa fa-times red"></i>Adjuntar documentación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar limitación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Proceso finalizado    
+                                    @elseif($item->estado_id == 5)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar comprador
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar vendedor
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar estipulante
+                                        <br>
+                                        @if($item->numeroSol != null)
+                                            @if($item->nroSolicitud == null)
+                                                <i class="fa fa-check green"></i>Transferencia creada en RC
+                                                <br>
+                                            @else
+                                                <i class="fa fa-check green"></i>Reingreso pendiente en RC
+                                                <br>
+                                            @endif
+                                        @else
+                                            <i class="fa fa-check green"></i>Ingresar resumen transferencia
+                                            <br>
+                                        @endif
+  
+                                        @if($item->numeroSolDocrc != null)
+                                            <i class="fa fa-check green"></i>Documentación enviada a RC
+                                            <br>
+                                        @else
+                                            <i class="fa fa-times red"></i>Documentación NO enviada a RC
+                                            <br>
+                                        @endif
+                                        @if($item->id_limitacion != null)
+                                            @if($item->id_limitacion_rc != null)
+                                                <i class="fa fa-check green"></i>Registrar limitación en RC
+                                                <br>
+                                            @else
+                                                <i class="fa fa-check green"></i>Ingresar limitación
+                                                <br>
+                                            @endif
+                                        @else
+                                            <i class="fa fa-times red"></i>Ingresar limitación
+                                            <br>
+                                        @endif
+  
+                                        @if($item->pagada && $item->monto_inscripcion > 0)
+                                            <i class="fa fa-check green"></i>Proceso finalizado
+                                        @else
+                                            <i class="fa fa-times red"></i>Proceso finalizado
+                                        @endif
+  
+                                    @elseif($item->estado_id == 12)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar comprador
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar vendedor
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar estipulante
+                                        <br>
+                                        @if($item->numeroSol != null)
+                                            @if($item->nroSolicitud == null)
+                                                <i class="fa fa-check green"></i>Transferencia creada en RC
+                                                <br>
+                                            @else
+                                                <i class="fa fa-check green"></i>Reingreso pendiente en RC
+                                                <br>
+                                            @endif
+                                        @else
+                                            <i class="fa fa-check green"></i>Ingresar resumen transferencia
+                                            <br>
+                                        @endif
+  
+                                        @if($item->numeroSolDocrc != null)
+                                            <i class="fa fa-check green"></i>Documentación enviada a RC
+                                            <br>
+                                        @else
+                                            <i class="fa fa-times red"></i>Documentación NO enviada a RC
+                                            <br>
+                                        @endif
+                                        @if($item->id_limitacion != null)
+                                            @if($item->id_limitacion_rc != null)
+                                                <i class="fa fa-check green"></i>Registrar limitación en RC
+                                                <br>
+                                            @else
+                                                <i class="fa fa-check green"></i>Ingresar limitación
+                                                <br>
+                                            @endif
+                                        @else
+                                            <i class="fa fa-times red"></i>Ingresar limitación
+                                            <br>
+                                        @endif
+                                        
+                                        @if($item->pagada && $item->monto_inscripcion > 0)
+                                            <i class="fa fa-check green"></i>Proceso finalizado
+                                        @else
+                                            <i class="fa fa-times red"></i>Proceso finalizado
+                                        @endif
+  
+                                    @endif
+                                </td>
                                 <td><?php
                                 if($item->cliente != ''){ 
                                     echo is_null($item->cliente->nombre)? $item->cliente->razon_social : $item->cliente->nombre .' '.$item->cliente->aPaterno.' '.$item->cliente->aMaterno; 
@@ -112,6 +276,15 @@
 
 @section('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css">    
+    <style>
+        .red{
+          color: #F00 !important;
+        }
+
+        .green{
+          color: #37e666 !important;
+        }
+    </style>
 @endsection
 
 @section('scripts')
@@ -241,7 +414,7 @@
                     "X-CSRF-TOKEN": "{{ csrf_token() }}"
                 },
                 body: JSON.stringify({
-                    id_solicitud_rc: numSolRC
+                    id_transferencia_rc: numSolRC
                 })
             })
             .then(function(response) {
