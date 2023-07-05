@@ -229,12 +229,13 @@
                     </span>
                 </a>
             </li>
-            <!--<li>
-                <a href="email_templates.html">
-                    <span class="glyphicons glyphicons-cogwheels"></span>
-                    <span class="sidebar-title">Procesamiento</span>
+            <li class="sidebar-label pt15">Estadísticas y Reportes</li>
+            <li>
+                <a href="{{ route('estadisticas.index.rc') }}">
+                    <span style="display: list-item;"><i class="fa fa-bar-chart" aria-hidden="true"></i></span>
+                    <span class="sidebar-title">Estadísticas de uso</span>
                 </a>
-            </li>-->
+            </li>
             @endif
 
 

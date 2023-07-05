@@ -152,6 +152,18 @@ Route::group(['prefix' => 'administrador', 'middleware' => ['auth', 'admin']], f
 
     //Registrar Pago STEV
     Route::post('/documento/transferencia/{id}/cargapago', 'TransferenciaController@registrarPago')->name('pago.transferencia.registrar.revision');
+
+    //Estadisticas RC
+    Route::get('estadisticas/rc','EstadisticasController@index')->name('estadisticas.index.rc');
+    Route::get('estadisticas/rc/getSolicitudesRCPorMes', 'EstadisticasController@getSolicitudesRCPorMes')->name('estadisticas.getSolicitudesRCPorMes.rc');
+    Route::get('estadisticas/rc/getSolicitudesRCPorMesNombreServicio', 'EstadisticasController@getSolicitudesRCPorMesNombreServicio')->name('estadisticas.getSolicitudesRCPorMesNombreServicio.rc');
+    Route::get('estadisticas/rc/getSolicitudesRCPorConvenio','EstadisticasController@getSolicitudesRCPorConvenio')->name('estadisticas.getSolicitudesRCPorConvenio.rc');
+    Route::get('estadisticas/rc/getSolicitudesRCPorTipoServicio','EstadisticasController@getSolicitudesRCPorTipoServicio')->name('estadisticas.getSolicitudesRCPorTipoServicio.rc');
+    Route::get('estadisticas/rc/getCantidadSolicitudesMes','EstadisticasController@getCantidadSolicitudesMes')->name('estadisticas.getCantidadSolicitudesMes.rc');
+    Route::get('estadisticas/rc/getCantidadSolicitudes', 'EstadisticasController@getCantidadSolicitudes')->name('estadisticas.getCantidadSolicitudes.rc');
+
+
+
 });
 
 
