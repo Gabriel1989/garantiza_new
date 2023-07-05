@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use Illuminate\Support\Facades\Http;
+use App\Models\ConsumeRC;
 
 class RegistroCivil{
     /************CONEXIÓN SPIEV ***************/
@@ -16,6 +17,8 @@ class RegistroCivil{
         curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
 
         $result = curl_exec($curl);
+
+        self::creaConsumeRC('PPUDisponible_porTipo_PID','SPIEV');
 
         return $result;
     }
@@ -33,6 +36,8 @@ class RegistroCivil{
 
         $result = curl_exec($curl);
 
+        self::creaConsumeRC('CreaSpieMoto_PID','SPIEV');
+
         return $result;
     }
 
@@ -46,6 +51,8 @@ class RegistroCivil{
         curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
 
         $result = curl_exec($curl);
+
+        self::creaConsumeRC('CreaSpieNew','SPIEV');
 
         return $result;
     }
@@ -61,6 +68,8 @@ class RegistroCivil{
 
         $result = curl_exec($curl);
 
+        self::creaConsumeRC('EstadoSolicitud_PID','SPIEV');
+
         return $result;
     }
 
@@ -74,6 +83,8 @@ class RegistroCivil{
         curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
 
         $result = curl_exec($curl);
+
+        self::creaConsumeRC('PID_ConsultaSolicitudRVMI','SPIEV');
 
         return $result;
     }
@@ -92,6 +103,8 @@ class RegistroCivil{
 
         $result = curl_exec($curl);
 
+        self::creaConsumeRC('Documentos_PID','SPIEV');
+
         return $result;
     }
 
@@ -108,6 +121,8 @@ class RegistroCivil{
 
         $result = curl_exec($curl);
 
+        self::creaConsumeRC('ConsultaLimitaConConsumidor_PID','SPIEV');
+
         return $result;
     }
 
@@ -121,6 +136,8 @@ class RegistroCivil{
         curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
 
         $result = curl_exec($curl);
+
+        self::creaConsumeRC('CreaSpieCarga_PID','SPIEV');
 
         return $result;
     }
@@ -136,11 +153,13 @@ class RegistroCivil{
 
         $result = curl_exec($curl);
 
+        self::creaConsumeRC('PID_LimiSpie','SPIEV');
+
         return $result;
     }
     /*************** CONEXIÓN STEV DESDE ESTE PUNTO ***********/
     public static function consultaDatosVehiculo($parametro){
-        //$wsdl = 'StevAPI/WSDL/PID_LimiSpie.wsdl';
+        //$wsdl = 'StevAPI/WSDL/PI_A_Vigente_PID.wsdl';
         $url = 'http://181.212.92.141/RC_API/STEV/CertAVigente.php';
         $curl = curl_init($url);
 
@@ -149,6 +168,8 @@ class RegistroCivil{
         curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
 
         $result = curl_exec($curl);
+
+        self::creaConsumeRC('PI_A_Vigente_PID','STEV');
 
         return $result;
     }
@@ -164,6 +185,8 @@ class RegistroCivil{
 
         $result = curl_exec($curl);
 
+        self::creaConsumeRC('CreaStev_new','STEV');
+
         return $result;
     }
 
@@ -177,6 +200,8 @@ class RegistroCivil{
         curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
 
         $result = curl_exec($curl);
+
+        self::creaConsumeRC('LimTransf','STEV');
 
         return $result;
     }
@@ -192,11 +217,13 @@ class RegistroCivil{
 
         $result = curl_exec($curl);
 
+        self::creaConsumeRC('ConsultaTransferenciaConConsumidor_PID','STEV');
+
         return $result;
     }
 
     public static function subirDocumentosStev($parametro){
-        //$wsdl = 'StevAPI/WSDL/PID_LimiSpie.wsdl';
+        //$wsdl = 'StevAPI/WSDL/Documentos_PID.wsdl';
         $url = 'http://181.212.92.141/RC_API/STEV/CargaDocumentosPID.php';
         $curl = curl_init($url);
 
@@ -205,6 +232,8 @@ class RegistroCivil{
         curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
 
         $result = curl_exec($curl);
+
+        self::creaConsumeRC('Documentos_PID','STEV');
 
         return $result;
     }
@@ -219,6 +248,8 @@ class RegistroCivil{
         curl_setopt($curl, CURLOPT_POSTFIELDS, $parametro);
 
         $result = curl_exec($curl);
+
+        self::creaConsumeRC('EstadoSolicitud_PID','STEV');
 
         return $result;
     }
@@ -236,6 +267,15 @@ class RegistroCivil{
 
         $result = curl_exec($curl);
 
+        self::creaConsumeRC('ConsultaLimitaConConsumidor_PID','STEV');
+
         return $result;
+    }
+
+    private static function creaConsumeRC($nombre_servicio,$convenio){
+        $consumeRC = new ConsumeRC();
+        $consumeRC->nombre_ws = $nombre_servicio;
+        $consumeRC->tipo_convenio = $convenio;
+        $consumeRC->save();
     }
 }
