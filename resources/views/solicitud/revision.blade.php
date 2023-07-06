@@ -47,7 +47,8 @@
                                     <button type="button" class="btn btn-sm btn-primary" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud({{$item->id}})">
                                         <li class="fa fa-file"></li> Ver Documentos</button>
                                     </button>
-
+                                    <br>
+                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger btnDescargaPdfGarantiza" data-garantizaSol="{{ $item->id }}"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
                                 </td>
                             </tr>
                         @endforeach
@@ -175,6 +176,26 @@
             });
 
         }
+
+        $(document).on("click",".btnDescargaPdfGarantiza",function(e){
+          showOverlay();
+          e.preventDefault();
+          let numSolGarantiza = $(this).data('garantizasol');
+          fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteRVM", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+                  "X-CSRF-TOKEN": "{{ csrf_token() }}"
+              },
+              body: JSON.stringify({
+                  id_solicitud: numSolGarantiza
+              })
+          }).then((response) => response.json())
+          .then((data) => {
+              hideOverlay();
+              window.open(data.file);
+          });
+        });
 
         $(document).on("submit","#formRegistraPago",function(e){
             showOverlay();
