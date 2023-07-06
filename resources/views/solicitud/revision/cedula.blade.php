@@ -247,7 +247,7 @@
                 @endif
     
             </div>
-            <form method="post" action="{{route('solicitud.updateRevisionCedula', ['id' => $id])}}" role="form" class="form-horizontal form-revision">
+            <form method="post" action="{{route('solicitud.updateRevisionCedula', ['id' => $id])}}" role="form" class="form-horizontal form-revision2">
                 @csrf
                 @method('PUT')
                 <div class="form-group">
@@ -376,7 +376,7 @@
             }
         });
 
-        $(".form-revision").on('submit', function () {
+        $(".form-revision2").on('submit', function () {
             var aprobado = $('#aprobado').prop('checked');
             var motivo = $('#motivo_rechazo').val(); 
             if(!aprobado&&motivo==0){

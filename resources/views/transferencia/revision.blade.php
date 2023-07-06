@@ -386,7 +386,7 @@
             });
 
             $.ajax({
-                url: "/administrador/documento/transferencia/"+formData.get('registra_pago_sol_id')+"/cargapago",
+                url: "/documento/transferencia/"+formData.get('registra_pago_sol_id')+"/cargapago",
                 type: "post",
                 processData: false,
                 contentType: false,

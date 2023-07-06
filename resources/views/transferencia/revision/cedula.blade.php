@@ -195,7 +195,7 @@
                     @include('transferencia.comprobante')
             </div>
             @endif
-            <form method="post" action="{{route('transferencia.updateRevisionCedula', ['id' => $id])}}" role="form" class="form-horizontal form-revision">
+            <form method="post" action="{{route('transferencia.updateRevisionCedula', ['id' => $id])}}" role="form" class="form-horizontal form-revision2">
                 @csrf
                 @method('PUT')
                 <div class="form-group" style="padding: 5px;">
@@ -325,7 +325,7 @@
             }
         });
 
-        $(".form-revision").on('submit', function () {
+        $(".form-revision2").on('submit', function () {
             var aprobado = $('#aprobado').prop('checked');
             var motivo = $('#motivo_rechazo').val(); 
             if(!aprobado&&motivo==0){
