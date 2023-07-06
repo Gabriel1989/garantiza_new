@@ -25,7 +25,7 @@ use App\Helpers\Funciones;
             $mes = $meses[$fecha->format('n') - 1];
             $fecha_spanish = $fecha->format('d') . ' de ' . $mes . ' de ' . $fecha->format('Y');
             ?>
-            <span style="float:right;font-weight:bold;">Solicitud de Transferencia N°{{ $transferencia->id }} <br><br>
+            <span style="float:right;font-weight:bold;">Solicitud de Transferencia Folio N°{{ $transferencia->id }} <br><br>
                 {{ $fecha_spanish }}</span>
         </div>
         <br>
@@ -302,6 +302,14 @@ use App\Helpers\Funciones;
                             <label>Kilometraje vehículo:</label>
                             {{ number_format($transferencia->data_transferencia->kilometraje,0,',','.') }} km
                         </div>
+
+                        @if($transferencia->pagada == 1 && $transferencia->monto_inscripcion > 0)
+                            <div class="form-group">
+                                <b>Monto total pagado por transferencia inscrita en Registro Civil:</b>
+                                <b>${{ number_format($transferencia->monto_inscripcion,0,',','.') }}</b>
+                            </div>
+                        @endif
+
                         <h4>Datos del pago de impuesto a la transferencia</h4>
                         <div class="form-group">
                             <label>Código CID del pago:</label>

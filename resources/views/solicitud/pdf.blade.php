@@ -28,7 +28,7 @@ use App\Helpers\Funciones;
             $mes = $meses[$fecha->format('n') - 1];
             $fecha_spanish = $fecha->format('d') . ' de ' . $mes . ' de ' . $fecha->format('Y');
             ?>
-            <span style="float:right;font-weight:bold;">Solicitud de Inscripción N°{{ $solicitud->id }} <br><br>
+            <span style="float:right;font-weight:bold;">Solicitud de Inscripción Folio N°{{ $solicitud->id }} <br><br>
                 {{ $fecha_spanish }}</span>
         </div>
         <br>
@@ -203,6 +203,14 @@ use App\Helpers\Funciones;
                                 <label>Código CID:</label>
                                 {{ $solicitud->datos_factura->codigo_cid }}
                             </div>
+
+                            @if($solicitud->pagada == 1 && $solicitud->monto_inscripcion > 0)
+                            <div class="form-group">
+                                <b>Monto total pagado por inscripción + patente:</b>
+                                <b>${{ number_format($solicitud->monto_inscripcion,0,',','.') }}</b>
+                            </div>
+                            @endif
+
                         </fieldset>
                     </div>
                 @endif
