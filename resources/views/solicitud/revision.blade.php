@@ -4,7 +4,7 @@
 @include('includes.mensaje')
 <div class="panel panel-info panel-border top">
     <div class="panel-heading">
-        <span class="panel-title">Solicitudes para Revisión</span>
+        <span class="panel-title">Solicitudes para Revisión (Primera Inscripción de Vehículos SPIEV)</span>
         <div class="widget-menu pull-right">
             {{-- <a href="{{route('sucursal.create')}}" class="btn btn-info btn-sm"><li class="fa fa-plus"></li> Agregar Sucursal</a> --}}
         </div>
@@ -20,6 +20,7 @@
                             <th scope="col">Fecha</th>
                             <th scope="col">Concesionaria</th>
                             <th scope="col">Cliente</th>
+                            <th scope="col">Etapas de solicitud</th>
                             <th scope="col">Estado Pago</th>
                             <th scope="col">Monto inscripción</th>
                             <th scope="col" style="width:250px">Acciones</th>
@@ -33,6 +34,195 @@
                                 <td>{{$item->concesionaria}}</td>
                                 <td>
                                     {{@$item->nombreCliente->razon_social_recep}}
+                                </td>
+                                <td>
+                                    @if($item->estado_id == 1)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar adquiriente
+                                        <br>
+                                        <i class="fa fa-times red"></i>Compra Para 
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar resumen solicitud
+                                        <br>
+                                        <i class="fa fa-times red"></i>Adjuntar documentación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar limitación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Proceso finalizado
+
+                                    @elseif($item->estado_id == 2)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar adquiriente
+                                        <br>
+                                        <i class="fa fa-times red"></i>Compra Para 
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar resumen solicitud
+                                        <br>
+                                        <i class="fa fa-times red"></i>Adjuntar documentación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar limitación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Proceso finalizado
+
+                                    @elseif($item->estado_id == 3)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar adquiriente
+                                        <br>
+                                        @if($item->rut_para != null)
+                                        <i class="fa fa-check green"></i>Compra Para ingresado
+                                        @else
+                                        <i class="fa fa-check green"></i>Compra Para no aplica                                        
+                                        @endif
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar resumen solicitud
+                                        <br>
+                                        <i class="fa fa-times red"></i>Adjuntar documentación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Ingresar limitación
+                                        <br>
+                                        <i class="fa fa-times red"></i>Proceso finalizado
+
+                                    @elseif($item->estado_id == 6 || $item->estado_id == 7)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar adquiriente
+                                        <br>
+                                        @if($item->rut_para != null)
+                                        <i class="fa fa-check green"></i>Compra Para ingresado
+                                        @else
+                                        <i class="fa fa-check green"></i>Compra Para no aplica                                        
+                                        @endif
+                                        <br>
+                                        @if($item->numeroSol != null)
+                                            @if($item->nroSolicitud == null)
+                                                <i class="fa fa-check green"></i>Primera Inscripción creada en RC
+                                                <br>
+                                            @else
+                                                <i class="fa fa-check green"></i>Reingreso pendiente en RC
+                                                <br>
+                                            @endif
+                                        @else
+                                            <i class="fa fa-check green"></i>Ingresar resumen solicitud
+                                            <br>
+                                        @endif
+
+                                        @if($item->numeroSolDocrc != null)
+                                            <i class="fa fa-check green"></i>Documentación enviada a RC
+                                            <br>
+                                        @else
+                                            <i class="fa fa-times red"></i>Documentación NO enviada a RC
+                                            <br>
+                                        @endif
+                                        @if($item->id_limitacion != null)
+                                            @if($item->id_limitacion_rc != null)
+                                                <i class="fa fa-check green"></i>Registrar limitación en RC
+                                                <br>
+                                            @else
+                                                <i class="fa fa-check green"></i>Ingresar limitación
+                                                <br>
+                                            @endif
+                                        @else
+                                            <i class="fa fa-times red"></i>Ingresar limitación
+                                            <br>
+                                        @endif
+
+                                        @if($item->pagada && $item->monto_inscripcion > 0)
+                                            <i class="fa fa-check green"></i>Proceso finalizado
+                                        @else
+                                            <i class="fa fa-times red"></i>Proceso finalizado
+                                        @endif
+
+                                    @elseif($item->estado_id == 11)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar adquiriente
+                                        <br>
+                                        @if($item->rut_para != null)
+                                        <i class="fa fa-check green"></i>Compra Para ingresado
+                                        @else
+                                        <i class="fa fa-check green"></i>Compra Para no aplica                                        
+                                        @endif
+                                        <br>
+                                        <i class="fa fa-check green"></i>Envío RC rechazado
+                                        <br>
+                                        @if($item->numeroSolDocrc != null)
+                                            <i class="fa fa-check green"></i>Documentación enviada a RC
+                                            <br>
+                                        @else
+                                            <i class="fa fa-times red"></i>Documentación NO enviada a RC
+                                            <br>
+                                        @endif
+                                        @if($item->id_limitacion != null)
+                                            @if($item->id_limitacion_rc != null)
+                                                <i class="fa fa-check green"></i>Registrar limitación en RC
+                                                <br>
+                                            @else
+                                                <i class="fa fa-check green"></i>Ingresar limitación
+                                                <br>
+                                            @endif
+                                        @else
+                                            <i class="fa fa-times red"></i>Ingresar limitación
+                                            <br>
+                                        @endif
+                                            <i class="fa fa-times red"></i>Proceso finalizado
+
+
+                                    @elseif($item->estado_id == 12)
+                                        <i class="fa fa-check green"></i>Solicitud creada
+                                        <br>
+                                        <i class="fa fa-check green"></i>Ingresar adquiriente
+                                        <br>
+                                        @if($item->rut_para != null)
+                                        <i class="fa fa-check green"></i>Compra Para ingresado
+                                        @else
+                                        <i class="fa fa-check green"></i>Compra Para no aplica                                        
+                                        @endif
+                                        <br>
+                                        @if($item->numeroSol != null)
+                                            @if($item->nroSolicitud == null)
+                                                <i class="fa fa-check green"></i>Primera Inscripción creada en RC
+                                                <br>
+                                            @else
+                                                <i class="fa fa-check green"></i>Reingreso pendiente en RC
+                                                <br>
+                                            @endif
+                                        @else
+                                            <i class="fa fa-check green"></i>Ingresar resumen solicitud
+                                            <br>
+                                        @endif
+
+                                        @if($item->numeroSolDocrc != null)
+                                            <i class="fa fa-check green"></i>Documentación enviada a RC
+                                            <br>
+                                        @else
+                                            <i class="fa fa-times red"></i>Documentación NO enviada a RC
+                                            <br>
+                                        @endif
+                                        @if($item->id_limitacion != null)
+                                            @if($item->id_limitacion_rc != null)
+                                                <i class="fa fa-check green"></i>Registrar limitación en RC
+                                                <br>
+                                            @else
+                                                <i class="fa fa-check green"></i>Ingresar limitación
+                                                <br>
+                                            @endif
+                                        @else
+                                            <i class="fa fa-times red"></i>Ingresar limitación
+                                            <br>
+                                        @endif
+
+                                        @if($item->pagada && $item->monto_inscripcion > 0)
+                                            <i class="fa fa-check green"></i>Proceso finalizado
+                                        @else
+                                            <i class="fa fa-times red"></i>Proceso finalizado
+                                        @endif
+
+                                    @endif
+                                    
+
                                 </td>
                                 <td>@php echo (!$item->pagada)? '<span style="background-color:#F00;color:#ffffff;">No pagada</span>': '<span style="background-color:#08bd08;color:#ffffff;">Pagada</span>'; @endphp</td>
                                 <td>{{$item->monto_inscripcion}}</td>
@@ -132,7 +322,16 @@
 
 
 @section('styles')
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css">    
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css"> 
+    <style>
+        .red{
+          color: #F00;
+        }
+
+        .green{
+          color: #37e666;
+        }
+    </style>      
 @endsection
 
 @section('scripts')

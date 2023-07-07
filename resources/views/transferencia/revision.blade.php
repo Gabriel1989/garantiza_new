@@ -4,7 +4,7 @@
 @include('includes.mensaje')
 <div class="panel panel-info panel-border top">
     <div class="panel-heading">
-        <span class="panel-title">Solicitudes para Revisión</span>
+        <span class="panel-title">Solicitudes para Revisión (Transferencia de Vehículos STEV)</span>
         <div class="widget-menu pull-right">
             {{-- <a href="{{route('sucursal.create')}}" class="btn btn-info btn-sm"><li class="fa fa-plus"></li> Agregar Sucursal</a> --}}
         </div>
@@ -110,7 +110,7 @@
                                         <br>
                                         <i class="fa fa-check green"></i>Ingresar vendedor
                                         <br>
-                                        <i class="fa fa-check green"></i>Ingresar estipulante
+                                        <i class="fa fa-check green"></i>Ingresar estipulante o no
                                         <br>
                                         @if($item->numeroSol != null)
                                             @if($item->nroSolicitud == null)

@@ -120,12 +120,12 @@
 
                         <div class="col-lg-3">
                             <label><span class="panel-title" style="color:#f00">(*) </span>Nombre o Razón Social Emisor</label>
-                            <input class="form-control" name="razon_soc_emisor" id="razon_soc_emisor" maxlength="35" value="{{ !@is_null($header->RznSoc)? $header->RznSoc : $user->concesionaria->razon_social}}">
+                            <input class="form-control" name="razon_soc_emisor" id="razon_soc_emisor" maxlength="35" value="{{ !@is_null($header->RznSoc)? $header->RznSoc : ((isset($user->concesionaria->razon_social))?  $user->concesionaria->razon_social :   ((isset($solicitud_data->sucursal->concesionaria->razon_social))? $solicitud_data->sucursal->concesionaria->razon_social: ''  ))}}">
                         </div>
 
                         <div class="col-lg-3">
                             <label><span class="panel-title" style="color:#f00">(*) </span>Rut emisor</label>
-                            <input type="number" min="1" max="99999999" class="form-control" name="rut_emisor" id="rut_emisor" value="{{!@is_null($header->RUTEmisor)? $header->RUTEmisor : $user->concesionaria->rut}}">
+                            <input type="number" min="1" max="99999999" class="form-control" name="rut_emisor" id="rut_emisor" value="{{!@is_null($header->RUTEmisor)? $header->RUTEmisor : ((isset($user->concesionaria->rut))?  $user->concesionaria->rut :   ((isset($solicitud_data->sucursal->concesionaria->rut))? $solicitud_data->sucursal->concesionaria->rut: ''  ))}}">
                         </div>
 
                         <div class="col-lg-3">

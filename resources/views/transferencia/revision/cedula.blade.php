@@ -14,6 +14,15 @@
     }
 @endphp
     <div class="panel panel-info panel-border top">
+        @if($reingreso != null)
+            <div class="panel-header panel_info">
+                <div class="row">
+                    <div class="col-md-6" style="padding-left:30px;">
+                        <h4><i class="fa fa-exclamation-triangle" style="color:red;" aria-hidden="true"></i> Solicitud debe ser reingresada <button class="btn btn-xs btn-success" onclick="$('.panel_info').hide(); $(this).hide();">OK</button></h4>
+                    </div>
+                </div>
+            </div>
+        @endif
         <div class="panel-heading">
             <span class="panel-title">Revisión de Transferencia N° {{$id}} - Datos Solicitud del Cliente</span>
         </div>

@@ -218,7 +218,14 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
 
     Route::post('documento/{id}/cargadocs', 'DocumentoController@CargaDocumentos')->name('documento.cargadocs.rc');
 
-    
+    //Buscadores de solicitudes
+    Route::get('buscador/spiev/index','BuscadorController@index_spiev')->name('buscador.spiev.index');
+    Route::get('buscador/spiev/tipoVehiculo', 'BuscadorController@tipoVehiculo')->name('buscador.spiev.tipoVehiculo');
+    Route::post('buscador/spiev/tipoVehiculo/form', 'BuscadorController@tipoVehiculoForm')->name('buscador.spiev.tipoVehiculo.form');
+    Route::get('buscador/spiev/rutadquiriente','BuscadorController@rutadquiriente')->name('buscador.spiev.rutadquiriente');
+    Route::post('buscador/spiev/rutadquiriente/form','BuscadorController@rutadquirienteForm')->name('buscador.spiev.rutadquiriente.form');
+    Route::get('buscador/spiev/numFactura','BuscadorController@numFactura')->name('buscador.spiev.numfactura');
+    Route::post('buscador/spiev/numFactura/form','BuscadorController@numFacturaForm')->name('buscador.spiev.numfactura.form');
 });
 
 Route::group(['middleware' => ['auth', 'ejecut.garantiza']], function () {

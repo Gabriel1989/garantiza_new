@@ -55,6 +55,8 @@
                     @elseif($acceso == "ingreso")
                         @if($estadoSolicitud != '' && $estadoSolicitud == 3)   
                             active
+                        @elseif($estadoSolicitud != '' && $estadoSolicitud == 11)
+                            active
                         @endif   
                     @endif
                     " role="presentation">
@@ -169,6 +171,8 @@
                                         @endif
                                       @elseif($acceso == "ingreso")
                                         @if($estadoSolicitud == 3)
+                                                show active in
+                                        @elseif ($estadoSolicitud == 11)
                                                 show active in
                                         @endif
                                       @endif

@@ -82,8 +82,19 @@ class Solicitud extends Model
         return DB::table('solicitudes')
             ->join('users', 'users.id', '=', 'solicitudes.user_id')
             ->join('concesionarias', 'concesionarias.id', '=', 'users.concesionaria_id')
+            ->leftjoin('solicitudes_rc', 'solicitudes_rc.solicitud_id', '=', 'solicitudes.id')
+            ->leftjoin('reingresos','reingresos.solicitud_id','=','solicitudes.id')
+            ->leftjoin('documentos_rc','documentos_rc.solicitud_id','=','solicitudes.id')
+            ->leftjoin('limitaciones','limitaciones.solicitud_id','=','solicitudes.id')
+            ->leftjoin('limitaciones_rc', 'limitaciones_rc.solicitud_id','=','solicitudes.id')
+            ->leftjoin('paras','paras.solicitud_id','=','solicitudes.id')
             ->whereIn('solicitudes.estado_id', [1,2,3,4,5,6,7,11,12])
-            ->select('solicitudes.*', 'concesionarias.name as concesionaria')
+            ->select('solicitudes.*', 'concesionarias.name as concesionaria'
+            ,'solicitudes_rc.numeroSol',
+            'reingresos.nroSolicitud',
+            'documentos_rc.numeroSol as numeroSolDocrc',
+            'limitaciones.id as id_limitacion', 
+            'limitaciones_rc.id as id_limitacion_rc', 'paras.rut as rut_para')
             ->get();
     }
 
@@ -121,10 +132,23 @@ class Solicitud extends Model
     public static function sinTerminar($user){
         return DB::table('solicitudes')
             ->join('sucursales', 'sucursales.id', '=', 'solicitudes.sucursal_id')
+            ->leftjoin('solicitudes_rc', 'solicitudes_rc.solicitud_id', '=', 'solicitudes.id')
+            ->leftjoin('reingresos','reingresos.solicitud_id','=','solicitudes.id')
+            ->leftjoin('documentos_rc','documentos_rc.solicitud_id','=','solicitudes.id')
+            ->leftjoin('limitaciones','limitaciones.solicitud_id','=','solicitudes.id')
+            ->leftjoin('limitaciones_rc', 'limitaciones_rc.solicitud_id','=','solicitudes.id')
+            ->leftjoin('paras','paras.solicitud_id','=','solicitudes.id')
             ->whereIn('solicitudes.estado_id', [1,2,3,4,5,6,7,11,12])
             ->where('solicitudes.user_id', '=', $user)
             ->select('solicitudes.id', 
                      'solicitudes.created_at', 
+                     'solicitudes.estado_id',
+                     'solicitudes.pagada','solicitudes.monto_inscripcion', 
+                     'sucursales.name as sucursales','solicitudes_rc.numeroSol',
+                     'reingresos.nroSolicitud',
+                     'documentos_rc.numeroSol as numeroSolDocrc',
+                     'limitaciones.id as id_limitacion', 
+                     'limitaciones_rc.id as id_limitacion_rc', 'paras.rut as rut_para',
                      'solicitudes.incluyeSOAP', 'solicitudes.incluyeTAG', 'solicitudes.incluyePermiso',
                      'sucursales.name as sucursales')
             ->get();
@@ -133,11 +157,73 @@ class Solicitud extends Model
     public static function getSolicitudesUser($user){
         return DB::table('solicitudes')
             ->join('sucursales', 'sucursales.id', '=', 'solicitudes.sucursal_id')
+            ->leftjoin('solicitudes_rc', 'solicitudes_rc.solicitud_id', '=', 'solicitudes.id')
+            ->leftjoin('reingresos','reingresos.solicitud_id','=','solicitudes.id')
+            ->leftjoin('documentos_rc','documentos_rc.solicitud_id','=','solicitudes.id')
+            ->leftjoin('limitaciones','limitaciones.solicitud_id','=','solicitudes.id')
+            ->leftjoin('limitaciones_rc', 'limitaciones_rc.solicitud_id','=','solicitudes.id')
+            ->leftjoin('paras','paras.solicitud_id','=','solicitudes.id')
             ->where('solicitudes.user_id', '=', $user)
             ->select('solicitudes.id', 
-                     'solicitudes.created_at', 
-                     'sucursales.name as sucursales')
+                     'solicitudes.created_at',
+                     'solicitudes.estado_id',
+                     'solicitudes.pagada','solicitudes.monto_inscripcion', 
+                     'sucursales.name as sucursales','solicitudes_rc.numeroSol',
+                     'reingresos.nroSolicitud',
+                     'documentos_rc.numeroSol as numeroSolDocrc',
+                     'limitaciones.id as id_limitacion', 
+                     'limitaciones_rc.id as id_limitacion_rc', 'paras.rut as rut_para')
             ->get();
+    }
+
+    public static function getSolicitudesFiltro($filtro,$data = '',$esAdmin = false){
+        if($data != ''){
+            $query = DB::table('solicitudes')
+                ->join('sucursales', 'sucursales.id', '=', 'solicitudes.sucursal_id')
+                ->leftjoin('solicitudes_rc', 'solicitudes_rc.solicitud_id', '=', 'solicitudes.id')
+                ->leftjoin('reingresos','reingresos.solicitud_id','=','solicitudes.id')
+                ->leftjoin('documentos_rc','documentos_rc.solicitud_id','=','solicitudes.id')
+                ->leftjoin('limitaciones','limitaciones.solicitud_id','=','solicitudes.id')
+                ->leftjoin('limitaciones_rc', 'limitaciones_rc.solicitud_id','=','solicitudes.id')
+                ->leftjoin('adquirientes', 'adquirientes.solicitud_id', '=','solicitudes.id')
+                ->leftjoin('factura_data', 'factura_data.id_solicitud', '=','solicitudes.id')
+                ->leftjoin('paras','paras.solicitud_id','=','solicitudes.id');
+
+            //Si no es administrador o ejecutivo de garantiza, solo verá las solicitudes del usuario autenticado
+            if(!$esAdmin){
+                $query = $query->where('solicitudes.user_id', '=', auth()->user()->id);
+            }
+
+            switch($filtro){
+                case "tipo_vehiculo":
+                    $query = $query->whereIn('solicitudes.tipoVehiculos_id',$data);
+                    break;
+
+                case "rut_adquiriente":
+                    $query = $query->where('adquirientes.rut','=',trim($data));
+                    break;
+                case "numero_factura":
+                    $query = $query->where('factura_data.num_factura','=',trim($data)); 
+                    break;
+            }
+
+            $query = $query->select('solicitudes.id', 
+                'solicitudes.created_at',
+                'solicitudes.estado_id',
+                'solicitudes.pagada','solicitudes.monto_inscripcion', 
+                'sucursales.name as sucursales','solicitudes_rc.numeroSol',
+                'reingresos.nroSolicitud',
+                'documentos_rc.numeroSol as numeroSolDocrc',
+                'limitaciones.id as id_limitacion', 
+                'limitaciones_rc.id as id_limitacion_rc', 'paras.rut as rut_para',
+                'solicitudes.incluyeSOAP', 'solicitudes.incluyeTAG', 'solicitudes.incluyePermiso')
+                ->orderBy('solicitudes.id','asc')->get();
+
+            return $query;
+        }
+        else{
+            return [];
+        }
     }
 
 

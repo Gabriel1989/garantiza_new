@@ -276,7 +276,7 @@
 
         $(".rut").rut().on('rutInvalido', function(e) {
             new PNotify({
-                title: 'Rut de Concesionaria',
+                title: 'Rut de Adquiriente',
                 text: 'El Rut ingresado no es válido.',
                 shadow: true,
                 opacity: '0.75',

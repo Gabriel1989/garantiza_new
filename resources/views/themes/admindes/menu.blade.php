@@ -32,30 +32,38 @@
                     <span class="sidebar-title">Nueva Solicitud </span>
                 </a>
 
-                <!--
+                
+
+                
                 <a class="accordion-toggle 
                     @php
-                        if (Route::is('solicitud.*')||
-                            Route::is('transferencia.*')) {
+                        if (Route::is('buscador.spiev.*')) {
                             echo 'menu-open';
                         }   
                     @endphp
                     " 
                     href="#">
-                    <span class="glyphicons glyphicons-inbox_plus"></span>
-                    <span class="sidebar-title">Nueva Solicitud</span>
+                    <span class="glyphicons glyphicons-search"></span>
+                    <span class="sidebar-title">Buscar Solicitudes SPIEV</span>
                     <span class="caret"></span>
                 </a>
                 <ul class="nav sub-nav">
-                    <li class="{{!Route::is('solicitud.*') ?: 'active'}}">
-                        <a href="{{route('solicitud.solicitarPPU')}}">
-                            <span class="glyphicons glyphicons-inbox_plus"></span> Primera inscripción </a>
+
+                    <li class="{{!Route::is('buscador.spiev.*') ?: 'active'}}">
+                        <a href="{{route('buscador.spiev.tipoVehiculo')}}">
+                            <span class="glyphicons glyphicons-car"></span> Búsqueda por tipo de vehículo </a>
                     </li>
-                    <li class="{{!Route::is('transferencia.*') ?: 'active'}}">
-                        <a href="{{route('transferencia.index')}}">
-                            <span class="glyphicons glyphicons-car"></span> Transferencia </a>
+
+                    <li class="{{!Route::is('buscador.spiev.*') ?: 'active'}}">
+                        <a href="{{route('buscador.spiev.rutadquiriente')}}">
+                            <span class="glyphicons glyphicons-user"></span> Búsqueda por rut adquiriente </a>
                     </li>
-                </ul>-->
+
+                    <li class="{{!Route::is('buscador.spiev.*') ?: 'active'}}">
+                        <a href="{{route('buscador.spiev.numfactura')}}">
+                            <span class="glyphicons glyphicons-file"></span> Búsqueda por N° Factura </a>
+                    </li>
+                </ul>
             </li>
             @endif
 

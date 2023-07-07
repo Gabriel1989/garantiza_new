@@ -2757,6 +2757,12 @@ class SolicitudController extends Controller
                     return view('solicitud.revision.docsIdentidadAuto', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
                 }
                 else{
+                    $solicitud2 = Solicitud::find($id);
+                    $solicitud2->estado_id = 11;
+                    $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+                    $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+                    $solicitud2->incluyeTAG = $request->get('incluyeTAG');
+                    $solicitud2->save();
                     return view('general.ErrorRC', ['glosa' => $salida['glosa']]);
                 }
             }
@@ -3083,6 +3089,12 @@ class SolicitudController extends Controller
                     return view('solicitud.revision.docsIdentidadCamion', compact('header', 'id', 'nro_solicitud_rc', 'ppu_rc','solicitud_rc'));
                 }
                 else{
+                    $solicitud2 = Solicitud::find($id);
+                    $solicitud2->estado_id = 11;
+                    $solicitud2->incluyeSOAP = $request->get('incluyeSOAP');
+                    $solicitud2->incluyePermiso = $request->get('incluyePermiso');
+                    $solicitud2->incluyeTAG = $request->get('incluyeTAG');
+                    $solicitud2->save();
                     return view('general.ErrorRC', ['glosa' => $salida['glosa']]);
                 }
             }
