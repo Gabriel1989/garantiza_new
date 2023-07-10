@@ -19,8 +19,8 @@
                             <th scope="col">Solicitud N°</th>
                             <th scope="col">Fecha</th>
                             <th scope="col">Notaria</th>
-                            <th scope="col">Cliente</th>
                             <th scope="col">Etapas de solicitud</th>
+                            <th scope="col">Cliente</th>
                             <th scope="col">Estado Pago</th>
                             <th scope="col">Monto inscripción</th>
                             <th scope="col" style="width:250px">Acciones</th>
@@ -32,12 +32,6 @@
                                 <td scope="row">{{$item->id}}</td>
                                 <td>{{date('d-m-Y h:i A', strtotime($item->created_at))}}</td>
                                 <td>{{$item->notarias}}</td>
-                                <td>
-                                    <?php
-                                    if($item->cliente != ''){ 
-                                        echo is_null($item->cliente->nombre)? $item->cliente->razon_social : $item->cliente->nombre .' '.$item->cliente->aPaterno.' '.$item->cliente->aMaterno; 
-                                    } ?>
-                                </td>
                                 <td>
                                     @if($item->estado_id == 1)
                                         <i class="fa fa-check green"></i>Solicitud creada
@@ -200,6 +194,12 @@
                                         @endif
 
                                     @endif
+                                </td>
+                                <td>
+                                    <?php
+                                    if($item->cliente != ''){ 
+                                        echo is_null($item->cliente->nombre)? $item->cliente->razon_social : $item->cliente->nombre .' '.$item->cliente->aPaterno.' '.$item->cliente->aMaterno; 
+                                    } ?>
                                 </td>
                                 <td>@php echo (!$item->pagada)? '<span style="background-color:#F00;color:#ffffff;">No pagada</span>': '<span style="background-color:#08bd08;color:#ffffff;">Pagada</span>'; @endphp</td>
                                 <td>{{$item->monto_inscripcion}}</td>

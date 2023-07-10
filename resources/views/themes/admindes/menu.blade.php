@@ -49,17 +49,17 @@
                 </a>
                 <ul class="nav sub-nav">
 
-                    <li class="{{!Route::is('buscador.spiev.*') ?: 'active'}}">
+                    <li class="{{!Route::is('buscador.spiev.tipoVehiculo') ?: 'active'}}">
                         <a href="{{route('buscador.spiev.tipoVehiculo')}}">
                             <span class="glyphicons glyphicons-car"></span> Búsqueda por tipo de vehículo </a>
                     </li>
 
-                    <li class="{{!Route::is('buscador.spiev.*') ?: 'active'}}">
+                    <li class="{{!Route::is('buscador.spiev.rutadquiriente') ?: 'active'}}">
                         <a href="{{route('buscador.spiev.rutadquiriente')}}">
                             <span class="glyphicons glyphicons-user"></span> Búsqueda por rut adquiriente </a>
                     </li>
 
-                    <li class="{{!Route::is('buscador.spiev.*') ?: 'active'}}">
+                    <li class="{{!Route::is('buscador.spiev.numfactura') ?: 'active'}}">
                         <a href="{{route('buscador.spiev.numfactura')}}">
                             <span class="glyphicons glyphicons-file"></span> Búsqueda por N° Factura </a>
                     </li>
@@ -99,6 +99,35 @@
                     <span class="glyphicons glyphicons-inbox_plus"></span>
                     <span class="sidebar-title">Nueva Solicitud </span>
                 </a>
+
+                <a class="accordion-toggle 
+                    @php
+                        if (Route::is('buscador.stev.*')) {
+                            echo 'menu-open';
+                        }   
+                    @endphp
+                    " 
+                    href="#">
+                    <span class="glyphicons glyphicons-search"></span>
+                    <span class="sidebar-title">Buscar Solicitudes STEV</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+                    <li class="{{!Route::is('buscador.stev.ppu') ?: 'active'}}">
+                        <a href="{{route('buscador.stev.ppu')}}">
+                            <span class="glyphicons glyphicons-car"></span>Buscar solicitud por PPU </a>
+                    </li>
+
+                    <li class="{{!Route::is('buscador.stev.rutcomprador') ?: 'active'}}">
+                        <a href="{{route('buscador.stev.rutcomprador')}}">
+                            <span class="glyphicons glyphicons-user"></span>Buscar solicitud por Rut de comprador </a>
+                    </li>
+
+                    <li class="{{!Route::is('buscador.stev.numerodoc') ?: 'active'}}">
+                        <a href="{{route('buscador.stev.numerodoc')}}">
+                            <span class="glyphicons glyphicons-file"></span>Buscar solicitud por N° Documento </a>
+                    </li>
+                </ul>
 
                 <!--
                 <a class="accordion-toggle 
@@ -237,6 +266,70 @@
                     </span>
                 </a>
             </li>
+
+            <li class="sidebar-label pt15">BUSCADORES</li>
+            <li>
+                <a class="accordion-toggle 
+                    @php
+                        if (Route::is('buscador.spiev.*')) {
+                            echo 'menu-open';
+                        }   
+                    @endphp
+                    " 
+                    href="#">
+                    <span class="glyphicons glyphicons-search"></span>
+                    <span class="sidebar-title">Buscar Solicitudes SPIEV</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+
+                    <li class="{{!Route::is('buscador.spiev.tipoVehiculo') ?: 'active'}}">
+                        <a href="{{route('buscador.spiev.tipoVehiculo')}}">
+                            <span class="glyphicons glyphicons-car"></span> Búsqueda por tipo de vehículo </a>
+                    </li>
+
+                    <li class="{{!Route::is('buscador.spiev.rutadquiriente') ?: 'active'}}">
+                        <a href="{{route('buscador.spiev.rutadquiriente')}}">
+                            <span class="glyphicons glyphicons-user"></span> Búsqueda por rut adquiriente </a>
+                    </li>
+
+                    <li class="{{!Route::is('buscador.spiev.numfactura') ?: 'active'}}">
+                        <a href="{{route('buscador.spiev.numfactura')}}">
+                            <span class="glyphicons glyphicons-file"></span> Búsqueda por N° Factura </a>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                <a class="accordion-toggle 
+                        @php
+                            if (Route::is('buscador.stev.*')) {
+                                echo 'menu-open';
+                            }   
+                        @endphp
+                        " 
+                        href="#">
+                        <span class="glyphicons glyphicons-search"></span>
+                        <span class="sidebar-title">Buscar Solicitudes STEV</span>
+                        <span class="caret"></span>
+                </a>
+                <ul class="nav sub-nav">
+                    <li class="{{!Route::is('buscador.stev.ppu') ?: 'active'}}">
+                        <a href="{{route('buscador.stev.ppu')}}">
+                            <span class="glyphicons glyphicons-car"></span>Buscar solicitud por PPU </a>
+                    </li>
+
+                    <li class="{{!Route::is('buscador.stev.rutcomprador') ?: 'active'}}">
+                        <a href="{{route('buscador.stev.rutcomprador')}}">
+                            <span class="glyphicons glyphicons-user"></span>Buscar solicitud por Rut de comprador </a>
+                    </li>
+
+                    <li class="{{!Route::is('buscador.stev.numerodoc') ?: 'active'}}">
+                        <a href="{{route('buscador.stev.numerodoc')}}">
+                            <span class="glyphicons glyphicons-file"></span>Buscar solicitud por N° Documento </a>
+                    </li>
+                </ul>
+            </li>
+
             <li class="sidebar-label pt15">Estadísticas y Reportes</li>
             <li>
                 <a href="{{ route('estadisticas.index.rc') }}">

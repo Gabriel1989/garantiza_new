@@ -180,6 +180,8 @@ class Solicitud extends Model
         if($data != ''){
             $query = DB::table('solicitudes')
                 ->join('sucursales', 'sucursales.id', '=', 'solicitudes.sucursal_id')
+                ->join('users', 'users.id', '=', 'solicitudes.user_id')
+                ->join('concesionarias', 'concesionarias.id', '=', 'users.concesionaria_id')
                 ->leftjoin('solicitudes_rc', 'solicitudes_rc.solicitud_id', '=', 'solicitudes.id')
                 ->leftjoin('reingresos','reingresos.solicitud_id','=','solicitudes.id')
                 ->leftjoin('documentos_rc','documentos_rc.solicitud_id','=','solicitudes.id')
@@ -216,6 +218,7 @@ class Solicitud extends Model
                 'documentos_rc.numeroSol as numeroSolDocrc',
                 'limitaciones.id as id_limitacion', 
                 'limitaciones_rc.id as id_limitacion_rc', 'paras.rut as rut_para',
+                'concesionarias.name as concesionaria',
                 'solicitudes.incluyeSOAP', 'solicitudes.incluyeTAG', 'solicitudes.incluyePermiso')
                 ->orderBy('solicitudes.id','asc')->get();
 

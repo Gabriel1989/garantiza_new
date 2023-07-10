@@ -218,7 +218,7 @@ Route::group(['middleware' => ['auth', 'ejecut.conces']], function () {
 
     Route::post('documento/{id}/cargadocs', 'DocumentoController@CargaDocumentos')->name('documento.cargadocs.rc');
 
-    //Buscadores de solicitudes
+    //Buscadores de solicitudes SPIEV
     Route::get('buscador/spiev/index','BuscadorController@index_spiev')->name('buscador.spiev.index');
     Route::get('buscador/spiev/tipoVehiculo', 'BuscadorController@tipoVehiculo')->name('buscador.spiev.tipoVehiculo');
     Route::post('buscador/spiev/tipoVehiculo/form', 'BuscadorController@tipoVehiculoForm')->name('buscador.spiev.tipoVehiculo.form');
@@ -337,6 +337,18 @@ Route::group(["middleware"=>["auth","ejecut.notaria"]],function(){
     Route::post('transferencia/{id}/limitacion/verEstadoSolicitud','LimitacionController@verEstadoLimiTransf')->name('transferencia.limitacion.estadoSolicitud');
     Route::post('transferencia/{id}/descargaComprobanteLimi','LimitacionController@descargaComprobanteLimiTransf')->name('transferencia.descargaComprobanteLimi');
     Route::post('transferencia/{id}/limitacion/resendFile','LimitacionController@reenviarArchivoLimiTransf')->name('transferencia.limitacion.reenviarArchivo');
+
+    //Buscadores de solicitudes STEV
+    Route::get('buscador/stev/index','BuscadorController@index_stev')->name('buscador.stev.index');
+
+    Route::get('buscador/stev/ppu', 'BuscadorController@ppu')->name('buscador.stev.ppu');
+    Route::post('buscador/stev/ppu/form','BuscadorController@ppuForm')->name('buscador.stev.ppu.form');
+
+    Route::get('buscador/stev/rutcomprador', 'BuscadorController@rutcomprador')->name('buscador.stev.rutcomprador');
+    Route::post('buscador/stev/rutcomprador/form', 'BuscadorController@rutcompradorForm')->name('buscador.stev.rutcomprador.form');
+
+    Route::get('buscador/stev/numerodoc', 'BuscadorController@numerodoc')->name('buscador.stev.numerodoc');
+    Route::post('buscador/stev/numerodoc/form', 'BuscadorController@numerodocForm')->name('buscador.stev.numerodoc.form');
 
 });
 

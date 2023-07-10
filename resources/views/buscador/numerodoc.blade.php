@@ -5,18 +5,15 @@
 
 <div class="panel panel-info panel-border top">
     <div class="panel-heading">
-        <span class="panel-title">Buscador de solicitudes por Tipo de Vehiculo</span>
+        <span class="panel-title">Buscador de transferencias por N° Documento</span>
     </div>
     <div class="panel-body">
         <form id="formBusqueda">
             <div class="row">
                 <div class="col-md-12 col-lg-12">
                     <div class="form-group">
-                        <label>Tipo Vehículo:</label>
-                        @foreach($tipoVehiculo as $t)
-                        &nbsp;<input type='checkbox' name='tiposVehi[]' value='{{ $t->id }}'>
-                        {{$t['name']}}&nbsp;&nbsp;
-                        @endforeach
+                        <label>N° Documento:</label>
+                        <input class="form-control" name="num_doc" id="num_doc">
                     </div>
                     <div class="form-group">
                         <button type="submit" id="buscaSolicitudesForm" class="btn btn-primary">Buscar</button>
@@ -31,21 +28,11 @@
                         <tr>
                             <th scope="col">Solicitud N°</th>
                             <th scope="col">Fecha</th>
-                            @if(!(auth()->user()->rol_id == 1 || auth()->user()->rol_id == 3))
-                            <th scope="col">Sucursal</th>
-                            <th scope="col">Etapas de la solicitud</th>
-                            <th scope="col">Cliente</th>
-                            <th scope="col">Estado Pago</th>
-                            <th scope="col">Monto inscripción</th>
-                            <th scope="col">Trámites adicionales</th>
-                            @else
-                            <th scope="col">Concesionaria</th>
+                            <th scope="col">Notaria</th>
                             <th scope="col">Etapas de solicitud</th>
                             <th scope="col">Cliente</th>
                             <th scope="col">Estado Pago</th>
                             <th scope="col">Monto inscripción</th>
-                            <th scope="col">Trámites adicionales</th>
-                            @endif
                             <th scope="col" style="width:250px">Acciones</th>
                         </tr>
                     </thead>
@@ -74,7 +61,7 @@
                     </div>
                     <div class="form-group">
                         <span class="btn btn-warning fileinput-button col-sm-12" name="ComprobantePDF" id="ComprobantePDF">
-                            Comprobante de inscripción Pagada</span>
+                            Comprobante de transferencia RC Pagada</span>
                         <input id="Comprobante_PDF" name="Comprobante_PDF" type="file" style="display:none" accept="application/pdf" />
                         <label id="lbl_Comprobante_PDF"></label>
                     </div>
@@ -177,120 +164,44 @@
 @endsection
 
 @section('scripts')
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap5.min.js"></script>
+    <script src="/js/jquery.rut.min.js"></script>
     
     <script>
         $(document).ready(function() {
-            $('#tabla-data').DataTable({
-                language: {
-                    "url": "/json/datatable.spanish.json"
-                }
+            
+
+            $(document).ready(function() {
+                $('#tabla-data').DataTable({
+                    language: {
+                        "url": "/json/datatable.spanish.json"
+                    }
+                });
             });
 
             $(document).on("click",".btnDescargaPdfGarantiza",function(e){
                 showOverlay();
                 e.preventDefault();
                 let numSolGarantiza = $(this).data('garantizasol');
-                fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteRVM", {
+                fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteTransferencia", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRF-TOKEN": "{{ csrf_token() }}"
                     },
                     body: JSON.stringify({
-                        id_solicitud: numSolGarantiza
+                        id_transferencia: numSolGarantiza
                     })
                 }).then((response) => response.json())
                 .then((data) => {
                     hideOverlay();
                     window.open(data.file);
                 });
-            });
-
-            $(document).on("submit","#formRegistraPago",function(e){
-                showOverlay();
-                e.preventDefault();
-                
-                let formData = new FormData(document.getElementById("formRegistraPago"));
-
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-
-                $.ajax({
-                    url: "/documento/"+formData.get('registra_pago_sol_id')+"/cargapago",
-                    type: "post",
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    success: function(data){
-                        hideOverlay();
-                        let json = JSON.parse(data);
-                        if(json.status == "ERROR"){
-                            new PNotify({
-                                title: 'Registro Pago',
-                                text: json.msj,
-                                shadow: true,
-                                opacity: '0.75',
-                                addclass: 'stack_top_right',
-                                type: 'danger',
-                                stack: {
-                                    "dir1": "down",
-                                    "dir2": "left",
-                                    "push": "top",
-                                    "spacing1": 10,
-                                    "spacing2": 10
-                                },
-                                width: '290px'
-                            });
-                            return false;
-                        }
-                        else{
-                            new PNotify({
-                                title: 'Registro Pago',
-                                text: json.msj,
-                                shadow: true,
-                                opacity: '0.75',
-                                addclass: 'stack_top_right',
-                                type: 'success',
-                                stack: {
-                                    "dir1": "down",
-                                    "dir2": "left",
-                                    "push": "top",
-                                    "spacing1": 10,
-                                    "spacing2": 10
-                                },
-                                width: '290px'
-                            });
-                        }
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                        // Acción cuando hay un error.
-                        hideOverlay();
-                        new PNotify({
-                            title: 'Error',
-                            text: "AJAX error: " + textStatus + ' : ' + errorThrown,
-                            shadow: true,
-                            opacity: '0.75',
-                            addclass: 'stack_top_right',
-                            type: 'danger',
-                            stack: {
-                                "dir1": "down",
-                                "dir2": "left",
-                                "push": "top",
-                                "spacing1": 10,
-                                "spacing2": 10
-                            },
-                            width: '290px'
-                        });
-                    },
-                });
-
             });
         });
 
@@ -310,7 +221,7 @@
         function verDocsSolicitud(id){
             $('#modal-docs-solicitud').modal('show');
             $.ajax({
-                url: "/documento/"+id+"/get",
+                url: "/documentoTransferencia/"+id+"/get",
                 type: "get",
                 success: function(data2) {
                     let jsondata = JSON.parse(data2);
@@ -321,6 +232,89 @@
             });
 
         }
+
+        $(document).on("submit","#formRegistraPago",function(e){
+            showOverlay();
+            e.preventDefault();
+            
+            let formData = new FormData(document.getElementById("formRegistraPago"));
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $.ajax({
+                url: "/documento/transferencia/"+formData.get('registra_pago_sol_id')+"/cargapago",
+                type: "post",
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function(data){
+                    hideOverlay();
+                    let json = JSON.parse(data);
+                    if(json.status == "ERROR"){
+                        new PNotify({
+                            title: 'Registro Pago',
+                            text: json.msj,
+                            shadow: true,
+                            opacity: '0.75',
+                            addclass: 'stack_top_right',
+                            type: 'danger',
+                            stack: {
+                                "dir1": "down",
+                                "dir2": "left",
+                                "push": "top",
+                                "spacing1": 10,
+                                "spacing2": 10
+                            },
+                            width: '290px'
+                        });
+                        return false;
+                    }
+                    else{
+                        new PNotify({
+                            title: 'Registro Pago',
+                            text: json.msj,
+                            shadow: true,
+                            opacity: '0.75',
+                            addclass: 'stack_top_right',
+                            type: 'success',
+                            stack: {
+                                "dir1": "down",
+                                "dir2": "left",
+                                "push": "top",
+                                "spacing1": 10,
+                                "spacing2": 10
+                            },
+                            width: '290px'
+                        });
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    // Acción cuando hay un error.
+                    hideOverlay();
+                    new PNotify({
+                        title: 'Error',
+                        text: "AJAX error: " + textStatus + ' : ' + errorThrown,
+                        shadow: true,
+                        opacity: '0.75',
+                        addclass: 'stack_top_right',
+                        type: 'danger',
+                        stack: {
+                            "dir1": "down",
+                            "dir2": "left",
+                            "push": "top",
+                            "spacing1": 10,
+                            "spacing2": 10
+                        },
+                        width: '290px'
+                    });
+                },
+            });
+
+        });
 
 
         $(document).on("submit","#formBusqueda",function(e){
@@ -335,7 +329,7 @@
             });
 
             $.ajax({
-                url: "{{ route('buscador.spiev.tipoVehiculo.form') }}",
+                url: "{{ route('buscador.stev.numerodoc.form') }}",
                 type: "post",
                 processData: false,
                 contentType: false,

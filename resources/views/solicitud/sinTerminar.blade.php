@@ -21,6 +21,8 @@
                             <th scope="col">Sucursal</th>
                             <th scope="col">Etapas de la solicitud</th>
                             <th scope="col">Cliente</th>
+                            <th scope="col">Estado Pago</th>
+                            <th scope="col">Monto inscripción</th>
                             <th scope="col">Trámites adicionales</th>
                             <th scope="col" style="width:250px">Acciones</th>
                         </tr>
@@ -228,6 +230,8 @@
 
                                 </td>
                                 <td>{{@$item->cliente->razon_social_recep}}</td>
+                                <td>@php echo (!$item->pagada)? '<span style="background-color:#F00;color:#ffffff;">No pagada</span>': '<span style="background-color:#08bd08;color:#ffffff;">Pagada</span>'; @endphp</td>
+                                <td>{{$item->monto_inscripcion}}</td>
                                 <td>
                                   <label>SOAP @if(!is_null($item->incluyeSOAP))  @if($item->incluyeSOAP == 1) <i class="fa fa-check green"></i>  @else <i class="fa fa-times red"></i> @endif @else <i class="fa fa-times red"></i> @endif </label>
                                   <br>

@@ -19,10 +19,11 @@
                             <th scope="col">Solicitud N°</th>
                             <th scope="col">Fecha</th>
                             <th scope="col">Concesionaria</th>
-                            <th scope="col">Cliente</th>
                             <th scope="col">Etapas de solicitud</th>
+                            <th scope="col">Cliente</th>
                             <th scope="col">Estado Pago</th>
                             <th scope="col">Monto inscripción</th>
+                            <th scope="col">Trámites adicionales</th>
                             <th scope="col" style="width:250px">Acciones</th>
                         </tr>
                         </thead>
@@ -32,9 +33,6 @@
                                 <td scope="row">{{$item->id}}</td>
                                 <td>{{date('d-m-Y h:i A', strtotime($item->created_at))}}</td>
                                 <td>{{$item->concesionaria}}</td>
-                                <td>
-                                    {{@$item->nombreCliente->razon_social_recep}}
-                                </td>
                                 <td>
                                     @if($item->estado_id == 1)
                                         <i class="fa fa-check green"></i>Solicitud creada
@@ -224,8 +222,18 @@
                                     
 
                                 </td>
+                                <td>
+                                    {{@$item->nombreCliente->razon_social_recep}}
+                                </td>
                                 <td>@php echo (!$item->pagada)? '<span style="background-color:#F00;color:#ffffff;">No pagada</span>': '<span style="background-color:#08bd08;color:#ffffff;">Pagada</span>'; @endphp</td>
                                 <td>{{$item->monto_inscripcion}}</td>
+                                <td>
+                                    <label>SOAP @if(!is_null($item->incluyeSOAP))  @if($item->incluyeSOAP == 1) <i class="fa fa-check green"></i>  @else <i class="fa fa-times red"></i> @endif @else <i class="fa fa-times red"></i> @endif </label>
+                                    <br>
+                                    <label>TAG @if(!is_null($item->incluyeTAG))  @if($item->incluyeTAG == 1) <i class="fa fa-check green"></i>  @else <i class="fa fa-times red"></i> @endif @else <i class="fa fa-times red"></i> @endif</label>
+                                    <br>
+                                    <label>Permiso de circulación @if(!is_null($item->incluyePermiso))  @if($item->incluyePermiso == 1) <i class="fa fa-check green"></i>  @else <i class="fa fa-times red"></i> @endif @else <i class="fa fa-times red"></i> @endif</label>
+                                  </td>
                                 <td>
                                     <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
                                         <li class="fa fa-pencil"></li> Revisar</button>

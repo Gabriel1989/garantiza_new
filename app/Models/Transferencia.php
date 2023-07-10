@@ -73,6 +73,59 @@ class Transferencia extends Model
         ->get();
     }
 
+    public static function getSolicitudesFiltro($filtro,$data = '',$esAdmin = false){
+        if($data != ''){
+            $query = DB::table('transferencias')
+                ->join('notarias', 'notarias.id', '=', 'transferencias.notaria_id')
+                ->leftjoin('transferencias_rc', 'transferencias_rc.transferencia_id', '=', 'transferencias.id')
+                ->leftjoin('reingresos','reingresos.transferencia_id','=','transferencias.id')
+                ->leftjoin('documentos_rc','documentos_rc.transferencia_id','=','transferencias.id')
+                ->leftjoin('limitaciones','limitaciones.transferencia_id','=','transferencias.id')
+                ->leftjoin('limitaciones_rc', 'limitaciones_rc.transferencia_id','=','transferencias.id')
+                ->leftjoin('compradores', 'compradores.transferencia_id', '=','transferencias.id')
+                ->leftjoin('transferencias_data', 'transferencias_data.transferencia_id', '=','transferencias.id')
+                ->leftjoin('estipulantes','estipulantes.transferencia_id','=','transferencias.id')
+                ->leftjoin('info_vehiculo_transferencia','info_vehiculo_transferencia.transferencia_id','=','transferencias.id');
+
+            //Si no es administrador o ejecutivo de garantiza, solo verá las solicitudes del usuario autenticado
+            if(!$esAdmin){
+                $query = $query->where('transferencias.user_id', '=', auth()->user()->id);
+            }
+
+            switch($filtro){
+                case "ppu":
+                    $query = $query->where('info_vehiculo_transferencia.ppu',$data);
+                    break;
+
+                case "rut_comprador":
+                    $query = $query->where('compradores.rut',$data);
+                    break;
+
+                case "numero_doc":
+                    $query = $query->where('transferencias_data.num_doc',$data);
+                    break;
+            }
+
+            $query = $query->select('transferencias.id', 
+                'transferencias.created_at',
+                'transferencias.estado_id',
+                'transferencias.pagada',
+                'transferencias.monto_inscripcion', 
+                'notarias.name as notarias',
+                'transferencias_rc.numeroSol',
+                'reingresos.nroSolicitud',
+                'documentos_rc.numeroSol as numeroSolDocrc',
+                'limitaciones.id as id_limitacion', 
+                'limitaciones_rc.id as id_limitacion_rc')
+                ->orderBy('transferencias.id','asc')->get();
+
+            return $query;
+        }
+        else{
+            return [];
+        }
+    }
+
     public static function getTransferenciaRC($id){
         return DB::table('transferencias_rc')
             ->where('transferencias_rc.transferencia_id', '=', $id)
