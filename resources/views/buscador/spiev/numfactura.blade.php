@@ -44,6 +44,7 @@
                             <th scope="col">Trámites adicionales</th>
                             @endif
                             <th scope="col" style="width:250px">Acciones</th>
+                            <th scope="col" style="width:100px">Consulta RC</th>
                         </tr>
                     </thead>
                     <tbody id="tabla-data-body">
@@ -112,6 +113,24 @@
 
                     </tbody>
                     </table>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal_solicitud" tabindex="-1" role="dialog" aria-labelledby="modal_solicitudLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document" style="min-width:450px;">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Estado Solicitud</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body" id="modal_solicitud_body">
+                  
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -352,6 +371,240 @@
                 }
             });
         });
+
+        $(document).on("click",".btnRevisaSolicitud",function(e){
+            showOverlay();
+            e.preventDefault();
+            let numSolRC = $(this).data('numsol');
+            let numSolGarantiza = $(this).data('garantizasol');
+            $(".modal-title").text('Estado Solicitud');
+
+            $.ajax({
+                url: "/solicitud/"+numSolGarantiza+"/verEstadoSolicitud",
+                type: "post",
+                data: {
+                    id_solicitud_rc: numSolRC,
+                    _token: "{{ csrf_token() }}"
+                },
+                beforeSend: function() {
+                    $("#modal_solicitud_body").html('<div style="margin-left: auto;margin-right: auto;" class="loader"></div>');
+                },
+                success: function(data){
+                    hideOverlay();
+                    $("#modal_solicitud_body").html(data);
+                }
+            })
+
+        })
+
+        $(document).on("click",".btnRevisaLimitacion",function(e){
+            showOverlay();
+            e.preventDefault();
+            let numSolRC = $(this).data('numsol');
+            let numSolGarantiza = $(this).data('garantizasol');
+            $(".modal-title").text('Estado de Limitación/Prohibición');
+
+            $.ajax({
+                url: "/solicitud/"+numSolGarantiza+"/limitacion/verEstadoSolicitud",
+                type: "post",
+                data: {
+                    id_solicitud_rc: numSolRC,
+                    _token: "{{ csrf_token() }}"
+                },
+                beforeSend: function() {
+                    $("#modal_solicitud_body").html('<div style="margin-left: auto;margin-right: auto;" class="loader"></div>');
+                },
+                success: function(data){
+                    hideOverlay();
+                    $("#modal_solicitud_body").html(data);
+                }
+            })
+
+        });
+        
+        $(document).on("click", ".btnDescargaComprobanteLimi", function(e) {
+            showOverlay();
+            e.preventDefault();
+            let numSolRC = $(this).data('numsol');
+            let numSolGarantiza = $(this).data('garantizasol');
+
+            fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteLimi", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    id_solicitud_rc: numSolRC
+                })
+            })
+            .then(function(response) {
+                hideOverlay();
+                if (response.ok) {
+                    if (response.headers.get('Content-Type') === 'application/pdf') {
+                        return response.blob();
+                    } else {
+                        return response.json();
+                    }
+                } else {
+                    throw new Error('Error en la petición');
+                }
+            })
+            .then(function(data) {
+                if (data instanceof Blob) {
+                    var blob = new Blob([data], {
+                        type: 'application/pdf'
+                    });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'voucher.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    showErrorNotification(data.error);
+                }
+            })
+            .catch(function(error) {
+                hideOverlay();
+                showErrorNotification(error.message);
+            });
+        });
+
+        $(document).on("click", ".btnDescargaComprobante", function(e) {
+            showOverlay();
+            e.preventDefault();
+            let numSolRC = $(this).data('numsol');
+            let numSolGarantiza = $(this).data('garantizasol');
+
+            fetch("/solicitud/" + numSolGarantiza + "/descargaComprobanteRVM", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                },
+                body: JSON.stringify({
+                    id_solicitud_rc: numSolRC
+                })
+            })
+            .then(function(response) {
+                hideOverlay();
+                if (response.ok) {
+                    if (response.headers.get('Content-Type') === 'application/pdf') {
+                        return response.blob();
+                    } else {
+                        return response.json();
+                    }
+                } else {
+                    throw new Error('Error en la petición');
+                }
+            })
+            .then(function(data) {
+                if (data instanceof Blob) {
+                    var blob = new Blob([data], {
+                        type: 'application/pdf'
+                    });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = 'voucher.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                } else {
+                    showErrorNotification(data.error);
+                }
+            })
+            .catch(function(error) {
+                hideOverlay();
+                showErrorNotification(error.message);
+            });
+        });
+
+
+
+        $(document).on("click",".btnRevisaReingreso",function(e){
+            e.preventDefault();
+            let data = atob($(this).data('reingreso'));
+            data = JSON.parse(data);
+            let html = '';
+            $("#modal_solicitud_body").html('');
+            const contenedor = document.getElementById('modal_solicitud_body');
+            data.forEach((dato) => {
+                const idLabel = document.createElement('label');
+                idLabel.textContent = `ID: ${dato.id}`;
+                contenedor.appendChild(idLabel);
+                contenedor.appendChild(document.createElement('br'));
+
+                const ppuLabel = document.createElement('label');
+                ppuLabel.textContent = `PPU: ${dato.ppu}`;
+                contenedor.appendChild(ppuLabel);
+                contenedor.appendChild(document.createElement('br'));
+
+                const estadoIdLabel = document.createElement('label');
+                estadoIdLabel.textContent = `Estado ID: ${dato.estado_id}`;
+                contenedor.appendChild(estadoIdLabel);
+                contenedor.appendChild(document.createElement('br'));
+
+                const solicitudIdLabel = document.createElement('label');
+                solicitudIdLabel.textContent = `Solicitud ID: ${dato.solicitud_id}`;
+                contenedor.appendChild(solicitudIdLabel);
+                contenedor.appendChild(document.createElement('br'));
+
+                const nroSolicitudLabel = document.createElement('label');
+                nroSolicitudLabel.textContent = `Nro Solicitud: ${dato.nroSolicitud}`;
+                contenedor.appendChild(nroSolicitudLabel);
+                contenedor.appendChild(document.createElement('br'));
+
+                const updatedAtLabel = document.createElement('label');
+                updatedAtLabel.textContent = `Actualizado en: ${formatearFecha(dato.updated_at)}`;
+                contenedor.appendChild(updatedAtLabel);
+                contenedor.appendChild(document.createElement('br'));
+
+                const observacionesLabel = document.createElement('label');
+                observacionesLabel.textContent = `Observaciones: ${JSON.parse(dato.observaciones).descrp}`;
+                contenedor.appendChild(observacionesLabel);
+                contenedor.appendChild(document.createElement('br'));
+
+                // Agrega un separador para mejorar la legibilidad
+                const separador = document.createElement('hr');
+                contenedor.appendChild(separador);
+            });
+            
+            $(".modal-title").text('Estado de Reingreso');
+            
+        });
+
+        function formatearFecha(fecha) {
+            const date = new Date(fecha);
+            const dia = String(date.getDate()).padStart(2, '0');
+            const mes = String(date.getMonth() + 1).padStart(2, '0');
+            const año = date.getFullYear();
+            const hora = String(date.getHours()).padStart(2, '0');
+            const minuto = String(date.getMinutes()).padStart(2, '0');
+            const segundo = String(date.getSeconds()).padStart(2, '0');
+
+            return `${dia}-${mes}-${año} ${hora}:${minuto}:${segundo}`;
+        }
+
+        function showErrorNotification(message) {
+            new PNotify({
+                title: 'Error',
+                text: message,
+                shadow: true,
+                opacity: '1',
+                addclass: 'stack_top_right',
+                type: 'danger',
+                stack: {
+                    "dir1": "down",
+                    "dir2": "left",
+                    "push": "top",
+                    "spacing1": 10,
+                    "spacing2": 10
+                },
+                width: '290px',
+                delay: 2000
+            });
+        }
 
         
     </script>

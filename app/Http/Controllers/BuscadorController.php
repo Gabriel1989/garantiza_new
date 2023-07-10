@@ -9,6 +9,8 @@ use App\Models\Solicitud;
 use App\Models\Transferencia;
 use App\Models\Propietario;
 use App\Models\Factura;
+use App\Models\Limitacion;
+use App\Models\Reingreso;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Exception;
@@ -20,15 +22,15 @@ class BuscadorController extends Controller
     public function tipoVehiculo()
     {
         $tipoVehiculo = Tipo_Vehiculo::all();
-        return view('buscador.tipoVehiculo', compact('tipoVehiculo'));
+        return view('buscador.spiev.tipoVehiculo', compact('tipoVehiculo'));
     }
 
     public function rutadquiriente(){
-        return view('buscador.rutadquiriente');
+        return view('buscador.spiev.rutadquiriente');
     }
 
     public function numFactura(){
-        return view('buscador.numfactura');
+        return view('buscador.spiev.numfactura');
     }
 
     public function tipoVehiculoForm(Request $request)
@@ -345,24 +347,54 @@ class BuscadorController extends Controller
                     <br>
                     <br>
                     <button type="button" data-toggle="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger btnDescargaPdfGarantiza" data-garantizaSol="'.$item->id.'"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
-                    </td></tr>';
+                    </td>';
                 }
                 else{
                     $html .= '<td>
-                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href=\''.route('solicitud.revision.cedula', ['id' => $item->id]).'\'">
+                    <button type="button" data-toggle="tooltip" title="Revisar solicitud para posterior envío a RC" class="btn btn-dark btn-sm" onclick="location.href=\''.route('solicitud.revision.cedula', ['id' => $item->id]).'\'">
                         <li class="fa fa-pencil"></li> Revisar</button>
                     <br>
-                    <button type="button" class="btn btn-sm btn-primary" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm('.$item->id.')">
+                    <button type="button" data-toggle="tooltip" title="Registrar pago de solicitud para registro interno" class="btn btn-sm btn-primary" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm('.$item->id.')">
                         <li class="fa fa-money"></li> Registrar Pago</button>
                     </button>
                     <br>
-                    <button type="button" class="btn btn-sm btn-primary" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud('.$item->id.')">
+                    <button type="button" data-toggle="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-primary" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud('.$item->id.')">
                         <li class="fa fa-file"></li> Ver Documentos</button>
                     </button>
                     <br>
                     <button type="button" data-toggle="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger btnDescargaPdfGarantiza" data-garantizaSol="'. $item->id .'"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
                     </td>';
                 }
+
+                $html .= '<td>';
+                $solicitud_rc = Solicitud::getSolicitudRC($item->id);
+
+                if(count($solicitud_rc) > 0){
+                    $html .= '<button type="button" style="margin-bottom:5px;" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="'.$item->id.'" data-numsol="'. $solicitud_rc[0]->numeroSol .'" class="btn btn-dark btn-sm btnRevisaSolicitud">
+                        <li class="fa fa-eye"></li> Revisar estado solicitud en RC
+                    </button>';
+                }    
+                                    
+                $limitacion_rc = Limitacion::getLimitacionRC($item->id);
+
+                if(count($limitacion_rc) > 0){
+                $html .= '<button type="button" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="'.$item->id.'" data-numsol="'. $limitacion_rc[0]->numSol .'" class="btn btn-dark btn-sm btnRevisaLimitacion">
+                    <li class="fa fa-eye"></li> Revisar estado solicitud de limitación/prohibición en RC
+                    </button>';
+                }       
+
+                $reingreso_rc = Reingreso::where('solicitud_id',$item->id)->get();
+
+                if(count($reingreso_rc) > 0){
+                    $html .= '<button type="button" data-toggle="modal" data-target="#modal_solicitud" data-reingreso="'.base64_encode($reingreso_rc).'" class="btn btn-dark btn-sm btnRevisaReingreso">
+                        <li class="fa fa-eye"></li> Revisar estado de reingreso
+                    </button>';
+                }      
+
+
+                $html .= '</td></tr>';
+
+
             }
         }
 
@@ -375,15 +407,15 @@ class BuscadorController extends Controller
 
     /*************FUNCIONES BÚSQUEDA STEV ************/
     public function ppu(){
-        return view('buscador.ppu');
+        return view('buscador.stev.ppu');
     }
 
     public function rutcomprador(){
-        return view('buscador.rutcomprador');
+        return view('buscador.stev.rutcomprador');
     }
 
     public function numerodoc(){
-        return view('buscador.numerodoc');
+        return view('buscador.stev.numerodoc');
     }
 
     public function ppuForm(Request $request){
@@ -573,7 +605,7 @@ class BuscadorController extends Controller
 
                 if(!(auth()->user()->rol_id == 1 || auth()->user()->rol_id == 3)){
                     $html .= '<td>
-                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href=\''.route('transferencia.continuarSolicitud', ['id' => $item->id,'reingresa'=> 0,'acceso'=>'ingreso']). '\'">
+                    <button type="button" data-toggle="tooltip" title="Continuar ingreso de solicitud donde había quedado" class="btn btn-dark btn-sm" onclick="location.href=\''.route('transferencia.continuarSolicitud', ['id' => $item->id,'reingresa'=> 0,'acceso'=>'ingreso']). '\'">
                         <li class="fa fa-pencil"></li> Continuar Ingreso</button>
                     <br>
                     <br>
@@ -581,17 +613,17 @@ class BuscadorController extends Controller
                     <br>
                     <br>
                     <button type="button" data-toggle="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger btnDescargaPdfGarantiza" data-garantizaSol="'. $item->id .'"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
-                    </td></tr>';
+                    </td>';
                 }else{
                     $html .= '<td>
-                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href=\''.route('transferencia.revision.cedula', ['id' => $item->id]).'\'">
+                    <button type="button" data-toggle="tooltip" title="Revisar solicitud para posterior envío a RC" class="btn btn-dark btn-sm" onclick="location.href=\''.route('transferencia.revision.cedula', ['id' => $item->id]).'\'">
                         <li class="fa fa-pencil"></li> Revisar</button>
                     <br>
-                    <button type="button" class="btn btn-sm btn-primary" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm('.$item->id.')">
+                    <button type="button" data-toggle="tooltip" title="Registrar pago de solicitud para registro interno" class="btn btn-sm btn-primary" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm('.$item->id.')">
                         <li class="fa fa-money"></li> Registrar Pago</button>
                     </button>
                     <br>
-                    <button type="button" class="btn btn-sm btn-primary" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud('.$item->id.')">
+                    <button type="button" data-toggle="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-primary" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud('.$item->id.')">
                         <li class="fa fa-file"></li> Ver Documentos</button>
                     </button>
                     <br>
@@ -599,6 +631,31 @@ class BuscadorController extends Controller
                     </td>';
                 }
 
+                $html .= '<td>';
+                $solicitud_rc = Transferencia::getTransferenciaRC($item->id);
+                if(count($solicitud_rc) > 0){
+                    $html .= '<button type="button" style="margin-bottom:5px;" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="'.$item->id.'" data-numsol="'. $solicitud_rc[0]->numeroSol .'" class="btn btn-dark btn-sm btnRevisaSolicitud">
+                        <li class="fa fa-eye"></li> Revisar estado solicitud en RC
+                    </button>';
+                }    
+
+                $limitacion_rc = Limitacion::getLimitacionTransferenciaRC($item->id);
+                
+                if(count($limitacion_rc) > 0){
+                    $html .= '<button type="button" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="'.$item->id.'" data-numsol="'. $limitacion_rc[0]->numSol .'" class="btn btn-dark btn-sm btnRevisaLimitacion">
+                        <li class="fa fa-eye"></li> Revisar estado solicitud de limitación/prohibición en RC
+                    </button>';
+                }       
+
+                $reingreso_rc = Reingreso::where('transferencia_id',$item->id)->get();
+
+                if(count($reingreso_rc) > 0){
+                    $html .= '<button type="button" data-toggle="modal" data-target="#modal_solicitud" data-reingreso="'.base64_encode($reingreso_rc).'" class="btn btn-dark btn-sm btnRevisaReingreso">
+                        <li class="fa fa-eye"></li> Revisar estado de reingreso
+                    </button>';
+                }      
+
+                $html .= '</td></tr>';
             }
         }
         return $html;
