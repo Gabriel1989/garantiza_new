@@ -196,8 +196,10 @@
 @endsection
 
 @section('scripts')
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.23/js/dataTables.bootstrap5.min.js"></script>
     
@@ -341,6 +343,35 @@
 
         }
 
+        function createTooltip(element) {
+            var tooltip = document.createElement("div");
+            tooltip.className = "custom-tooltip";
+            tooltip.innerHTML = '<div class="tooltip-arrow"></div><div class="tooltip-inner">' + element.getAttribute("title") + "</div>";
+            document.body.appendChild(tooltip);
+            return tooltip;
+          }
+      
+          function showTooltip(element, tooltip) {
+            tooltip.classList.add("show");
+            var popperInstance = Popper.createPopper(element, tooltip, {
+              placement: element.dataset.placement || "top",
+              modifiers: [
+                {
+                  name: "offset",
+                  options: {
+                    offset: [0, 8],
+                  },
+                },
+              ],
+            });
+            return popperInstance;
+          }
+      
+          function hideTooltip(tooltip, popperInstance) {
+            popperInstance.destroy();
+            tooltip.classList.remove("show");
+          }
+
 
         $(document).on("submit","#formBusqueda",function(e){
             e.preventDefault();
@@ -367,6 +398,22 @@
                     $("#tabla-data-body").html(data);
 
                     table.rows.add($(data)).draw();
+
+                    $('[data-toggle="tooltip"]').each(function () {
+                        var element = this;
+                        var tooltip = createTooltip(element);
+                        var popperInstance;
+                
+                        $(element).on("mouseenter", function () {
+                        popperInstance = showTooltip(element, tooltip);
+                        });
+                
+                        $(element).on("mouseleave", function () {
+                        if (popperInstance) {
+                            hideTooltip(tooltip, popperInstance);
+                        }
+                        });
+                    });
                 }
             });
         });
@@ -606,54 +653,6 @@
         }
 
         
-    </script>
-    <script>
-        $(function () {
-          function createTooltip(element) {
-            var tooltip = document.createElement("div");
-            tooltip.className = "custom-tooltip";
-            tooltip.innerHTML = '<div class="tooltip-arrow"></div><div class="tooltip-inner">' + element.getAttribute("title") + "</div>";
-            document.body.appendChild(tooltip);
-            return tooltip;
-          }
-      
-          function showTooltip(element, tooltip) {
-            tooltip.classList.add("show");
-            var popperInstance = Popper.createPopper(element, tooltip, {
-              placement: element.dataset.placement || "top",
-              modifiers: [
-                {
-                  name: "offset",
-                  options: {
-                    offset: [0, 8],
-                  },
-                },
-              ],
-            });
-            return popperInstance;
-          }
-      
-          function hideTooltip(tooltip, popperInstance) {
-            popperInstance.destroy();
-            tooltip.classList.remove("show");
-          }
-      
-          $('[data-toggle="tooltip"]').each(function () {
-            var element = this;
-            var tooltip = createTooltip(element);
-            var popperInstance;
-      
-            $(element).on("mouseenter", function () {
-              popperInstance = showTooltip(element, tooltip);
-            });
-      
-            $(element).on("mouseleave", function () {
-              if (popperInstance) {
-                hideTooltip(tooltip, popperInstance);
-              }
-            });
-          });
-        });
     </script>
       
 @endsection

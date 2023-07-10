@@ -336,6 +336,35 @@
 
         });
 
+        function createTooltip(element) {
+            var tooltip = document.createElement("div");
+            tooltip.className = "custom-tooltip";
+            tooltip.innerHTML = '<div class="tooltip-arrow"></div><div class="tooltip-inner">' + element.getAttribute("title") + "</div>";
+            document.body.appendChild(tooltip);
+            return tooltip;
+        }
+      
+        function showTooltip(element, tooltip) {
+        tooltip.classList.add("show");
+        var popperInstance = Popper.createPopper(element, tooltip, {
+            placement: element.dataset.placement || "top",
+            modifiers: [
+            {
+                name: "offset",
+                options: {
+                offset: [0, 8],
+                },
+            },
+            ],
+        });
+        return popperInstance;
+        }
+      
+        function hideTooltip(tooltip, popperInstance) {
+        popperInstance.destroy();
+        tooltip.classList.remove("show");
+        }
+
 
         $(document).on("submit","#formBusqueda",function(e){
             e.preventDefault();
@@ -362,6 +391,22 @@
                     $("#tabla-data-body").html(data);
 
                     table.rows.add($(data)).draw();
+
+                    $('[data-toggle="tooltip"]').each(function () {
+                        var element = this;
+                        var tooltip = createTooltip(element);
+                        var popperInstance;
+      
+                        $(element).on("mouseenter", function () {
+                        popperInstance = showTooltip(element, tooltip);
+                        });
+      
+                        $(element).on("mouseleave", function () {
+                        if (popperInstance) {
+                            hideTooltip(tooltip, popperInstance);
+                        }
+                        });
+                    });
                 }
             });
         });
@@ -607,53 +652,6 @@
 
         
     </script>
-    <script>
-        $(function () {
-          function createTooltip(element) {
-            var tooltip = document.createElement("div");
-            tooltip.className = "custom-tooltip";
-            tooltip.innerHTML = '<div class="tooltip-arrow"></div><div class="tooltip-inner">' + element.getAttribute("title") + "</div>";
-            document.body.appendChild(tooltip);
-            return tooltip;
-          }
-      
-          function showTooltip(element, tooltip) {
-            tooltip.classList.add("show");
-            var popperInstance = Popper.createPopper(element, tooltip, {
-              placement: element.dataset.placement || "top",
-              modifiers: [
-                {
-                  name: "offset",
-                  options: {
-                    offset: [0, 8],
-                  },
-                },
-              ],
-            });
-            return popperInstance;
-          }
-      
-          function hideTooltip(tooltip, popperInstance) {
-            popperInstance.destroy();
-            tooltip.classList.remove("show");
-          }
-      
-          $('[data-toggle="tooltip"]').each(function () {
-            var element = this;
-            var tooltip = createTooltip(element);
-            var popperInstance;
-      
-            $(element).on("mouseenter", function () {
-              popperInstance = showTooltip(element, tooltip);
-            });
-      
-            $(element).on("mouseleave", function () {
-              if (popperInstance) {
-                hideTooltip(tooltip, popperInstance);
-              }
-            });
-          });
-        });
-    </script>
+    
       
 @endsection
