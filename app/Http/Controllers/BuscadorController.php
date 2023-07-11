@@ -351,14 +351,14 @@ class BuscadorController extends Controller
                 }
                 else{
                     $html .= '<td>
-                    <button type="button" data-trigger="tooltip" title="Revisar solicitud para posterior envío a RC" class="btn btn-dark btn-sm" onclick="location.href=\''.route('solicitud.revision.cedula', ['id' => $item->id]).'\'">
+                    <button type="button" data-trigger="tooltip" title="Revisar solicitud para posterior envío a RC" class="btn btn-dark btn-sm mb10" onclick="location.href=\''.route('solicitud.revision.cedula', ['id' => $item->id]).'\'">
                         <li class="fa fa-pencil"></li> Revisar</button>
                     <br>
-                    <button type="button" data-trigger="tooltip" title="Registrar pago de solicitud para registro interno" class="btn btn-sm btn-primary btnRegistraPagos" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm('.$item->id.')">
+                    <button type="button" data-trigger="tooltip" title="Registrar pago de solicitud para registro interno" class="btn btn-sm btn-primary btnRegistraPagos mb10" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm('.$item->id.')">
                         <li class="fa fa-money"></li> Registrar Pago</button>
                     </button>
                     <br>
-                    <button type="button" data-trigger="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-primary btnVerDocsSolicitud" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud('.$item->id.')">
+                    <button type="button" data-trigger="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-success btnVerDocsSolicitud mb10" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud('.$item->id.')">
                         <li class="fa fa-file"></li> Ver Documentos</button>
                     </button>
                     <br>
@@ -616,14 +616,14 @@ class BuscadorController extends Controller
                     </td>';
                 }else{
                     $html .= '<td>
-                    <button type="button" data-trigger="tooltip" title="Revisar solicitud para posterior envío a RC" class="btn btn-dark btn-sm" onclick="location.href=\''.route('transferencia.revision.cedula', ['id' => $item->id]).'\'">
+                    <button type="button" data-trigger="tooltip" title="Revisar solicitud para posterior envío a RC" class="btn btn-dark btn-sm mb10" onclick="location.href=\''.route('transferencia.revision.cedula', ['id' => $item->id]).'\'">
                         <li class="fa fa-pencil"></li> Revisar</button>
                     <br>
-                    <button type="button" data-trigger="tooltip" title="Registrar pago de solicitud para registro interno" class="btn btn-sm btn-primary btnRegistraPagos" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm('.$item->id.')">
+                    <button type="button" data-trigger="tooltip" title="Registrar pago de solicitud para registro interno" class="btn btn-sm btn-primary btnRegistraPagos mb10" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm('.$item->id.')">
                         <li class="fa fa-money"></li> Registrar Pago</button>
                     </button>
                     <br>
-                    <button type="button" data-trigger="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-primary btnVerDocsSolicitud" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud('.$item->id.')">
+                    <button type="button" data-trigger="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-success btnVerDocsSolicitud mb10" data-solicitud="'.$item->id.'" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud('.$item->id.')">
                         <li class="fa fa-file"></li> Ver Documentos</button>
                     </button>
                     <br>

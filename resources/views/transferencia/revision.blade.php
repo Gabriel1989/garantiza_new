@@ -225,7 +225,7 @@
                                         <li class="fa fa-money"></li> Registrar Pago</button>
                                     </button>
                                     <br>
-                                    <button type="button" data-trigger="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-primary mb10" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud({{$item->id}})">
+                                    <button type="button" data-trigger="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-success mb10" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud({{$item->id}})">
                                         <li class="fa fa-file"></li> Ver Documentos</button>
                                     </button>
                                     <br>
