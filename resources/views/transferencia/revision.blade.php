@@ -211,18 +211,18 @@
                                 <td>@php echo (!$item->pagada)? '<span style="background-color:#F00;color:#ffffff;">No pagada</span>': '<span style="background-color:#08bd08;color:#ffffff;">Pagada</span>'; @endphp</td>
                                 <td>{{$item->monto_inscripcion}}</td>
                                 <td>
-                                    <button type="button" class="btn btn-dark btn-sm" onclick="location.href='{{route('transferencia.revision.cedula', ['id' => $item->id])}}'">
+                                    <button type="button" data-trigger="tooltip" title="Revisar solicitud para posterior envío a RC" class="btn btn-dark btn-sm" onclick="location.href='{{route('transferencia.revision.cedula', ['id' => $item->id])}}'">
                                         <li class="fa fa-pencil"></li> Revisar</button>
                                     <br>
-                                    <button type="button" class="btn btn-sm btn-primary" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm({{$item->id}})">
+                                    <button type="button" data-trigger="tooltip" title="Registrar pago de solicitud para registro interno" class="btn btn-sm btn-primary" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm({{$item->id}})">
                                         <li class="fa fa-money"></li> Registrar Pago</button>
                                     </button>
                                     <br>
-                                    <button type="button" class="btn btn-sm btn-primary" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud({{$item->id}})">
+                                    <button type="button" data-trigger="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-primary" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud({{$item->id}})">
                                         <li class="fa fa-file"></li> Ver Documentos</button>
                                     </button>
                                     <br>
-                                    <button type="button" data-toggle="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger btnDescargaPdfGarantiza" data-garantizaSol="{{ $item->id }}"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
+                                    <button type="button" data-trigger="tooltip" data-placement="top" title="Generar comprobante solicitud" class="btn btn-danger btnDescargaPdfGarantiza" data-garantizaSol="{{ $item->id }}"><i class="fa fa-file-pdf-o"></i> Generar comprobante</button>
                                 </td>
                                 <td>
                                     <?php
@@ -239,7 +239,7 @@
                                     ?>
 
                                     @if(count($limitacion_rc) > 0)
-                                    <button type="button" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="{{$item->id}}" data-numsol="{{ $limitacion_rc[0]->numSol }}" class="btn btn-dark btn-sm btnRevisaLimitacion">
+                                    <button type="button" style="white-space:normal;margin-bottom:5px;" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="{{$item->id}}" data-numsol="{{ $limitacion_rc[0]->numSol }}" class="btn btn-dark btn-sm btnRevisaLimitacion">
                                         <li class="fa fa-eye"></li> Revisar estado solicitud de limitación/prohibición en RC
                                     </button>
                                     @endif       
@@ -359,6 +359,40 @@
 @section('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.23/css/dataTables.bootstrap5.min.css"> 
     <style>
+        .custom-tooltip {
+          position: absolute;
+          z-index: 1070;
+          display: block;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 1.42857143;
+          text-align: left;
+          text-decoration: none;
+          word-wrap: break-word;
+          opacity: 0;
+          transition: opacity 150ms;
+        }
+        .custom-tooltip.show {
+          opacity: 0.9;
+        }
+        .custom-tooltip .tooltip-inner {
+          max-width: 200px;
+          padding: 3px 8px;
+          color: #fff;
+          text-align: center;
+          background-color: #000;
+          border-radius: 4px;
+        }
+        .custom-tooltip .tooltip-arrow {
+          position: absolute;
+          display: block;
+          width: 0;
+          height: 0;
+          border-color: transparent;
+          border-style: solid;
+        }
         .red{
           color: #F00;
         }
@@ -417,7 +451,7 @@
         }
 
         function verDocsSolicitud(id){
-            $('#modal-docs-solicitud').modal('show');
+            $('#modal-docs-form').modal('show');
             $.ajax({
                 url: "/documentoTransferencia/"+id+"/get",
                 type: "get",
@@ -752,5 +786,53 @@
                 delay: 2000
             });
         }
+    </script>
+    <script>
+        $(function () {
+          function createTooltip(element) {
+            var tooltip = document.createElement("div");
+            tooltip.className = "custom-tooltip";
+            tooltip.innerHTML = '<div class="tooltip-arrow"></div><div class="tooltip-inner">' + element.getAttribute("title") + "</div>";
+            document.body.appendChild(tooltip);
+            return tooltip;
+          }
+      
+          function showTooltip(element, tooltip) {
+            tooltip.classList.add("show");
+            var popperInstance = Popper.createPopper(element, tooltip, {
+              placement: element.dataset.placement || "top",
+              modifiers: [
+                {
+                  name: "offset",
+                  options: {
+                    offset: [0, 8],
+                  },
+                },
+              ],
+            });
+            return popperInstance;
+          }
+      
+          function hideTooltip(tooltip, popperInstance) {
+            popperInstance.destroy();
+            tooltip.classList.remove("show");
+          }
+      
+          $('[data-trigger="tooltip"]').each(function () {
+            var element = this;
+            var tooltip = createTooltip(element);
+            var popperInstance;
+      
+            $(element).on("mouseenter", function () {
+              popperInstance = showTooltip(element, tooltip);
+            });
+      
+            $(element).on("mouseleave", function () {
+              if (popperInstance) {
+                hideTooltip(tooltip, popperInstance);
+              }
+            });
+          });
+        });
     </script>
 @endsection

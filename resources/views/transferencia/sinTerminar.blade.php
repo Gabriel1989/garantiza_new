@@ -236,7 +236,7 @@
                                     ?>
 
                                     @if(count($limitacion_rc) > 0)
-                                    <button type="button" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="{{$item->id}}" data-numsol="{{ $limitacion_rc[0]->numSol }}" class="btn btn-dark btn-sm btnRevisaLimitacion">
+                                    <button type="button" style="white-space:normal;margin-bottom:5px;" data-toggle="modal" data-target="#modal_solicitud" data-garantizaSol="{{$item->id}}" data-numsol="{{ $limitacion_rc[0]->numSol }}" class="btn btn-dark btn-sm btnRevisaLimitacion">
                                         <li class="fa fa-eye"></li> Revisar estado solicitud de limitación/prohibición en RC
                                     </button>
                                     @endif       

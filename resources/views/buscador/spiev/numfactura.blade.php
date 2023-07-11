@@ -328,7 +328,7 @@
         }
 
         function verDocsSolicitud(id){
-            $('#modal-docs-solicitud').modal('show');
+            $('#modal-docs-form').modal('show');
             $.ajax({
                 url: "/documento/"+id+"/get",
                 type: "get",
@@ -398,7 +398,7 @@
 
                     table.rows.add($(data)).draw();
 
-                    $('[data-toggle="tooltip"]').each(function () {
+                    $('[data-trigger="tooltip"]').each(function () {
                         var element = this;
                         var tooltip = createTooltip(element);
                         var popperInstance;

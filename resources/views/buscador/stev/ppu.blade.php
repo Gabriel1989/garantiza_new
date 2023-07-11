@@ -202,25 +202,40 @@
             });
 
             $(document).on("click",".btnDescargaPdfGarantiza",function(e){
-            showOverlay();
-            e.preventDefault();
-            let numSolGarantiza = $(this).data('garantizasol');
-            fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteTransferencia", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                },
-                body: JSON.stringify({
-                    id_transferencia: numSolGarantiza
-                })
-            }).then((response) => response.json())
-            .then((data) => {
-                hideOverlay();
-                window.open(data.file);
-            });
+                showOverlay();
+                e.preventDefault();
+                let numSolGarantiza = $(this).data('garantizasol');
+                fetch("/transferencia/" + numSolGarantiza + "/descargaComprobanteTransferencia", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify({
+                        id_transferencia: numSolGarantiza
+                    })
+                }).then((response) => response.json())
+                .then((data) => {
+                    hideOverlay();
+                    window.open(data.file);
+                });
             });
         });
+
+        /*
+        $(document).on("click",".btnRegistraPagos",function(e){
+            var id = $(this).data('solicitud');
+            $('#modal-pago-form').modal('show');
+            $('#ComprobantePDF').on('click', function() {
+                $('#Comprobante_PDF').trigger('click');
+            });
+
+            $('#Comprobante_PDF').on('change', function() {
+                $('#lbl_Comprobante_PDF').text($('#Comprobante_PDF').val());
+            });
+
+            $("#registra_pago_sol_id").val(id);
+        });*/
 
         function registrarPagoForm(id){
             $('#modal-pago-form').modal('show');
@@ -235,8 +250,24 @@
             $("#registra_pago_sol_id").val(id);
         }
 
+        /*$(document).on("click",".btnVerDocsSolicitud",function(){
+            var id = $(this).data('solicitud');
+            $('#modal-docs-form').modal('show');
+            $.ajax({
+                url: "/documentoTransferencia/"+id+"/get",
+                type: "get",
+                success: function(data2) {
+                    let jsondata = JSON.parse(data2);
+                    let html = jsondata.data;
+                    $("#tableDocsBody3").html(html);
+                    $('#tableDocs3 tr > *:nth-child(3)').hide();
+                }
+            });
+        });*/
+
+
         function verDocsSolicitud(id){
-            $('#modal-docs-solicitud').modal('show');
+            $('#modal-docs-form').modal('show');
             $.ajax({
                 url: "/documentoTransferencia/"+id+"/get",
                 type: "get",
@@ -389,7 +420,7 @@
 
                     table.rows.add($(data)).draw();
 
-                    $('[data-toggle="tooltip"]').each(function () {
+                    $('[data-trigger="tooltip"]').each(function () {
                         var element = this;
                         var tooltip = createTooltip(element);
                         var popperInstance;
