@@ -34,8 +34,15 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($solicitudes as $item)
-                            <tr>
+                        @php
+                            $classes = ['active', 'success', 'warning'];
+                            $classesCount = count($classes);
+                        @endphp  
+                        @foreach ($solicitudes as $index => $item)
+                            @php 
+                                $class = $classes[$index % $classesCount];   
+                                echo "<tr class=\"$class\">";
+                            @endphp
                                 <td scope="row">{{$item->id}}</td>
                                 <td>{{date('d-m-Y h:i A', strtotime($item->created_at))}}</td>
                                 <td>{{$item->concesionaria}}</td>
@@ -241,14 +248,14 @@
                                     <label>Permiso de circulación @if(!is_null($item->incluyePermiso))  @if($item->incluyePermiso == 1) <i class="fa fa-check green"></i>  @else <i class="fa fa-times red"></i> @endif @else <i class="fa fa-times red"></i> @endif</label>
                                   </td>
                                 <td>
-                                    <button type="button" data-trigger="tooltip" title="Revisar solicitud para posterior envío a RC" class="btn btn-dark btn-sm" onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
+                                    <button type="button" data-trigger="tooltip" title="Revisar solicitud para posterior envío a RC" class="btn btn-dark btn-sm mb10" onclick="location.href='{{route('solicitud.revision.cedula', ['id' => $item->id])}}'">
                                         <li class="fa fa-pencil"></li> Revisar</button>
                                     <br>
-                                    <button type="button" data-trigger="tooltip" title="Registrar pago de solicitud para registro interno" class="btn btn-sm btn-primary" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm({{$item->id}})">
+                                    <button type="button" data-trigger="tooltip" title="Registrar pago de solicitud para registro interno" class="btn btn-sm btn-primary mb10" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-pago-form" onclick="registrarPagoForm({{$item->id}})">
                                         <li class="fa fa-money"></li> Registrar Pago</button>
                                     </button>
                                     <br>
-                                    <button type="button" data-trigger="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-primary" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud({{$item->id}})">
+                                    <button type="button" data-trigger="tooltip" title="Ver documentos adjuntados a la solicitud" class="btn btn-sm btn-primary mb10" data-solicitud="{{$item->id}}" data-toggle="modal" data-target="#modal-docs-form" onclick="verDocsSolicitud({{$item->id}})">
                                         <li class="fa fa-file"></li> Ver Documentos</button>
                                     </button>
                                     <br>
